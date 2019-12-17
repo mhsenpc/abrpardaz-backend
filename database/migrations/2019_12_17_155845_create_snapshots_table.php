@@ -21,6 +21,7 @@ class CreateSnapshotsTable extends Migration
             $table->integer('machine_id');
             $table->integer('user_id');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('machine_id')->references('id')->on('machines');
             $table->foreign('user_id')->references('id')->on('users');

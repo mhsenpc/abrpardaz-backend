@@ -19,6 +19,7 @@ class CreateSshKeysTable extends Migration
             $table->string('content');
             $table->integer('user_id');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users');
         });

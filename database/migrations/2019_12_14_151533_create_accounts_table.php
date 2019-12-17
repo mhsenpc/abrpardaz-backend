@@ -26,6 +26,7 @@ class CreateAccountsTable extends Migration
             $table->timestamp('national_card_verified_at')->nullable();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

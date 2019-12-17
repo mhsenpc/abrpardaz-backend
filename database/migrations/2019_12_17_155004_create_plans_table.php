@@ -20,6 +20,7 @@ class CreatePlansTable extends Migration
             $table->integer('ram');
             $table->integer('vcpu');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

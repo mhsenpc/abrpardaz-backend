@@ -20,6 +20,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('is_valid');
             $table->integer('user_id');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('invoice_id')->references('id')->on('invoices');

@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->boolean('is_root');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('account_id')->references('id')->on('users');
         });

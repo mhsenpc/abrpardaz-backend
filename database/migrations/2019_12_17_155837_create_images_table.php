@@ -20,6 +20,7 @@ class CreateImagesTable extends Migration
             $table->integer('min_disk');
             $table->integer('min_ram');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

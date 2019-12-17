@@ -21,6 +21,7 @@ class CreateMachinesTable extends Migration
             $table->integer('image_id');
             $table->integer('ssh_key_id');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('plan_id')->references('id')->on('plans');
