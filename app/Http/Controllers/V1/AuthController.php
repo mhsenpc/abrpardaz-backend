@@ -14,7 +14,12 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     function register(RegisterRequest $request){
-
+        return 'register';
+    /*    return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);*/
     }
 
     function login(LoginRequest $request){

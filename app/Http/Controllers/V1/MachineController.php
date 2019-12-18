@@ -10,6 +10,10 @@ use Illuminate\Http\Request;
 
 class MachineController extends Controller
 {
+    function index(){
+
+    }
+
     function createFromImage(CreateFromImageRequest $request){
 
     }
