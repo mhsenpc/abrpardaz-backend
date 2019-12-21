@@ -21,9 +21,15 @@ class CreateAccountsTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('mobile')->nullable()->unique();
             $table->timestamp('mobile_verified_at')->nullable();
+            $table->string('phone')->nullable()->unique();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->string('national_code')->nullable()->unique();
-            $table->string('national_card')->nullable();
-            $table->timestamp('national_card_verified_at')->nullable();
+            $table->string('national_card_front')->nullable();
+            $table->timestamp('national_card_front_verified_at')->nullable();
+            $table->string('national_card_back')->nullable();
+            $table->timestamp('national_card_back_verified_at')->nullable();
+            $table->string('birth_certificate')->nullable();
+            $table->timestamp('birth_certificate_verified_at')->nullable();
             $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->softDeletes();

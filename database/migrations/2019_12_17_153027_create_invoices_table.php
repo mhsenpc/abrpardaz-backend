@@ -15,6 +15,7 @@ class CreateInvoicesTable extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
             $table->float('amount');
             $table->float('vat');
             $table->float('total');

@@ -24,7 +24,8 @@ class VerifyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'email' => 'required',
+            'token' => 'required'
         ];
     }
 }
