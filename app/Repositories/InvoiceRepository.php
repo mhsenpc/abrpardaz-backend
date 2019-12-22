@@ -8,8 +8,8 @@ use App\Models\Invoice;
 
 class InvoiceRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(Invoice $model)
     {
-        $this->model = (new Invoice());
+        $this->model = $model;
     }
 }

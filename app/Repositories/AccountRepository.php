@@ -8,8 +8,8 @@ use App\Models\Account;
 
 class AccountRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(Account $model)
     {
-        $this->model = (new Account());
+        $this->model = $model;
     }
 }

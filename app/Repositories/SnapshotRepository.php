@@ -8,8 +8,8 @@ use App\Models\Snapshot;
 
 class SnapshotRepository extends BaseRepository
 {
-    function __construct()
+    public function __construct(Snapshot $model)
     {
-        $this->model = (new Snapshot());
+        $this->model = $model;
     }
 }

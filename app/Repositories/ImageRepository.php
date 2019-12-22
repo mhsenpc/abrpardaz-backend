@@ -8,8 +8,8 @@ use App\Models\Image;
 
 class ImageRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(Image $model)
     {
-        $this->model = (new Image());
+        $this->model = $model;
     }
 }

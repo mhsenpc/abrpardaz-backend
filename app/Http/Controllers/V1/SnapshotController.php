@@ -2,25 +2,35 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
+use App\Repositories\SnapshotRepository;
 use Illuminate\Http\Request;
 
-class SnapshotController extends Controller
+class SnapshotController extends BaseController
 {
-    function index(){
+    /**
+     * @var SnapshotRepository
+     */
+    protected $repository;
 
+    public function __construct(SnapshotRepository $repository)
+    {
+        $this->repository = $repository;
     }
 
-    function getProgress(){
-
+    function index(){
+        return responder()->success(['list' => $this->repository->all()]);
     }
 
     function rename(RenameSnapshotRequest $request){
-
+        //do some stuff
+        return responder()->success("نام تصویر آنی با موفقیت تغییر کرد");
     }
 
-    function remove(){
-
+    function remove(Request $request){
+        //do some stuff
+        $this->repository->deleteById($request->input('id'));
+        return responder()->success("تصویر آنی با موفقیت حذف شد");
     }
 }

@@ -8,8 +8,8 @@ use App\Models\User;
 
 class UserRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(User $model)
     {
-        $this->model = (new User());
+        $this->model = $model;
     }
 }

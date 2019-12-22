@@ -11,7 +11,7 @@ Route::prefix('v1')->group(function () {
         Route::post('logout','V1\\AuthController@logout');
     });
 
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware([/*'auth:api'*/])->group(function () {
         Route::prefix('images')->group(function () {
             Route::post('os','V1\\ImageController@os');
         });

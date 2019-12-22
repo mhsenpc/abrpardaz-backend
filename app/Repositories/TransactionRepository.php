@@ -4,12 +4,12 @@
 namespace App\Repositories;
 
 
-use App\Models\transaction;
+use App\Models\Transaction;
 
 class TransactionRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(Transaction $model)
     {
-        $this->model = (new transaction());
+        $this->model = $model;
     }
 }

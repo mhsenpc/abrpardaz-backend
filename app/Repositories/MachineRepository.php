@@ -8,8 +8,8 @@ use App\Models\Machine;
 
 class MachineRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(Machine $model)
     {
-        $this->model = (new Machine());
+        $this->model = $model;
     }
 }

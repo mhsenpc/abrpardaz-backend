@@ -8,8 +8,8 @@ use App\Models\Plan;
 
 class PlanRepository extends BaseRepository
 {
-    function __construct()
+    function __construct(Plan $model)
     {
-        $this->model = (new Plan());
+        $this->model = $model;
     }
 }
