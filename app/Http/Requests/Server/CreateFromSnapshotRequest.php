@@ -24,7 +24,7 @@ class CreateFromSnapshotRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
         ];
     }
 }

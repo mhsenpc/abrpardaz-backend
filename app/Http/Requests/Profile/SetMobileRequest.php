@@ -24,7 +24,8 @@ class SetMobileRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'mobile' => 'required',
+            'code' => 'required'
         ];
     }
 }

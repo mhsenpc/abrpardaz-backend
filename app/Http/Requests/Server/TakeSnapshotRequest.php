@@ -24,7 +24,8 @@ class TakeSnapshotRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'machine_id' => 'required|numeric'
         ];
     }
 }

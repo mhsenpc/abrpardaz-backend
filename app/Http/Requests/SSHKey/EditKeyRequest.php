@@ -24,7 +24,9 @@ class EditKeyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'id' => 'required|numeric',
+            'name' => 'required',
+            'content' => 'required'
         ];
     }
 }

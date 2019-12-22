@@ -24,7 +24,8 @@ class AddKeyRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'content' => 'required'
         ];
     }
 }
