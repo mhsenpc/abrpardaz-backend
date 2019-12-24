@@ -25,12 +25,12 @@ class SnapshotController extends BaseController
 
     function rename(RenameSnapshotRequest $request){
         //do some stuff
-        return responder()->success("نام تصویر آنی با موفقیت تغییر کرد");
+        return responder()->success(['message'=>"نام تصویر آنی با موفقیت تغییر کرد"]);
     }
 
     function remove(Request $request){
         //do some stuff
         $this->repository->deleteById($request->input('id'));
-        return responder()->success("تصویر آنی با موفقیت حذف شد");
+        return responder()->success(['message'=>"تصویر آنی با موفقیت حذف شد"]);
     }
 }

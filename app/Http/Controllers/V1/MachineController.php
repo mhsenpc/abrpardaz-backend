@@ -26,11 +26,11 @@ class MachineController extends BaseController
     }
 
     function createFromImage(CreateFromImageRequest $request){
-        return responder()->success("سرور با موفقیت ساخته شد");
+        return responder()->success(['message'=>"سرور با موفقیت ساخته شد"]);
     }
 
     function createFromSnapshot(CreateFromSnapshotRequest $request){
-        return responder()->success("سرور با موفقیت ساخته شد");
+        return responder()->success(['message'=>"سرور با موفقیت ساخته شد"]);
     }
 
     function console(){
@@ -38,26 +38,26 @@ class MachineController extends BaseController
     }
 
     function powerOn(){
-        return responder()->success("سرور با موفقیت روشن شد");
+        return responder()->success(['message'=>"سرور با موفقیت روشن شد"]);
     }
 
     function powerOff(){
-        return responder()->success("سرور با موفقیت خاموش شد");
+        return responder()->success(['message'=>"سرور با موفقیت خاموش شد"]);
     }
 
     function takeSnapshot(TakeSnapshotRequest $request){
-        return responder()->success("تصویر آنی با موفقیت ساخته شد");
+        return responder()->success(['message'=>"تصویر آنی با موفقیت ساخته شد"]);
     }
 
     function resendInfo(){
-        return responder()->success("اطلاعات سرور مجددا به ایمیل شما ارسال گردید");
+        return responder()->success(['message'=>"اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
     }
 
     function rename(){
-        return responder()->success("نام سرور با موفقیت تغییر یافت");
+        return responder()->success(['message'=>"نام سرور با موفقیت تغییر یافت"]);
     }
 
     function remove(){
-        return responder()->success("سرور با موفقیت حذف گردید");
+        return responder()->success(['message'=>"سرور با موفقیت حذف گردید"]);
     }
 }

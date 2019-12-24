@@ -15,15 +15,22 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('account_id');
-            $table->string('username')->unique();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
+            $table->string('email')->unique();
+            $table->boolean('is_root')->default(false);
+            $table->boolean('is_active')->default(false);
             $table->string('password');
-            $table->boolean('is_root');
+            $table->integer('parent_id')->nullable();
+            $table->integer('referrer_id')->nullable();
+            $table->integer('profile_id')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('account_id')->references('id')->on('users');
+            $table->foreign('profile_id')->references('id')->on('profiles');
+            $table->foreign('parent_id')->references('id')->on('users');
         });
     }
 

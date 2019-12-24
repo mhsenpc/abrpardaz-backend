@@ -29,7 +29,7 @@ class SSHKeyController extends BaseController
     function add(AddKeyRequest $request)
     {
         $this->repository->create($request->input('name'), $request->input('content'), 3);
-        return responder()->success("کلید با موفقیت اضافه شد");
+        return responder()->success(['message'=>"کلید با موفقیت اضافه شد"]);
     }
 
     function edit(EditKeyRequest $request)
@@ -37,12 +37,12 @@ class SSHKeyController extends BaseController
         $this->repository->getById($request->input('id'))->update([
             'content' => $request->input('content')
         ]);
-        return responder()->success("کلید با موفقیت ویرایش شد");
+        return responder()->success(['message'=>"کلید با موفقیت ویرایش شد"]);
     }
 
     function remove(Request $request)
     {
         $this->repository->deleteById($request->input('id'));
-        return responder()->success("کلید با موفقیت حذف شد");
+        return responder()->success(['message'=>"کلید با موفقیت حذف شد"]);
     }
 }

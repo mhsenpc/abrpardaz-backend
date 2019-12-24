@@ -7,7 +7,7 @@ Route::prefix('v1')->group(function () {
         Route::post('register','V1\\AuthController@register');
         Route::post('login','V1\\AuthController@login');
         Route::post('forgetPassword','V1\\AuthController@forgetPassword');
-        Route::post('verify','V1\\AuthController@verify');
+        Route::post('verify','V1\\AuthController@verify')->name('auth.verify');
         Route::post('logout','V1\\AuthController@logout');
     });
 
