@@ -14,6 +14,7 @@ use App\Repositories\ProfileRepository;
 use App\Repositories\UserRepository;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -36,24 +37,27 @@ class AuthController extends BaseController
             Hash::make(request('password'))
         );
 
-        $user->notify(new RegisterUserNotification());
+        $token =  uniqid();
+        Cache::put('verification_for_' . request('email') , $token ,7 * 24 * 60 * 60);
+
+        $user->notify(new RegisterUserNotification($token));
 
         return responder()->success(['message' => 'لینک فعال سازی به ایمیل شما ارسال گردید']);
     }
 
     function login(LoginRequest $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password'), 'is_active' => true])) {
             $user = Auth::user();
             $result = [];
-            $token  = $user->createToken('Abrpardaz');
+            $token = $user->createToken('Abrpardaz');
             $result['access_token'] = $token->accessToken;
             $result['token_type'] = 'Bearer';
             $result['expires_at'] = $token->token->expires_at;
 
             return responder()->success($result);
         } else {
-            return responder()->error(['error' => 'نام کاربری یا رمز عبور صحیح نمی باشد'], 401);
+            return responder()->error(422, 'نام کاربری یا رمز عبور صحیح نمی باشد');
         }
     }
 
@@ -64,7 +68,14 @@ class AuthController extends BaseController
 
     function verify(VerifyRequest $request)
     {
-
+        $token = Cache::get('verification_for_' . request('email') );
+        if(request('token') == $token){
+            $this->repository->activateUserByEmail(request('email'));
+            return responder()->success(['message' => 'حساب شما با موفقیت تایید شد']);
+        }
+        else{
+            return responder()->error(422,'تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
+        }
     }
 
     function logout(LogoutRequest $request)

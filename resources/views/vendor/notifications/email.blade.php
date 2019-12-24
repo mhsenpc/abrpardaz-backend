@@ -51,7 +51,7 @@
 @isset($actionText)
 @slot('subcopy')
 @lang(
-    "در صورتی که در نمایش دکمه \":actionText\" مشکلی وجود دارد می توانید بر روی لینک زیر کلیک کنید\n".
+    "در صورتی که در نمایش دکمه \":actionText\" مشکلی وجود دارد می توانید از لینک زیر استفاده کنید\n".
     ': [:actionURL](:actionURL)',
     [
         'actionText' => $actionText,

@@ -10,15 +10,20 @@ use Illuminate\Notifications\Notification;
 class RegisterUserNotification extends Notification
 {
     use Queueable;
+    /**
+     * @var string
+     */
+    private $token;
 
     /**
      * Create a new notification instance.
      *
-     * @return void
+     * @param string $token
      */
-    public function __construct()
+    public function __construct(string $token)
     {
         //
+        $this->token = $token;
     }
 
     /**
@@ -43,7 +48,7 @@ class RegisterUserNotification extends Notification
         return (new MailMessage)
                     ->line('به ابرپرداز خوش آمدید.')
                     ->line('برای فعال سازی حساب کاربری خود بر روی دکمه فعال سازی کلیک کنید.')
-                    ->action('فعال سازی', route('auth.verify',['token'=>33]))
+                    ->action('فعال سازی', route('auth.verify',['token'=>$this->token]))
                     ->line('');
     }
 

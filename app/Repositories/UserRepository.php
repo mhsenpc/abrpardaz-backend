@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Models\Profile;
 use App\Models\User;
+use Carbon\Carbon;
 
 class UserRepository extends BaseRepository
 {
@@ -27,5 +28,9 @@ class UserRepository extends BaseRepository
         $this->model->save();
 
         return $this->model;
+    }
+
+    function activateUserByEmail(string $email){
+        User::where('email',$email)->update(['is_active' => true, 'email_verified_at'=>Carbon::now()]);
     }
 }
