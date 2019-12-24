@@ -32,18 +32,29 @@ class AuthController extends BaseController
     function register(RegisterRequest $request)
     {
         $user = $this->repository->newUser(
-            $request->input('email'),
-            Hash::make($request->input('password'))
+            request('email'),
+            Hash::make(request('password'))
         );
 
         $user->notify(new RegisterUserNotification());
 
-        return responder()->success(['message'=>'لینک فعال سازی به ایمیل شما ارسال گردید']);
+        return responder()->success(['message' => 'لینک فعال سازی به ایمیل شما ارسال گردید']);
     }
 
     function login(LoginRequest $request)
     {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+            $user = Auth::user();
+            $result = [];
+            $token  = $user->createToken('Abrpardaz');
+            $result['access_token'] = $token->accessToken;
+            $result['token_type'] = 'Bearer';
+            $result['expires_at'] = $token->token->expires_at;
 
+            return responder()->success($result);
+        } else {
+            return responder()->error(['error' => 'نام کاربری یا رمز عبور صحیح نمی باشد'], 401);
+        }
     }
 
     function forgetPassword(ForgetPasswordRequest $request)
@@ -59,6 +70,6 @@ class AuthController extends BaseController
     function logout(LogoutRequest $request)
     {
         Auth::logout();
-        return responder()->success(['message'=>'شما با موفقیت خارج شدید']);
+        return responder()->success(['message' => 'شما با موفقیت خارج شدید']);
     }
 }
