@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\Profile;
+use App\Models\Project;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -17,6 +18,10 @@ class UserRepository extends BaseRepository
 
     function newUser(string $email, string $password)
     {
+        $project = (new Project());
+        $project->name = "Default";
+        $project->save();
+
         $profile = (new Profile());
         $profile->save();
 
@@ -25,6 +30,11 @@ class UserRepository extends BaseRepository
         $this->model->email = $email;
         $this->model->profile_id = $profile->id;
         $this->model->save();
+
+        $project->owner_id = $this->model->id;
+        $project->save();
+
+        $this->model->project()->attach($project->id);
 
         return $this->model;
     }
