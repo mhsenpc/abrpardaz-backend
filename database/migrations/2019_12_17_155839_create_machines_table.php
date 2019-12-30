@@ -16,10 +16,11 @@ class CreateMachinesTable extends Migration
         Schema::create('machines', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('remote_id')->nullable();
             $table->integer('user_id');
             $table->integer('plan_id');
             $table->integer('image_id');
-            $table->integer('ssh_key_id');
+            $table->integer('ssh_key_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

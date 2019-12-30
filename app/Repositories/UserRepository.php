@@ -21,7 +21,6 @@ class UserRepository extends BaseRepository
         $profile->save();
 
         $this->model->password = $password;
-        $this->model->is_root = true;
         $this->model->is_active = false;
         $this->model->email = $email;
         $this->model->profile_id = $profile->id;
