@@ -30,6 +30,42 @@ class AuthController extends BaseController
         $this->repository = $repository;
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/register",
+     *      operationId="getProjectsList",
+     *      summary="Register a new user",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function register(RegisterRequest $request)
     {
         $user = $this->repository->newUser(
@@ -45,6 +81,42 @@ class AuthController extends BaseController
         return responder()->success(['message' => 'لینک فعال سازی به ایمیل شما ارسال گردید']);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/login",
+     *      operationId="getProjectsList",
+     *      summary="Login a new user",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function login(LoginRequest $request)
     {
         if (Auth::attempt(['email' => request('email'), 'password' => request('password'), 'is_active' => true])) {
