@@ -23,7 +23,7 @@
                 ],
                 "summary": "Register a new user",
                 "description": "",
-                "operationId": "getProjectsList",
+                "operationId": "App\\Http\\Controllers\\V1\\AuthController::register",
                 "parameters": [
                     {
                         "name": "email",
@@ -58,7 +58,7 @@
                 ],
                 "summary": "Login a new user",
                 "description": "",
-                "operationId": "getProjectsList",
+                "operationId": "App\\Http\\Controllers\\V1\\AuthController::login",
                 "parameters": [
                     {
                         "name": "email",
@@ -82,6 +82,81 @@
                 "responses": {
                     "default": {
                         "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/machines/list": {
+            "get": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "List Your machines",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::index",
+                "responses": {
+                    "default": {
+                        "description": "returns a list of machines"
+                    }
+                }
+            }
+        },
+        "/machines/console": {
+            "get": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Get console url of the machine ",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::console",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/powerOn": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "powers on the machine ",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::powerOn",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/powerOff": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "powers off the machine ",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::powerOff",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/remove": {
+            "delete": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Removes the machine ",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::remove",
+                "responses": {
+                    "default": {
+                        "description": ""
                     }
                 }
             }

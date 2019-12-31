@@ -17,6 +17,7 @@ class CreateImagesTable extends Migration
             $table->increments('id');
             $table->string('remote_id');
             $table->string('name');
+            $table->string('version');
             $table->integer('min_disk');
             $table->integer('min_ram');
             $table->timestamps();

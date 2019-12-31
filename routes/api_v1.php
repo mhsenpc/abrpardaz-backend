@@ -7,13 +7,13 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::post('register', 'AuthController@register');
         Route::post('login', 'AuthController@login');
         Route::post('forgetPassword', 'AuthController@forgetPassword');
-        Route::any('verify', 'AuthController@verify')->name('auth.verify');
+        Route::any( 'verify', 'AuthController@verify')->name('auth.verify');
         Route::post('logout', 'AuthController@logout');
     });
 
-    Route::middleware([ /*'auth:api'*/])->group(function () {
+    Route::middleware([ 'auth:api'])->group(function () {
         Route::prefix('images')->group(function () {
-            Route::post('os', 'ImageController@os');
+            Route::get('list', 'ImageController@os');
         });
 
         Route::prefix('machines')->group(function () {

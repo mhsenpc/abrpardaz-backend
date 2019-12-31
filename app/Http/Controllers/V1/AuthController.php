@@ -34,7 +34,6 @@ class AuthController extends BaseController
      * @OA\Post(
      *      tags={"Authentication"},
      *      path="/auth/register",
-     *      operationId="getProjectsList",
      *      summary="Register a new user",
      *      description="",
      *
@@ -85,7 +84,6 @@ class AuthController extends BaseController
      * @OA\Post(
      *      tags={"Authentication"},
      *      path="/auth/login",
-     *      operationId="getProjectsList",
      *      summary="Login a new user",
      *      description="",
      *

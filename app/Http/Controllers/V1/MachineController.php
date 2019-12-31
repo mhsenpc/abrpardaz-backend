@@ -24,6 +24,22 @@ class MachineController extends BaseController
         $this->repository = $repository;
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Machine"},
+     *      path="/machines/list",
+     *      summary="List Your machines",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="returns a list of machines"
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function index(){
         $machines = (new MachineRepository(new Machine()))->all();
         return responder()->success(['list'=>$machines]);
@@ -44,6 +60,22 @@ class MachineController extends BaseController
         return responder()->success(['message'=>"سرور با موفقیت ساخته شد"]);
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Machine"},
+     *      path="/machines/console",
+     *      summary="Get console url of the machine ",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function console(){
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
@@ -52,6 +84,22 @@ class MachineController extends BaseController
         return responder()->success(['link'=>$link]);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/powerOn",
+     *      summary="powers on the machine ",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function powerOn(){
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
@@ -59,6 +107,22 @@ class MachineController extends BaseController
         return responder()->success(['message'=>"سرور با موفقیت روشن شد"]);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/powerOff",
+     *      summary="powers off the machine ",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function powerOff(){
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
@@ -86,6 +150,22 @@ class MachineController extends BaseController
         return responder()->success(['message'=>"نام سرور با موفقیت تغییر یافت"]);
     }
 
+    /**
+     * @OA\Delete(
+     *      tags={"Machine"},
+     *      path="/machines/remove",
+     *      summary="Removes the machine ",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function remove(){
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
