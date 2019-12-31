@@ -5,17 +5,23 @@ namespace App\Repositories;
 
 
 use App\Models\SshKey;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class SSHKeyRepository extends BaseRepository
 {
-    public function __construct(SshKey $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\SshKey";
     }
 
-    function create(string $name, string $content, int $user_id)
+    function createKey(string $name, string $content, int $user_id)
     {
-        $this->newQuery()->query->insert([
+        $this->create([
             'user_id' => $user_id,
             'name' => $name,
             'content' => $content,

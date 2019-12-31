@@ -11,6 +11,7 @@ use App\Models\Machine;
 use App\Repositories\MachineRepository;
 use App\Services\MachineService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MachineController extends BaseController
 {
@@ -40,24 +41,32 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function index(){
-        $machines = (new MachineRepository(new Machine()))->all();
-        return responder()->success(['list'=>$machines]);
+    function index()
+    {
+        $machines = $this->repository->all();
+        return responder()->success(['list' => $machines]);
     }
 
-    function createFromImage(CreateFromImageRequest $request){
+    function createFromImage(CreateFromImageRequest $request)
+    {
         $service = new MachineService();
-        $result = $service->createMachineFromImage();
-        if($result){
-            return responder()->success(['message'=>"سرور با موفقیت ساخته شد"]);
-        }
-        else{
-            return responder()->error( 500,"ساخت سرور انجام نشد");
+        $result = $service->createMachineFromImage(
+            \request('name'),
+            Auth::id(),
+            \request('plan_id'),
+            \request('image_id'),
+            \request('ssh_key_id')
+        );
+        if ($result) {
+            return responder()->success(['message' => "سرور با موفقیت ساخته شد"]);
+        } else {
+            return responder()->error(500, "ساخت سرور انجام نشد");
         }
     }
 
-    function createFromSnapshot(CreateFromSnapshotRequest $request){
-        return responder()->success(['message'=>"سرور با موفقیت ساخته شد"]);
+    function createFromSnapshot(CreateFromSnapshotRequest $request)
+    {
+        return responder()->success(['message' => "سرور با موفقیت ساخته شد"]);
     }
 
     /**
@@ -76,12 +85,13 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function console(){
+    function console()
+    {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $link = $service->console($machine->remote_id);
 
-        return responder()->success(['link'=>$link]);
+        return responder()->success(['link' => $link]);
     }
 
     /**
@@ -100,11 +110,12 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function powerOn(){
+    function powerOn()
+    {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOn($machine->remote_id);
-        return responder()->success(['message'=>"سرور با موفقیت روشن شد"]);
+        return responder()->success(['message' => "سرور با موفقیت روشن شد"]);
     }
 
     /**
@@ -123,31 +134,35 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function powerOff(){
+    function powerOff()
+    {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOf($machine->remote_id);
-        return responder()->success(['message'=>"سرور با موفقیت خاموش شد"]);
+        return responder()->success(['message' => "سرور با موفقیت خاموش شد"]);
     }
 
-    function takeSnapshot(TakeSnapshotRequest $request){
+    function takeSnapshot(TakeSnapshotRequest $request)
+    {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
-        $service->takeSnapshot($machine->remote_id,\request('name'));
+        $service->takeSnapshot($machine->remote_id, \request('name'));
 
-        return responder()->success(['message'=>"تصویر آنی با موفقیت ساخته شد"]);
+        return responder()->success(['message' => "تصویر آنی با موفقیت ساخته شد"]);
     }
 
-    function resendInfo(){
-        return responder()->success(['message'=>"اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
+    function resendInfo()
+    {
+        return responder()->success(['message' => "اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
     }
 
-    function rename(RenameServerRequest $request){
+    function rename(RenameServerRequest $request)
+    {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
-        $service->rename($machine->remote_id,\request('name'));
+        $service->rename($machine->remote_id, \request('name'));
 
-        return responder()->success(['message'=>"نام سرور با موفقیت تغییر یافت"]);
+        return responder()->success(['message' => "نام سرور با موفقیت تغییر یافت"]);
     }
 
     /**
@@ -166,11 +181,12 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function remove(){
+    function remove()
+    {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->remove($machine->remote_id);
 
-        return responder()->success(['message'=>"سرور با موفقیت حذف گردید"]);
+        return responder()->success(['message' => "سرور با موفقیت حذف گردید"]);
     }
 }

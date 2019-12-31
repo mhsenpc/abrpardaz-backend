@@ -4,6 +4,11 @@
 namespace App\Services;
 
 
+use App\Models\Image;
+use App\Models\Machine;
+use App\Models\Plan;
+use App\Repositories\ImageRepository;
+use App\Repositories\MachineRepository;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -13,6 +18,7 @@ class MachineService
 
     function __construct()
     {
+        return;
         $this->openstack = new OpenStack([
             'authUrl' => config('openstack.authUrl'),
             'region' => config('openstack.region'),
@@ -26,13 +32,18 @@ class MachineService
         $this->compute = $this->openstack->computeV2(['region' => config('openstack.region')]);
     }
 
-    function createMachineFromImage(): bool
+    function createMachineFromImage(string $name,int $user_id,int $plan_id,int $image_id,$ssh_key_id=null): bool
     {
+        $image = Image::find($image_id);
+        $plan = Plan::find($plan_id);
+        $machine = MachineRepository::createMachine($name,$user_id,$plan_id,$image_id,$ssh_key_id);
+        return true;
+
         $options = [
             // Required
-            'name' => '{serverName}',
-            'imageId' => '{imageId}',
-            'flavorId' => '{flavorId}',
+            'name' => $name,
+            'imageId' => $image->remote_id,
+            'flavorId' => $plan->remote_id,
 
             // Required if multiple network is defined
             'networks' => [

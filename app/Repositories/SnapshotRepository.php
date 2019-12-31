@@ -5,11 +5,17 @@ namespace App\Repositories;
 
 
 use App\Models\Snapshot;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class SnapshotRepository extends BaseRepository
 {
-    public function __construct(Snapshot $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\Snapshot";
     }
 }

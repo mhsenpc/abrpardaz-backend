@@ -5,11 +5,17 @@ namespace App\Repositories;
 
 
 use App\Models\Invoice;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class InvoiceRepository extends BaseRepository
 {
-    function __construct(Invoice $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\invoice";
     }
 }

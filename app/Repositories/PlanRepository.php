@@ -5,11 +5,17 @@ namespace App\Repositories;
 
 
 use App\Models\Plan;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class PlanRepository extends BaseRepository
 {
-    function __construct(Plan $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\Plan";
     }
 }

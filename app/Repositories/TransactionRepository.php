@@ -5,11 +5,17 @@ namespace App\Repositories;
 
 
 use App\Models\Transaction;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class TransactionRepository extends BaseRepository
 {
-    function __construct(Transaction $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\Transaction";
     }
 }

@@ -8,12 +8,18 @@ use App\Models\Profile;
 use App\Models\Project;
 use App\Models\User;
 use Carbon\Carbon;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class UserRepository extends BaseRepository
 {
-    function __construct(User $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\User";
     }
 
     function newUser(string $email, string $password)

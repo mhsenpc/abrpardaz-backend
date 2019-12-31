@@ -24,8 +24,10 @@ class CreateFromImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-
+            'name'     => 'required',
+            'plan_id'  => 'required|numeric|exists:plans,id',
+            'image_id' => 'required|numeric|exists:images,id',
+            'ssh_key_id' => 'sometimes|numeric|exists:ssh_keys,id',
         ];
     }
 }

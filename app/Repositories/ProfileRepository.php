@@ -5,11 +5,17 @@ namespace App\Repositories;
 
 
 use App\Models\Profile;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class ProfileRepository extends BaseRepository
 {
-    function __construct(Profile $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\Profile";
     }
 }

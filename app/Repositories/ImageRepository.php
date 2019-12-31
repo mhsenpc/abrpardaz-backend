@@ -5,11 +5,17 @@ namespace App\Repositories;
 
 
 use App\Models\Image;
+use Prettus\Repository\Eloquent\BaseRepository;
 
 class ImageRepository extends BaseRepository
 {
-    function __construct(Image $model)
+    /**
+     * Specify Model class name
+     *
+     * @return string
+     */
+    public function model()
     {
-        $this->model = $model;
+        return "App\\Models\\Image";
     }
 }
