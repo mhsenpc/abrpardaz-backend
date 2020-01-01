@@ -9,6 +9,7 @@ use App\Http\Requests\Profile\SetUserInfoRequest;
 use App\Models\Profile;
 use App\Repositories\ProfileRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends BaseController
 {
@@ -23,7 +24,11 @@ class ProfileController extends BaseController
     }
 
     function getUserInfo(){
-
+        $user = Auth::user();
+        $profile = Auth::user()->profile;
+        return responder()->success([
+            'user'    => $user
+        ]);
     }
 
     function setUserInfo(SetUserInfoRequest $request){
