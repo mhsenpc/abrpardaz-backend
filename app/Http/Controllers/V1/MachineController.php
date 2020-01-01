@@ -7,8 +7,11 @@ use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
 use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
+use App\Jobs\CreateMachineFromImageJob;
 use App\Jobs\TakeSnapshotJob;
+use App\Models\Image;
 use App\Models\Machine;
+use App\Models\Plan;
 use App\Repositories\MachineRepository;
 use App\Repositories\SnapshotRepository;
 use App\Services\MachineService;
@@ -43,7 +46,7 @@ class MachineController extends BaseController
      */
     function index()
     {
-        $machines = $this->repository->with(['image','plan','sshKey'])->all();
+        $machines = $this->repository->with(['image', 'plan', 'sshKey'])->all();
         return responder()->success(['list' => $machines]);
     }
 
@@ -73,17 +76,32 @@ class MachineController extends BaseController
      */
     function createFromImage(CreateFromImageRequest $request)
     {
-        $service = new MachineService();
-        $result = $service->createMachineFromImage(
-            \request('name'),
-            Auth::id(),
-            \request('plan_id'),
-            \request('image_id'),
-            \request('ssh_key_id')
-        );
-        if ($result) {
-            return responder()->success(['message' => "سرور با موفقیت ساخته شد"]);
-        } else {
+        $user_id = Auth::id();
+        $name = \request('name');
+        $plan_id = \request('plan_id');
+        $image_id = \request('image_id');
+        $ssh_key_id = \request('ssh_key_id');
+
+        try {
+            $machine = MachineRepository::createMachine(
+                $name,
+                $user_id,
+                $plan_id,
+                $image_id,
+                $ssh_key_id
+            );
+
+            CreateMachineFromImageJob::dispatch(
+                $user_id,
+                $name,
+                $plan_id,
+                $image_id,
+                $ssh_key_id,
+                $machine->id
+            );
+
+            return responder()->success(['message' => "عملیات ساخت سرور شروع شد"]);
+        } catch (\Exception $exception) {
             return responder()->error(500, "ساخت سرور انجام نشد");
         }
     }
@@ -236,7 +254,7 @@ class MachineController extends BaseController
             Auth::id()
         );
 
-        TakeSnapshotJob::dispatch($machine->remote_id,\request('name'),$snapshot->id);
+        TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
         return responder()->success(['message' => "عملیات ساخت شروع تصویر آنی شروع شد"]);
     }

@@ -33,4 +33,12 @@ class MachineRepository extends BaseRepository
 
         return $machine;
     }
+
+    public static function updateMachine(int $machine_id, string $remote_id){
+        /** @var Machine $machine */
+        $machine = Machine::find($machine_id);
+        $machine->remote_id = $remote_id;
+        $machine->save();
+        return $machine;
+    }
 }

@@ -34,28 +34,37 @@ class MachineService
         $this->compute = $this->openstack->computeV2(['region' => config('openstack.region')]);
     }
 
-    function createMachineFromImage(string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null): bool
+    function createMachineFromImage(int $machine_id, string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null): bool
     {
-        $image = Image::find($image_id);
-        $plan = Plan::find($plan_id);
-        $machine = MachineRepository::createMachine($name, $user_id, $plan_id, $image_id, $ssh_key_id);
-        return true;
+        try {
+            $image = Image::find($image_id);
+            $plan = Plan::find($plan_id);
+            return true;
 
-        $options = [
-            // Required
-            'name' => $name,
-            'imageId' => $image->remote_id,
-            'flavorId' => $plan->remote_id,
+            $options = [
+                // Required
+                'name' => $name,
+                'imageId' => $image->remote_id,
+                'flavorId' => $plan->remote_id,
 
-            // Required if multiple network is defined
-            'networks' => [
-                ['uuid' => config('openstack.networkId')]
-            ],
-        ];
+                // Required if multiple network is defined
+                'networks' => [
+                    ['uuid' => config('openstack.networkId')]
+                ],
+            ];
 
-        // Create the server
-        /**@var OpenStack\Compute\v2\Models\Server $server */
-        $server = $this->compute->createServer($options);
+            // Create the server
+            /**@var OpenStack\Compute\v2\Models\Server $server */
+            $server = $this->compute->createServer($options);
+
+            $server->waitUntil('Active');
+
+            MachineRepository::updateMachine($machine_id, $server->id);
+        }
+        catch (\Exception $exception){
+            //TODO: save a notification for this user
+            MachineRepository::updateMachine($machine_id,'failed');
+        }
     }
 
     function powerOn(string $id)
