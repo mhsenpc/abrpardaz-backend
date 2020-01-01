@@ -43,7 +43,7 @@ class MachineController extends BaseController
      */
     function index()
     {
-        $machines = $this->repository->all();
+        $machines = $this->repository->with(['image','plan','sshKey'])->all();
         return responder()->success(['list' => $machines]);
     }
 
