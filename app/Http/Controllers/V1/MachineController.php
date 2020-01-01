@@ -7,8 +7,10 @@ use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
 use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
+use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
 use App\Repositories\MachineRepository;
+use App\Repositories\SnapshotRepository;
 use App\Services\MachineService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,8 +38,6 @@ class MachineController extends BaseController
      *         response="default",
      *         description="returns a list of machines"
      *     ),
-     *
-     *
      *     )
      *
      */
@@ -47,6 +47,30 @@ class MachineController extends BaseController
         return responder()->success(['list' => $machines]);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/createFromImage",
+     *      summary="Create a new machine from an image",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *    )
+     *
+     */
     function createFromImage(CreateFromImageRequest $request)
     {
         $service = new MachineService();
@@ -72,9 +96,19 @@ class MachineController extends BaseController
     /**
      * @OA\Get(
      *      tags={"Machine"},
-     *      path="/machines/console",
+     *      path="/machines/{id}/console",
      *      summary="Get console url of the machine ",
      *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *
      * @OA\Response(
      *         response="default",
@@ -97,16 +131,24 @@ class MachineController extends BaseController
     /**
      * @OA\Post(
      *      tags={"Machine"},
-     *      path="/machines/powerOn",
+     *      path="/machines/{id}/powerOn",
      *      summary="powers on the machine ",
      *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *
      * @OA\Response(
      *         response="default",
      *         description=""
      *     ),
-     *
-     *
      *     )
      *
      */
@@ -121,16 +163,24 @@ class MachineController extends BaseController
     /**
      * @OA\Post(
      *      tags={"Machine"},
-     *      path="/machines/powerOff",
+     *      path="/machines/{id}/powerOff",
      *      summary="powers off the machine ",
      *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *
      * @OA\Response(
      *         response="default",
      *         description=""
      *     ),
-     *
-     *
      *     )
      *
      */
@@ -142,13 +192,53 @@ class MachineController extends BaseController
         return responder()->success(['message' => "سرور با موفقیت خاموش شد"]);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/takeSnapshot",
+     *      summary="Take snapshot from a machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     * @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="The name you want to put on the snapshot",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
     function takeSnapshot(TakeSnapshotRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
-        $service->takeSnapshot($machine->remote_id, \request('name'));
 
-        return responder()->success(['message' => "تصویر آنی با موفقیت ساخته شد"]);
+        $snapshot = SnapshotRepository::newSnapshot(
+            \request('name'),
+            \request('id'),
+            Auth::id()
+        );
+
+        TakeSnapshotJob::dispatch($machine->remote_id,\request('name'),$snapshot->id);
+
+        return responder()->success(['message' => "عملیات ساخت شروع تصویر آنی شروع شد"]);
     }
 
     function resendInfo()
@@ -156,6 +246,41 @@ class MachineController extends BaseController
         return responder()->success(['message' => "اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
     }
 
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/rename",
+     *      summary="Change the name of a machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="The new name you want to put on the machine",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
     function rename(RenameServerRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
@@ -176,8 +301,6 @@ class MachineController extends BaseController
      *         response="default",
      *         description=""
      *     ),
-     *
-     *
      *     )
      *
      */

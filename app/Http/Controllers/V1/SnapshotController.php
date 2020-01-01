@@ -30,7 +30,7 @@ class SnapshotController extends BaseController
 
     function remove(Request $request){
         //do some stuff
-        $this->repository->deleteById($request->input('id'));
+        $this->repository->delete(\request('id'));
         return responder()->success(['message'=>"تصویر آنی با موفقیت حذف شد"]);
     }
 }

@@ -7,8 +7,10 @@ namespace App\Services;
 use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
+use App\Models\Snapshot;
 use App\Repositories\ImageRepository;
 use App\Repositories\MachineRepository;
+use App\Repositories\SnapshotRepository;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -32,11 +34,11 @@ class MachineService
         $this->compute = $this->openstack->computeV2(['region' => config('openstack.region')]);
     }
 
-    function createMachineFromImage(string $name,int $user_id,int $plan_id,int $image_id,$ssh_key_id=null): bool
+    function createMachineFromImage(string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null): bool
     {
         $image = Image::find($image_id);
         $plan = Plan::find($plan_id);
-        $machine = MachineRepository::createMachine($name,$user_id,$plan_id,$image_id,$ssh_key_id);
+        $machine = MachineRepository::createMachine($name, $user_id, $plan_id, $image_id, $ssh_key_id);
         return true;
 
         $options = [
@@ -74,19 +76,40 @@ class MachineService
         return $server->getConsoleOutput();
     }
 
-    function rename(string $id,string $newname){
+    function rename(string $id, string $newname)
+    {
         $server = $this->compute->getServer(['id' => $id]);
         $server->name = $newname;
         $server->update();
     }
 
-    function takeSnapshot(string $id,string $name){
+    function takeSnapshot(string $remote_id, string $name, int $snapshot_id)
+    {
+        return true;
+        try {
+            $server = $this->compute->getServer(['id' => $remote_id]);
 
+            $image = $server->createImage([
+                'name' => $name,
+            ]);
+
+            $server->waitUntil('Active');
+
+            //update size and remote id in snapshots
+            $snapshot = (new SnapshotRepository(Snapshot::find($snapshot_id)));
+            $snapshot->updateSizeAndRemoteId($remote_id,$image->size);
+        }
+        catch (\Exception $exception){
+            $snapshot = Snapshot::find($snapshot_id);
+            $snapshot->delete();
+        }
     }
 
-    function remove(string $id){
+    function remove(string $id)
+    {
+        $machine = Machine::find($id);
+        $machine->delete();
         $server = $this->compute->getServer(['id' => $id]);
         $server->delete();
     }
-
 }

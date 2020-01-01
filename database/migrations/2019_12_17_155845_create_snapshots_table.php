@@ -16,8 +16,8 @@ class CreateSnapshotsTable extends Migration
         Schema::create('snapshots', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('remote_id');
-            $table->float('size');
+            $table->string('remote_id')->nullable();
+            $table->float('size')->nullable();
             $table->integer('machine_id');
             $table->integer('user_id');
             $table->timestamps();

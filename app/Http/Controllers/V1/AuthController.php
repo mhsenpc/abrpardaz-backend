@@ -148,6 +148,21 @@ class AuthController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/logout",
+     *      summary="Removes your token",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     )
+     *
+     */
     function logout(LogoutRequest $request)
     {
         Auth::logout();

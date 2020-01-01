@@ -12,7 +12,7 @@
         },
         {
             "url": "http://abrpardaz.com/api/v1",
-            "description": "L5 Swagger OpenApi dynamic host server"
+            "description": "The API endpoint"
         }
     ],
     "paths": {
@@ -86,6 +86,21 @@
                 }
             }
         },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Removes your token",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\AuthController::logout",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
         "/machines/list": {
             "get": {
                 "tags": [
@@ -101,7 +116,33 @@
                 }
             }
         },
-        "/machines/console": {
+        "/machines/createFromImage": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Create a new machine from an image",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::createFromImage",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/console": {
             "get": {
                 "tags": [
                     "Machine"
@@ -109,6 +150,17 @@
                 "summary": "Get console url of the machine ",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\MachineController::console",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": ""
@@ -116,7 +168,7 @@
                 }
             }
         },
-        "/machines/powerOn": {
+        "/machines/{id}/powerOn": {
             "post": {
                 "tags": [
                     "Machine"
@@ -124,6 +176,17 @@
                 "summary": "powers on the machine ",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\MachineController::powerOn",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": ""
@@ -131,7 +194,7 @@
                 }
             }
         },
-        "/machines/powerOff": {
+        "/machines/{id}/powerOff": {
             "post": {
                 "tags": [
                     "Machine"
@@ -139,6 +202,52 @@
                 "summary": "powers off the machine ",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\MachineController::powerOff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/takeSnapshot": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Take snapshot from a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::takeSnapshot",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "The name you want to put on the snapshot",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": ""

@@ -25,7 +25,6 @@ class TakeSnapshotRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'machine_id' => 'required|numeric'
         ];
     }
 }

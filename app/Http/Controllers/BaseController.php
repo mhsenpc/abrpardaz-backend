@@ -24,7 +24,7 @@ class BaseController extends Controller
      *  )
      *  @OA\Server(
      *      url=L5_SWAGGER_CONST_HOST,
-     *      description="L5 Swagger OpenApi dynamic host server"
+     *      description="The API endpoint"
      *  )
      */
     /**
