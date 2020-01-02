@@ -7,11 +7,11 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::post('register', 'AuthController@register');
         Route::post('login', 'AuthController@login');
         Route::post('forgetPassword', 'AuthController@forgetPassword');
-        Route::any( 'verify', 'AuthController@verify')->name('auth.verify');
+        Route::any('verify', 'AuthController@verify')->name('auth.verify');
         Route::post('logout', 'AuthController@logout');
     });
 
-    Route::middleware([ 'auth:api'])->group(function () {
+    Route::middleware(['auth:api'])->group(function () {
         Route::prefix('images')->group(function () {
             Route::get('list', 'ImageController@os');
         });
@@ -50,9 +50,13 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('snapshots')->group(function () {
             Route::get('list', 'SnapshotController@index');
-            Route::post('getProgress', 'SnapshotController@getProgress');
-            Route::post('rename', 'SnapshotController@rename');
-            Route::delete('remove', 'SnapshotController@remove');
+            Route::get('ofMachine', 'SnapshotController@ofMachine');
+
+            Route::prefix('{id}')->group(function () {
+                Route::post('getProgress', 'SnapshotController@getProgress');
+                Route::post('rename', 'SnapshotController@rename');
+                Route::delete('remove', 'SnapshotController@remove');
+            });
         });
 
         Route::prefix('ssh_keys')->group(function () {

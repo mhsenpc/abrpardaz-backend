@@ -30,6 +30,6 @@ class SnapshotRepository extends BaseRepository
     public function updateSizeAndRemoteId(string $remote_id,float $size){
         $this->model->remote_id = $remote_id;
         $this->model->size = $size;
-        $this->model->save();
+        $this->model->update();
     }
 }
