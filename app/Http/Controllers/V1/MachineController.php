@@ -108,6 +108,7 @@ class MachineController extends BaseController
 
     function createFromSnapshot(CreateFromSnapshotRequest $request)
     {
+
         return responder()->success(['message' => "سرور با موفقیت ساخته شد"]);
     }
 

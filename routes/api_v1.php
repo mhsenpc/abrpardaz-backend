@@ -32,10 +32,10 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::delete('remove', 'MachineController@remove');
         });
 
-        Route::prefix('payment')->group(function () {
+/*        Route::prefix('payment')->group(function () {
             Route::post('requestPayment', 'PaymentController@requestPayment');
             Route::post('result', 'PaymentController@paymentResult');
-        });
+        });*/
 
         Route::prefix('plans')->group(function () {
             Route::get('list', 'PlanController@index');
