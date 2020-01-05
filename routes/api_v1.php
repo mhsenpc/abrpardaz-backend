@@ -11,7 +11,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::post('logout', 'AuthController@logout');
     });
 
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware([/*'auth:api'*/])->group(function () {
         Route::prefix('images')->group(function () {
             Route::get('list', 'ImageController@os');
         });
@@ -28,7 +28,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::post('powerOff', 'MachineController@powerOff');
             Route::post('takeSnapshot', 'MachineController@takeSnapshot');
             Route::post('resendInfo', 'MachineController@resendInfo');
-            Route::post('rename', 'MachineController@rename');
+            Route::put('rename', 'MachineController@rename');
             Route::delete('remove', 'MachineController@remove');
         });
 
@@ -53,16 +53,16 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::get('ofMachine', 'SnapshotController@ofMachine');
 
             Route::prefix('{id}')->group(function () {
-                Route::post('getProgress', 'SnapshotController@getProgress');
-                Route::post('rename', 'SnapshotController@rename');
+                Route::get('getProgress', 'SnapshotController@getProgress');
+                Route::put('rename', 'SnapshotController@rename');
                 Route::delete('remove', 'SnapshotController@remove');
             });
         });
 
-        Route::prefix('ssh_keys')->group(function () {
+        Route::prefix('sshKeys')->group(function () {
             Route::get('list', 'SSHKeyController@index');
             Route::post('add', 'SSHKeyController@add');
-            Route::post('edit', 'SSHKeyController@edit');
+            Route::put('edit', 'SSHKeyController@edit');
             Route::delete('remove', 'SSHKeyController@remove');
         });
     });

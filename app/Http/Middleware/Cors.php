@@ -3,9 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
 
-class AddAcceptJsonToHeader
+class Cors
 {
     /**
      * Handle an incoming request.
@@ -16,8 +15,8 @@ class AddAcceptJsonToHeader
      */
     public function handle($request, Closure $next)
     {
-        Auth::loginUsingId(1);
-        $request->headers->set('Accept', 'application/json');
-        return $next($request);
+        return $next($request)
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     }
 }

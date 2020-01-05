@@ -40,7 +40,8 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
-            'accept_json'
+            'accept_json',
+            'cors'
         ],
     ];
 
@@ -63,6 +64,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'accept_json' => \App\Http\Middleware\AddAcceptJsonToHeader::class,
+        'cors' => \App\Http\Middleware\Cors::class,
     ];
 
     /**

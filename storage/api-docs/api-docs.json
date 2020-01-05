@@ -255,6 +255,41 @@
                 }
             }
         },
+        "/machines/{id}/rename": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Change the name of a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::rename",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "The new name you want to put on the machine",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/machines/remove": {
             "delete": {
                 "tags": [
@@ -266,6 +301,126 @@
                 "responses": {
                     "default": {
                         "description": ""
+                    }
+                }
+            }
+        },
+        "/sshKeys/list": {
+            "get": {
+                "tags": [
+                    "Ssh key"
+                ],
+                "summary": "List all ssh keys that belong to the current user",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SSHKeyController::index",
+                "responses": {
+                    "default": {
+                        "description": "List of ssh keys"
+                    }
+                }
+            }
+        },
+        "/sshKeys/add": {
+            "post": {
+                "tags": [
+                    "Ssh key"
+                ],
+                "summary": "Add a ssh key to your profile",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SSHKeyController::add",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "content",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/sshKeys/edit": {
+            "put": {
+                "tags": [
+                    "Ssh key"
+                ],
+                "summary": "Edit a ssh key using its id",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SSHKeyController::edit",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "content",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/sshKeys/remove": {
+            "delete": {
+                "tags": [
+                    "Ssh key"
+                ],
+                "summary": "Remove a ssh key using it",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SSHKeyController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
                     }
                 }
             }
