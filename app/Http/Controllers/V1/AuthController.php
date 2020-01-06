@@ -133,6 +133,31 @@ class AuthController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/forgetPassword",
+     *      summary="Send a password reset link to the email",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function forgetPassword(ForgetPasswordRequest $request)
     {
         $token = uniqid();
@@ -143,6 +168,61 @@ class AuthController extends BaseController
         return responder()->success(['message' => 'لینک بازنشانی رمز به ایمیل شما ارسال گردید']);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/resetPassword",
+     *      summary="Changes the password using the provided token",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="token",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="password_confirmation",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function resetPassword(ResetPasswordRequest $request)
     {
         $token = Cache::get('forget_token_for_' . request('email'));
