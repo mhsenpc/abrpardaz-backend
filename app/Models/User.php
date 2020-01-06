@@ -18,4 +18,16 @@ class User extends Model
     {
         return $this->belongsToMany('App\Models\Project');
     }
+
+    public function replies()
+    {
+        return $this->hasMany(Reply::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class);
+    }
+
+
 }
