@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RegisterUserNotification extends Notification
+class ResetPasswordNotification extends Notification
 {
     use Queueable;
     /**
@@ -27,7 +27,6 @@ class RegisterUserNotification extends Notification
      */
     public function __construct(string $email, string $token)
     {
-        //
         $this->token = $token;
         $this->email = $email;
     }
@@ -35,7 +34,7 @@ class RegisterUserNotification extends Notification
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -46,22 +45,24 @@ class RegisterUserNotification extends Notification
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
-        $link = config('panel.url').config('panel.verify_page'). '?token=' . $this->token . '&email' . $this->email;
+        $link = config('panel.url') . config('panel.reset_password') . '?token=' . $this->token . '&email' . $this->email;
         return (new MailMessage)
-                    ->line('به ابرپرداز خوش آمدید.')
-                    ->line('برای فعال سازی حساب کاربری خود بر روی دکمه فعال سازی کلیک کنید.')
-                    ->action('فعال سازی', $link );
+            ->line('کاربر گرامی ابرپرداز')
+            ->line('ما درخواستی مبنی بر بازنشانی رمز عبور شما را دریافت کردیم.')
+            ->line('در صورت تمایل به بازنشانی رمز عبور بر روی لینک زیر کلیک کنید')
+            ->action('بازنشانی رمز عبور', $link)
+            ->line('در صورتی که این درخواست از طرف شما نبوده، این پیام را نادیده بگیرید');
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)

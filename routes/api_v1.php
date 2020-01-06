@@ -7,6 +7,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::post('register', 'AuthController@register');
         Route::post('login', 'AuthController@login');
         Route::post('forgetPassword', 'AuthController@forgetPassword');
+        Route::post('resetPassword', 'AuthController@resetPassword');
         Route::any('verify', 'AuthController@verify')->name('auth.verify');
         Route::post('logout', 'AuthController@logout');
     });

@@ -45,7 +45,12 @@ class UserRepository extends BaseRepository
         return $this->model;
     }
 
-    function activateUserByEmail(string $email){
-        User::where('email',$email)->update(['is_active' => true, 'email_verified_at'=>Carbon::now()]);
+    function activateUserByEmail(string $email)
+    {
+        User::where('email', $email)->update(['is_active' => true, 'email_verified_at' => Carbon::now()]);
+    }
+
+    function updatePassword(string $email,string $password){
+        User::where('email', $email)->update(['password' =>$password]);
     }
 }

@@ -7,9 +7,11 @@ use App\Http\Requests\Auth\ForgetPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\VerifyRequest;
 use App\Models\Profile;
 use App\Notifications\RegisterUserNotification;
+use App\Notifications\ResetPasswordNotification;
 use App\Repositories\ProfileRepository;
 use App\Repositories\UserRepository;
 use App\Models\User;
@@ -72,10 +74,10 @@ class AuthController extends BaseController
             Hash::make(request('password'))
         );
 
-        $token =  uniqid();
-        Cache::put('verification_for_' . request('email') , $token ,7 * 24 * 60 * 60);
+        $token = uniqid();
+        Cache::put('verification_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
-        $user->notify(new RegisterUserNotification($token));
+        $user->notify(new RegisterUserNotification(request('email'), $token));
 
         return responder()->success(['message' => 'لینک فعال سازی به ایمیل شما ارسال گردید']);
     }
@@ -133,18 +135,39 @@ class AuthController extends BaseController
 
     function forgetPassword(ForgetPasswordRequest $request)
     {
+        $token = uniqid();
+        Cache::put('forget_token_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
+        Auth::user()->notify(new ResetPasswordNotification(request('email'), $token));
+
+        return responder()->success(['message' => 'لینک بازنشانی رمز به ایمیل شما ارسال گردید']);
+    }
+
+    function resetPassword(ResetPasswordRequest $request)
+    {
+        $token = Cache::get('forget_token_for_' . request('email'));
+        if (request('token') == $token) {
+            $this->repository->updatePassword(
+                request('email'),
+                Hash::make(request('password'))
+            );
+
+            Cache::forget('forget_token_for_' . request('email'));
+            return responder()->success(['message' => 'بازنشانی رمز عبور با موفقیت انجام شد']);
+        } else {
+            return responder()->success(['message' => 'بازنشانی رمز با توکن وارد شده امکان پذیر نمی باشد']);
+        }
     }
 
     function verify(VerifyRequest $request)
     {
-        $token = Cache::get('verification_for_' . request('email') );
-        if(request('token') == $token){
+        $token = Cache::get('verification_for_' . request('email'));
+        if (request('token') == $token) {
             $this->repository->activateUserByEmail(request('email'));
+            Cache::forget('verification_for_' . request('email'));
             return responder()->success(['message' => 'حساب شما با موفقیت تایید شد']);
-        }
-        else{
-            return responder()->error(422,'تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
+        } else {
+            return responder()->error(422, 'تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
         }
     }
 
