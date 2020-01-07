@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Server;
 
+use App\Http\Requests\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TakeSnapshotRequest extends FormRequest
+class TakeSnapshotRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Snapshots;
+namespace App\Http\Requests\Ticket;
 
-use App\Http\Requests\ApiRequest;
+use App\Http\Requests\AddIDParameterTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
-class OfMachineRequest extends ApiRequest
+class CloseTicketRequest extends FormRequest
 {
+    use AddIDParameterTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,7 +26,7 @@ class OfMachineRequest extends ApiRequest
     public function rules()
     {
         return [
-            'machine_id' => 'required|numeric|exists:machines,id'
+            'id' => 'required|numeric|exists:tickets,id'
         ];
     }
 }
