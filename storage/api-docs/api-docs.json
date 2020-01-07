@@ -180,6 +180,21 @@
                 }
             }
         },
+        "/images/os": {
+            "get": {
+                "tags": [
+                    "Image"
+                ],
+                "summary": "List all operating systems",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ImageController::os",
+                "responses": {
+                    "default": {
+                        "description": "List of operating system"
+                    }
+                }
+            }
+        },
         "/machines/list": {
             "get": {
                 "tags": [
@@ -384,6 +399,21 @@
                 }
             }
         },
+        "/plans/list": {
+            "get": {
+                "tags": [
+                    "Plan"
+                ],
+                "summary": "List all plans",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\PlanController::index",
+                "responses": {
+                    "default": {
+                        "description": "List of plans"
+                    }
+                }
+            }
+        },
         "/sshKeys/list": {
             "get": {
                 "tags": [
@@ -500,6 +530,108 @@
                 "responses": {
                     "default": {
                         "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/snapshots/list": {
+            "get": {
+                "tags": [
+                    "Snapshot"
+                ],
+                "summary": "List all snapshots of your account",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::index",
+                "responses": {
+                    "default": {
+                        "description": "List of all your snapshots"
+                    }
+                }
+            }
+        },
+        "/snapshots/ofMachine": {
+            "get": {
+                "tags": [
+                    "Snapshot"
+                ],
+                "summary": "List snapshots of a specific machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::ofMachine",
+                "parameters": [
+                    {
+                        "name": "machine_id",
+                        "in": "query",
+                        "description": "id of the machine your want its snapshots",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "List snapshots of a specific machine"
+                    }
+                }
+            }
+        },
+        "/snapshots/{id}/rename": {
+            "put": {
+                "tags": [
+                    "Snapshot"
+                ],
+                "summary": "Rename a snapshot",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::rename",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of the snapshot",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "new name of the snapshot",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "result"
+                    }
+                }
+            }
+        },
+        "/snapshots/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "Snapshot"
+                ],
+                "summary": "Removes the snapshot",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of the snapshot",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "result"
                     }
                 }
             }

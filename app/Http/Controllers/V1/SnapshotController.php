@@ -22,11 +22,51 @@ class SnapshotController extends BaseController
         $this->repository = $repository;
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Snapshot"},
+     *      path="/snapshots/list",
+     *      summary="List all snapshots of your account",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="List of all your snapshots"
+     *     ),
+     *
+     *     )
+     *
+     */
     function index()
     {
         return responder()->success(['list' => $this->repository->all()]);
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Snapshot"},
+     *      path="/snapshots/ofMachine",
+     *      summary="List snapshots of a specific machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="machine_id",
+     *         in="query",
+     *         description="id of the machine your want its snapshots",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="List snapshots of a specific machine"
+     *     ),
+     *
+     *     )
+     *
+     */
     function ofMachine(OfMachineRequest $request)
     {
         return responder()->success([
@@ -36,6 +76,43 @@ class SnapshotController extends BaseController
         ]);
     }
 
+
+    /**
+     * @OA\Put(
+     *      tags={"Snapshot"},
+     *      path="/snapshots/{id}/rename",
+     *      summary="Rename a snapshot",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="id of the snapshot",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="new name of the snapshot",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="result"
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function rename(RenameSnapshotRequest $request)
     {
         $snapshot = $this->repository->find(request('id'));
@@ -55,6 +132,32 @@ class SnapshotController extends BaseController
 
     }
 
+    /**
+     * @OA\Delete(
+     *      tags={"Snapshot"},
+     *      path="/snapshots/{id}/remove",
+     *      summary="Removes the snapshot",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="id of the snapshot",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="result"
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function remove(Request $request)
     {
         $service = new SnapshotService();

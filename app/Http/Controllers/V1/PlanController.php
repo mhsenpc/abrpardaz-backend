@@ -19,8 +19,23 @@ class PlanController extends BaseController
         $this->repository = $repository;
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Plan"},
+     *      path="/plans/list",
+     *      summary="List all plans",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="List of plans"
+     *     ),
+     *
+     *     )
+     *
+     */
     function index(){
-        $plans = (new PlanRepository(new Plan()))->all();
+        $plans = $this->repository->all();
         return responder()->success(['list'=>$plans]);
     }
 }

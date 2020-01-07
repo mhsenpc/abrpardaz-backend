@@ -18,6 +18,21 @@ class ImageController extends BaseController
         $this->repository = $repository;
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Image"},
+     *      path="/images/os",
+     *      summary="List all operating systems",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="List of operating system"
+     *     ),
+     *
+     *     )
+     *
+     */
     function os(){
         return responder()->success(['items' => $this->repository->all()]);
     }
