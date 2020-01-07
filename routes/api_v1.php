@@ -66,5 +66,16 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::put('edit', 'SSHKeyController@edit');
             Route::delete('remove', 'SSHKeyController@remove');
         });
+
+        Route::prefix('tickets')->group(function () {
+            Route::get('list', 'TicketController@index');
+            Route::post('newTicket', 'TicketController@newTicket');
+
+            Route::prefix('{id}')->group(function () {
+                Route::post('newReply', 'TicketController@newReply');
+                Route::put('close', 'TicketController@close');
+                Route::get('show', 'TicketController@show');
+            });
+        });
     });
 });

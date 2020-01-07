@@ -15,7 +15,7 @@ class Ticket extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function comments()
+    public function replies()
     {
         return $this->hasMany(Reply::class);
     }

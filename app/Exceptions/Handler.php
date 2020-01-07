@@ -3,7 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -46,6 +48,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof NotFoundHttpException ) {
+            return responder()->error(404,'مسیر نامعبر است')->respond();
+        }
+        else if ($exception instanceof ModelNotFoundException ) {
+            return responder()->error(404,'رکورد مورد نظر پیدا نشد')->respond();
+        }
+        else{
+            return parent::render($request, $exception);
+        }
     }
 }
