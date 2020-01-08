@@ -9,9 +9,11 @@ use App\Http\Requests\Ticket\CloseTicketRequest;
 use App\Http\Requests\Ticket\NewReplyRequest;
 use App\Http\Requests\Ticket\NewTicketRequest;
 use App\Http\Requests\Ticket\ShowTicketRequest;
-use App\Mailers\AppMailer;
 use App\Models\Reply;
 use App\Models\Ticket;
+use App\Notifications\NewTicketNotification;
+use App\Notifications\TicketReplyNotification;
+use App\Notifications\TicketStatusNotification;
 use App\Repositories\SSHKeyRepository;
 use App\Repositories\TicketRepository;
 use Illuminate\Http\Request;
@@ -30,13 +32,95 @@ class TicketController extends BaseController
         $this->repository = $repository;
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Ticket"},
+     *      path="/tickets/list",
+     *      summary="Returns the list of your tickets",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     )
+     *
+     */
     public function index()
     {
         $tickets = Ticket::all();
         return responder()->success(['list' => $tickets]);
     }
 
-    public function newTicket(NewTicketRequest $request, AppMailer $mailer)
+
+    /**
+     * @OA\Post(
+     *      tags={"Ticket"},
+     *      path="/tickets/newTicket",
+     *      summary="Crates a new ticket",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="title",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="priority",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="message",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     @OA\Parameter(
+     *         name="machine",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
+    public function newTicket(NewTicketRequest $request)
     {
         $ticket = new Ticket([
             'title' => \request('title'),
@@ -53,38 +137,122 @@ class TicketController extends BaseController
         }
         $ticket->save();
 
-        $mailer->sendTicketInformation(Auth::user(), $ticket);
+        Auth::user()->notify(new NewTicketNotification($ticket,Auth::user()));
         return responder()->success(['message' => 'تیکت جدید با موفقیت ایجاد شد']);
     }
 
-    public function newReply(NewReplyRequest $request, AppMailer $mailer)
+    /**
+     * @OA\Post(
+     *      tags={"Ticket"},
+     *      path="/tickets/{id}/newReply",
+     *      summary="Insert reply for a ticket",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="comment",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *     )
+     *
+     */
+    public function newReply(NewReplyRequest $request)
     {
-        $comment = Reply::create([
+        $reply = Reply::create([
             'ticket_id' => \request('id'),
             'user_id' => Auth::id(),
             'comment' => \request('comment')
         ]);
 
         // send mail if the user commenting is not the ticket owner
-        if ($comment->ticket->user->id !== Auth::id()) {
-            $mailer->sendTicketComments($comment->ticket->user, Auth::user(), $comment->ticket, $comment);
+        if ($reply->ticket->user->id !== Auth::id()) {
+            Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()));
         }
 
         return responder()->success(['message' => 'پاسخ شما به تیکت با موفقیت ذخیره شد']);
     }
 
-    public function close(CloseTicketRequest $request, AppMailer $mailer)
+    /**
+     * @OA\Put(
+     *      tags={"Ticket"},
+     *      path="/tickets/{id}/close",
+     *      summary="Closes a ticket",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *     )
+     *
+     */
+    public function close(CloseTicketRequest $request)
     {
         $ticket = Ticket::findOrFail(\request('id'));
         $ticket->status = "Closed";
         $ticket->save();
         $ticketOwner = $ticket->user;
 
-        $mailer->sendTicketStatusNotification($ticketOwner, $ticket);
+        Auth::user()->notify(new TicketStatusNotification($ticketOwner, $ticket));
 
         return responder()->success(['message' => 'تسکت شما با موفقیت بسته شد']);
     }
 
+    /**
+     * @OA\Get(
+     *      tags={"Ticket"},
+     *      path="/tickets/{id}/show",
+     *      summary="Show a ticket information",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *     )
+     *
+     */
     public function show(ShowTicketRequest $request)
     {
         $ticket = $this->repository->with(['replies'])->find(\request('id'));

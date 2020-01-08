@@ -63,7 +63,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -125,7 +125,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -160,7 +160,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -192,7 +192,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -224,7 +224,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      * @OA\Parameter(
@@ -278,7 +278,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *

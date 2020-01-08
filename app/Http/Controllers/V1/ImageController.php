@@ -34,6 +34,6 @@ class ImageController extends BaseController
      *
      */
     function os(){
-        return responder()->success(['items' => $this->repository->all()]);
+        return responder()->success(['list' => $this->repository->all()]);
     }
 }

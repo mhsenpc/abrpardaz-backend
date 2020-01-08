@@ -7,28 +7,26 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RegisterUserNotification extends Notification
+class TicketReplyNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var string
-     */
-    private $token;
-    /**
-     * @var string
-     */
-    private $email;
+    private $ticket;
+    private $reply;
+    private $user;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $email
-     * @param string $token
+     * @param $ticket
+     * @param $reply
+     * @param $user
      */
-    public function __construct(string $email, string $token)
+    public function __construct($ticket, $reply, $user)
     {
-        $this->token = $token;
-        $this->email = $email;
+        //
+        $this->ticket = $ticket;
+        $this->reply = $reply;
+        $this->user = $user;
     }
 
     /**
@@ -50,11 +48,15 @@ class RegisterUserNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $link = config('panel.url').config('panel.verify_page'). '?token=' . $this->token . '&email' . $this->email;
         return (new MailMessage)
-                    ->line('به ابرپرداز خوش آمدید.')
-                    ->line('برای فعال سازی حساب کاربری خود بر روی دکمه فعال سازی کلیک کنید.')
-                    ->action('فعال سازی', $link );
+            ->subject("RE: {$this->ticket->title} (Ticket ID: {$this->ticket->ticket_id})")
+            ->line($this->reply->comment)
+            ->line("پاسخ توسط:".$this->user->first_name . ' ' . $this->user->last_name)
+            ->line('عناون:' . $this->ticket->title)
+            ->line('شماره تیکت:' . $this->ticket->ticket_id)
+            ->line('وضعیت:' . $this->ticket->status)
+            ->line('هر زمان که تمایل داشته باشید می توانید از طریق لینک زیر تیکت خود را مشاهده کنید')
+            ->action('نمایش تیکت', url('tickets/' . $this->ticket->ticket_id));
     }
 
     /**

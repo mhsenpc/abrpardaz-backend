@@ -225,7 +225,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
@@ -251,7 +251,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
@@ -277,7 +277,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
@@ -303,7 +303,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
@@ -329,7 +329,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     },
                     {
@@ -364,7 +364,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     },
                     {
@@ -632,6 +632,170 @@
                 "responses": {
                     "default": {
                         "description": "result"
+                    }
+                }
+            }
+        },
+        "/tickets/list": {
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Returns the list of your tickets",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\TicketController::index",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/tickets/newTicket": {
+            "post": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Crates a new ticket",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\TicketController::newTicket",
+                "parameters": [
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "priority",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "machine",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/newReply": {
+            "post": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Insert reply for a ticket",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\TicketController::newReply",
+                "parameters": [
+                    {
+                        "name": "comment",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/close": {
+            "put": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Closes a ticket",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\TicketController::close",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/tickets/{id}/show": {
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Show a ticket information",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\TicketController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
                     }
                 }
             }

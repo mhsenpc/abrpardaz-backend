@@ -7,28 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RegisterUserNotification extends Notification
+class TicketStatusNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var string
-     */
-    private $token;
-    /**
-     * @var string
-     */
-    private $email;
+    private $ticketOwner;
+    private $ticket;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $email
-     * @param string $token
+     * @param $ticketOwner
+     * @param $ticket
      */
-    public function __construct(string $email, string $token)
+    public function __construct($ticketOwner, $ticket)
     {
-        $this->token = $token;
-        $this->email = $email;
+        $this->ticketOwner = $ticketOwner;
+        $this->ticket = $ticket;
     }
 
     /**
@@ -50,11 +44,10 @@ class RegisterUserNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $link = config('panel.url').config('panel.verify_page'). '?token=' . $this->token . '&email' . $this->email;
         return (new MailMessage)
-                    ->line('به ابرپرداز خوش آمدید.')
-                    ->line('برای فعال سازی حساب کاربری خود بر روی دکمه فعال سازی کلیک کنید.')
-                    ->action('فعال سازی', $link );
+            ->subject("RE: {$this->ticket->title} (شماره تیکت: {$this->ticket->ticket_id})")
+            ->line($this->ticketOwner->first_name . ' ' . $this->ticketOwner->last_name. ' '. 'عزیز')
+            ->line('تیکت شما به شماره '.$this->ticket->ticket_id .' بسته شد');
     }
 
     /**
