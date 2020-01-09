@@ -27,7 +27,6 @@ class SetUserInfoRequest extends ApiRequest
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'phone' => 'required',
             'national_code' => 'required',
         ];
     }

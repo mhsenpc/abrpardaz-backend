@@ -22,13 +22,14 @@ class CreateProfilesTable extends Migration
             $table->boolean('organization')->default(false);
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('national_code')->nullable()->unique();
+            $table->timestamp('national_code_verified_at')->nullable();
             $table->string('national_card_front')->nullable();
             $table->timestamp('national_card_front_verified_at')->nullable();
             $table->string('national_card_back')->nullable();
             $table->timestamp('national_card_back_verified_at')->nullable();
             $table->string('birth_certificate')->nullable();
             $table->timestamp('birth_certificate_verified_at')->nullable();
-            $table->boolean('is_active')->default(false);
+            $table->timestamp('validatied_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

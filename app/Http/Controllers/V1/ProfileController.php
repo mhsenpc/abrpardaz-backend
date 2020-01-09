@@ -31,8 +31,12 @@ class ProfileController extends BaseController
         ]);
     }
 
-    function setUserInfo(SetUserInfoRequest $request){
-
+    function setUserBasicInfo(SetUserInfoRequest $request){
+        $profile = Auth::user()->profile->update([
+            'first_name' => \request('first_name'),
+            'last_name' => \request('last_name'),
+            'national_code' => \request('national_code'),
+        ]);
     }
 
     function requestSetMobile(RequestSetMobileRequest $request){

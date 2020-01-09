@@ -44,7 +44,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('profile')->group(function () {
             Route::get('getUserInfo', 'ProfileController@getUserInfo');
-            Route::post('setUserInfo', 'ProfileController@setUserInfo');
+            Route::put('setUserBasicInfo', 'ProfileController@setUserBasicInfo');
             Route::post('requestSetMobile', 'ProfileController@requestSetMobile');
             Route::post('setMobile', 'ProfileController@setMobile');
         });
