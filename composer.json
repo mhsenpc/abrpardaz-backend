@@ -17,6 +17,7 @@
         "laravel/tinker": "^1.0",
         "php-opencloud/openstack": "^3.0",
         "prettus/l5-repository": "^2.6",
+        "sentry/sentry-laravel": "1.5.0",
         "spatie/laravel-permission": "^3.3"
     },
     "require-dev": {
