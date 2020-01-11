@@ -114,11 +114,9 @@ class MachineService
         }
     }
 
-    function remove(string $id)
+    function remove(string $remote_id)
     {
-        $machine = Machine::find($id);
-        $machine->delete();
-        $server = $this->compute->getServer(['id' => $id]);
+        $server = $this->compute->getServer(['id' => $remote_id]);
         $server->delete();
     }
 }

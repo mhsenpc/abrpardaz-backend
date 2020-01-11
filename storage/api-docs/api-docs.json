@@ -384,7 +384,7 @@
                 }
             }
         },
-        "/machines/remove": {
+        "/machines/{id}/remove": {
             "delete": {
                 "tags": [
                     "Machine"
@@ -392,6 +392,17 @@
                 "summary": "Removes the machine ",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\MachineController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
                 "responses": {
                     "default": {
                         "description": ""

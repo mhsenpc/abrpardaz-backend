@@ -44,9 +44,14 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('profile')->group(function () {
             Route::get('getUserInfo', 'ProfileController@getUserInfo');
-            Route::put('setUserBasicInfo', 'ProfileController@setUserBasicInfo');
+            Route::post('setUserBasicInfo', 'ProfileController@setUserBasicInfo');
             Route::post('requestSetMobile', 'ProfileController@requestSetMobile');
             Route::post('setMobile', 'ProfileController@setMobile');
+            Route::post('requestSetPhone', 'ProfileController@requestSetPhone');
+            Route::post('setPhone', 'ProfileController@setPhone');
+            Route::post('uploadNationalCardFront', 'ProfileController@uploadNationalCardFront');
+            Route::post('uploadNationalCardBack', 'ProfileController@uploadNationalCardBack');
+            Route::post('uploadBirthCertificate', 'ProfileController@uploadBirthCertificate');
         });
 
         Route::prefix('snapshots')->group(function () {

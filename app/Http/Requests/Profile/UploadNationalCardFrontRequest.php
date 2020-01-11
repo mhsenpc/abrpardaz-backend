@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\profile;
 
-use App\Http\Requests\AddIDParameterTrait;
-use App\Http\Requests\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SetUserInfoRequest extends ApiRequest
+class UploadNationalCardFrontRequest extends FormRequest
 {
-    use AddIDParameterTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -16,7 +13,7 @@ class SetUserInfoRequest extends ApiRequest
      */
     public function authorize()
     {
-        return true;
+        return false;
     }
 
     /**
@@ -27,9 +24,7 @@ class SetUserInfoRequest extends ApiRequest
     public function rules()
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'national_code' => 'required',
+            //
         ];
     }
 }

@@ -312,9 +312,19 @@ class MachineController extends BaseController
     /**
      * @OA\Delete(
      *      tags={"Machine"},
-     *      path="/machines/remove",
+     *      path="/machines/{id}/remove",
      *      summary="Removes the machine ",
      *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
      *
      * @OA\Response(
      *         response="default",
@@ -326,8 +336,10 @@ class MachineController extends BaseController
     function remove()
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
-        $service->remove($machine->remote_id);
+        //$service = new MachineService();
+        //$service->remove($machine->remote_id);
+
+        $machine->delete();
 
         return responder()->success(['message' => "سرور با موفقیت حذف گردید"]);
     }
