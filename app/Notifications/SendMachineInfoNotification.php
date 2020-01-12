@@ -7,28 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class RegisterUserNotification extends Notification
+class SendMachineInfoNotification extends Notification
 {
     use Queueable;
-    /**
-     * @var string
-     */
-    private $token;
-    /**
-     * @var string
-     */
-    private $email;
+    private $user;
+    private $machine;
 
     /**
      * Create a new notification instance.
      *
-     * @param string $email
-     * @param string $token
+     * @param $user
+     * @param $machine
      */
-    public function __construct(string $email, string $token)
+    public function __construct($user, $machine)
     {
-        $this->token = $token;
-        $this->email = $email;
+        $this->user = $user;
+        $this->machine = $machine;
     }
 
     /**
@@ -50,12 +44,14 @@ class RegisterUserNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $link = config('panel.url').config('panel.verify_page'). '?token=' . $this->token . '&email' . $this->email;
         return (new MailMessage)
-                    ->subject("فعال سازی حساب کاربری - ابرپرداز")
-                    ->line('به ابرپرداز خوش آمدید.')
-                    ->line('برای فعال سازی حساب کاربری خود بر روی دکمه فعال سازی کلیک کنید.')
-                    ->action('فعال سازی', $link );
+            ->subject("اطلاعات سرور شما - ابرپرداز")
+            ->line($this->user->first_name . ' ' . $this->user->last_name. ' '. 'عزیز')
+            ->line('سرور جدید شما با موفقیت ساخته شد')
+            ->line('نام: ' . $this->machine->name)
+            ->line('IP: ' . $this->machine->public_ipv4)
+            ->line('Username: root' )
+            ->line('Password: ' . $this->machine->password);
     }
 
     /**

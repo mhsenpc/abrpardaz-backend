@@ -12,11 +12,13 @@ use App\Jobs\TakeSnapshotJob;
 use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
+use App\Notifications\SendMachineInfoNotification;
 use App\Repositories\MachineRepository;
 use App\Repositories\SnapshotRepository;
 use App\Services\MachineService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class MachineController extends BaseController
 {
@@ -102,6 +104,8 @@ class MachineController extends BaseController
 
             return responder()->success(['message' => "عملیات ساخت سرور شروع شد"]);
         } catch (\Exception $exception) {
+            Log::critical("Couldn't create server for user #".Auth::id());
+            Log::critical($exception);
             return responder()->error(500, "ساخت سرور انجام نشد");
         }
     }
@@ -260,8 +264,35 @@ class MachineController extends BaseController
         return responder()->success(['message' => "عملیات ساخت شروع تصویر آنی شروع شد"]);
     }
 
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/resendInfo",
+     *      summary="Resends information of this machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
     function resendInfo()
     {
+        $machine = $this->repository->find(\request('id'));
+        Auth::user()->notify(new SendMachineInfoNotification(Auth::user(), $machine));
         return responder()->success(['message' => "اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
     }
 

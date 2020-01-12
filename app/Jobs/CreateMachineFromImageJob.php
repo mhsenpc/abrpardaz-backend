@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\Machine;
+use App\Models\User;
+use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -71,5 +74,10 @@ class CreateMachineFromImageJob implements ShouldQueue
             $this->image_id,
             $this->ssh_key_id
         );
+
+        $machine = Machine::find($this->machine_id);
+        $user = User::find($this->user_id);
+
+        $user->notify(new SendMachineInfoNotification($user, $machine));
     }
 }

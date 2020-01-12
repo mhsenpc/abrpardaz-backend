@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Server;
 
+use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RenameServerRequest extends ApiRequest
 {
+    use AddIDParameterTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,7 +27,8 @@ class RenameServerRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name' => 'required'
+            'name' => 'required',
+            'id' => 'required|numeric|exists:machines,id'
         ];
     }
 }

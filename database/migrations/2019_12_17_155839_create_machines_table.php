@@ -17,6 +17,8 @@ class CreateMachinesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('remote_id')->nullable();
+            $table->string('public_ipv4')->nullable();
+            $table->string('password')->nullable();
             $table->integer('user_id');
             $table->integer('plan_id');
             $table->integer('image_id');
