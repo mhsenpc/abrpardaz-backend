@@ -53,10 +53,10 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof NotFoundHttpException ) {
-            return responder()->error(404,'مسیر نامعبر است')->respond();
+            return responder()->error(404,'Route not found')->respond();
         }
         else if ($exception instanceof ModelNotFoundException ) {
-            return responder()->error(404,'رکورد مورد نظر پیدا نشد')->respond();
+            return responder()->error(404,'Model not found')->respond();
         }
         else{
             return parent::render($request, $exception);

@@ -15,13 +15,17 @@ use App\Models\Profile;
 use App\Repositories\ProfileRepository;
 use App\Services\MobileService;
 use App\Services\PhoneService;
+use App\Traits\UploadTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProfileController extends BaseController
 {
+    use UploadTrait;
     /**
      * @var ProfileRepository
      */
@@ -109,14 +113,52 @@ class ProfileController extends BaseController
     }
 
     function uploadNationalCardFront(UploadNationalCardFrontRequest $request){
+        if ($request->has('image')) {
+            $path = $request->file('image')->store('images');
+
+            $user = Auth::user();
+            Profile::where('id', $user->profile_id)->update([
+                'national_card_front' => $path,
+            ]);
+
+            return responder()->success(['message' => 'تصویر با موفقیت بارگذاری شد']);
+        }
+        else{
+            return responder()->error(400,'بارگذاری تصویر مشکلی وجود دارد');
+        }
 
     }
 
     function uploadNationalCardBack(UploadNationalCardBackRequest  $request){
+        if ($request->has('image')) {
+            $path = $request->file('image')->store('images');
 
+            $user = Auth::user();
+            Profile::where('id', $user->profile_id)->update([
+                'national_card_back' => $path,
+            ]);
+
+            return responder()->success(['message' => 'تصویر با موفقیت بارگذاری شد']);
+        }
+        else{
+            return responder()->error(400,'بارگذاری تصویر مشکلی وجود دارد');
+        }
     }
 
     function uploadBirthCertificate(UploadBirthCertificateRequest $request){
+        if ($request->has('image')) {
+            $path = $request->file('image')->store('images');
 
+            $user = Auth::user();
+            Profile::where('id', $user->profile_id)->update([
+                'birth_certificate' => $path,
+            ]);
+
+
+            return responder()->success(['message' => 'تصویر با موفقیت بارگذاری شد']);
+        }
+        else{
+            return responder()->error(400,'بارگذاری تصویر مشکلی وجود دارد');
+        }
     }
 }

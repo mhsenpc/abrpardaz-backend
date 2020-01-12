@@ -13,7 +13,7 @@ class UploadBirthCertificateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class UploadBirthCertificateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ];
     }
 }
