@@ -662,6 +662,21 @@
                 }
             }
         },
+        "/tickets/categories": {
+            "get": {
+                "tags": [
+                    "Ticket"
+                ],
+                "summary": "Returns the list of ticket categories",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\TicketController::categories",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
         "/tickets/newTicket": {
             "post": {
                 "tags": [

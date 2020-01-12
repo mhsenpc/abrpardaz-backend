@@ -9,6 +9,7 @@ use App\Http\Requests\Ticket\CloseTicketRequest;
 use App\Http\Requests\Ticket\NewReplyRequest;
 use App\Http\Requests\Ticket\NewTicketRequest;
 use App\Http\Requests\Ticket\ShowTicketRequest;
+use App\Models\Category;
 use App\Models\Reply;
 use App\Models\Ticket;
 use App\Notifications\NewTicketNotification;
@@ -50,6 +51,27 @@ class TicketController extends BaseController
     public function index()
     {
         $tickets = Ticket::all();
+        return responder()->success(['list' => $tickets]);
+    }
+
+    /**
+     * @OA\Get(
+     *      tags={"Ticket"},
+     *      path="/tickets/categories",
+     *      summary="Returns the list of ticket categories",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     )
+     *
+     */
+    public function categories()
+    {
+        $tickets = Category::all();
         return responder()->success(['list' => $tickets]);
     }
 
