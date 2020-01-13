@@ -87,7 +87,7 @@ class SSHKeyController extends BaseController
     }
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *      tags={"Ssh key"},
      *      path="/sshKeys/edit",
      *      summary="Edit a ssh key using its id",

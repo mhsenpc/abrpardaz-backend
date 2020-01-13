@@ -297,7 +297,7 @@ class MachineController extends BaseController
     }
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *      tags={"Machine"},
      *      path="/machines/{id}/rename",
      *      summary="Change the name of a machine",

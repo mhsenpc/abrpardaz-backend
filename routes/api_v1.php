@@ -28,15 +28,10 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::post('powerOn', 'MachineController@powerOn');
             Route::post('powerOff', 'MachineController@powerOff');
             Route::post('takeSnapshot', 'MachineController@takeSnapshot');
-            Route::post('resendInfo', 'MachineController@resendInfo');
-            Route::put('rename', 'MachineController@rename');
+            Route::put('resendInfo', 'MachineController@resendInfo');
+            Route::post('rename', 'MachineController@rename');
             Route::delete('remove', 'MachineController@remove');
         });
-
-/*        Route::prefix('payment')->group(function () {
-            Route::post('requestPayment', 'PaymentController@requestPayment');
-            Route::post('result', 'PaymentController@paymentResult');
-        });*/
 
         Route::prefix('plans')->group(function () {
             Route::get('list', 'PlanController@index');
@@ -60,7 +55,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
             Route::prefix('{id}')->group(function () {
                 Route::get('getProgress', 'SnapshotController@getProgress');
-                Route::put('rename', 'SnapshotController@rename');
+                Route::post('rename', 'SnapshotController@rename');
                 Route::delete('remove', 'SnapshotController@remove');
             });
         });
@@ -68,7 +63,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('sshKeys')->group(function () {
             Route::get('list', 'SSHKeyController@index');
             Route::post('add', 'SSHKeyController@add');
-            Route::put('edit', 'SSHKeyController@edit');
+            Route::post('edit', 'SSHKeyController@edit');
             Route::delete('remove', 'SSHKeyController@remove');
         });
 
@@ -83,5 +78,15 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::get('show', 'TicketController@show');
             });
         });
+
+        Route::prefix('volumes')->group(function () {
+            Route::get('list', 'VolumeController@index');
+
+            Route::prefix('{id}')->group(function () {
+                Route::post('rename', 'VolumeController@rename');
+                Route::delete('remove', 'VolumeController@remove');
+            });
+        });
+
     });
 });

@@ -59,11 +59,11 @@ class MachineService
 
             $server->waitUntil('Active');
 
-            MachineRepository::updateMachine($machine_id, $server->id);
+            MachineRepository::updateRemoteID($machine_id, $server->id);
         }
         catch (\Exception $exception){
             //TODO: save a notification for this user
-            MachineRepository::updateMachine($machine_id,'failed');
+            MachineRepository::updateRemoteID($machine_id,'failed');
         }
     }
 

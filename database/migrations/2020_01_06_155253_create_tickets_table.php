@@ -18,7 +18,6 @@ class CreateTicketsTable extends Migration
             $table->integer('user_id');
             $table->integer('category_id');
             $table->integer('machine_id')->nullable();
-            $table->integer('project_id')->nullable();
             $table->string('ticket_id')->unique();
             $table->string('title');
             $table->string('priority');
@@ -27,7 +26,6 @@ class CreateTicketsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('project_id')->references('id')->on('projects');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('category_id')->references('id')->on('categories');
         });

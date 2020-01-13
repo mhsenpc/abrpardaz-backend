@@ -78,7 +78,7 @@ class SnapshotController extends BaseController
 
 
     /**
-     * @OA\Put(
+     * @OA\Post(
      *      tags={"Snapshot"},
      *      path="/snapshots/{id}/rename",
      *      summary="Rename a snapshot",
@@ -90,7 +90,7 @@ class SnapshotController extends BaseController
      *         description="id of the snapshot",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -145,7 +145,7 @@ class SnapshotController extends BaseController
      *         description="id of the snapshot",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *

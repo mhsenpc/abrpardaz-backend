@@ -4,16 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
 
-class Profile extends Model
+class Volume extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['national_card'];
+    public function machine()
+    {
+        return $this->belongsTo('App\Models\Machine');
+    }
 
     public function user()
     {
-        return $this->hasOne('App\Models\User');
+        return $this->belongsTo('App\Models\User');
     }
 }

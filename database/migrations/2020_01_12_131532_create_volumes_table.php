@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRepliesTable extends Migration
+class CreateVolumesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,18 @@ class CreateRepliesTable extends Migration
      */
     public function up()
     {
-        Schema::create('replies', function (Blueprint $table) {
+        Schema::create('volumes', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('ticket_id')->unsigned();
-            $table->integer('user_id')->unsigned();
-            $table->text('comment');
+            $table->string('remote_id');
+            $table->string('name')->nullable();
+            $table->float('size');
+            $table->boolean('is_root')->default(false);
+            $table->integer('machine_id');
+            $table->integer('user_id');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('ticket_id')->references('id')->on('tickets');
+            $table->foreign('machine_id')->references('id')->on('machines');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
@@ -33,6 +36,6 @@ class CreateRepliesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('replies');
+        Schema::dropIfExists('volumes');
     }
 }

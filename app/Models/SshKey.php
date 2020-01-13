@@ -14,7 +14,7 @@ class SshKey extends Model
     {
         parent::boot();
 
-        //static::addGlobalScope(new UserIDScope());
+        static::addGlobalScope(new UserIDScope());
     }
 
     protected $guarded = [];
