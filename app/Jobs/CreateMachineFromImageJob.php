@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Machine;
 use App\Models\User;
+use App\Models\Volume;
 use App\Notifications\SendMachineInfoNotification;
 use App\Repositories\VolumeRepository;
 use App\Services\MachineService;
@@ -83,7 +84,14 @@ class CreateMachineFromImageJob implements ShouldQueue
         //find its root volume
         $volumeService = new VolumeService();
         $volume_id = $volumeService->findMachineRootVolume($machine->remote_id);
-        //TODO: crete root volume save in db
+        Volume::create([
+            'remote_id' => $volume_id,
+            'name' => $volume_id,
+            'size' => $machine->plan->disk,
+            'is_root' => true,
+            'machine_id' => $machine->id,
+            'user_id' => $user->id
+        ]);
 
         $user->notify(new SendMachineInfoNotification($user, $machine));
     }

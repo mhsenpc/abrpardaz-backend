@@ -19,7 +19,7 @@ class CreateVolumesTable extends Migration
             $table->string('name')->nullable();
             $table->float('size');
             $table->boolean('is_root')->default(false);
-            $table->integer('machine_id');
+            $table->integer('machine_id')->nullable();
             $table->integer('user_id');
             $table->timestamps();
             $table->softDeletes();

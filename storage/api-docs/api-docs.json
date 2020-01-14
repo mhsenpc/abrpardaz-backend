@@ -349,8 +349,34 @@
                 }
             }
         },
-        "/machines/{id}/rename": {
+        "/machines/{id}/resendInfo": {
             "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Resends information of this machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::resendInfo",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/rename": {
+            "post": {
                 "tags": [
                     "Machine"
                 ],
@@ -476,7 +502,7 @@
             }
         },
         "/sshKeys/edit": {
-            "put": {
+            "post": {
                 "tags": [
                     "Ssh key"
                 ],
@@ -587,7 +613,7 @@
             }
         },
         "/snapshots/{id}/rename": {
-            "put": {
+            "post": {
                 "tags": [
                     "Snapshot"
                 ],
@@ -601,7 +627,7 @@
                         "description": "id of the snapshot",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     },
                     {
@@ -636,7 +662,7 @@
                         "description": "id of the snapshot",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
@@ -808,6 +834,187 @@
                 "summary": "Show a ticket information",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\TicketController::show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/volumes/list": {
+            "get": {
+                "tags": [
+                    "Volume"
+                ],
+                "summary": "Returns the list of your volumes",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\VolumeController::index",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/volumes/createVolume": {
+            "post": {
+                "tags": [
+                    "Volume"
+                ],
+                "summary": "Creates a volume",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\VolumeController::createVolume",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "float"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/volumes/{id}/attachToMachine": {
+            "post": {
+                "tags": [
+                    "Volume"
+                ],
+                "summary": "Attaches a volume to a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\VolumeController::attachToMachine",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "machine_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/volumes/{id}/detachFromMachine": {
+            "post": {
+                "tags": [
+                    "Volume"
+                ],
+                "summary": "Detaches a volume from a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\VolumeController::detachFromMachine",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "machine_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/volumes/{id}/rename": {
+            "post": {
+                "tags": [
+                    "Volume"
+                ],
+                "summary": "Change the name of the volume",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\VolumeController::rename",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/volumes/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "Volume"
+                ],
+                "summary": "Removes the volume",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\VolumeController::remove",
                 "parameters": [
                     {
                         "name": "id",

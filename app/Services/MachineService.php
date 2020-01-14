@@ -39,6 +39,7 @@ class MachineService
         try {
             $image = Image::find($image_id);
             $plan = Plan::find($plan_id);
+            MachineRepository::updateRemoteID($machine_id, 'test');
             return true;
 
             $options = [
@@ -116,6 +117,7 @@ class MachineService
 
     function remove(string $remote_id)
     {
+        return;
         $server = $this->compute->getServer(['id' => $remote_id]);
         $server->delete();
     }

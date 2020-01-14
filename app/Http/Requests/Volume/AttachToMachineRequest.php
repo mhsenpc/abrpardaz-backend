@@ -5,7 +5,7 @@ namespace App\Http\Requests\Volume;
 use App\Http\Requests\AddIDParameterTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RemoveVolumeRequest extends FormRequest
+class AttachToMachineRequest extends FormRequest
 {
     use AddIDParameterTrait;
     /**
@@ -27,6 +27,7 @@ class RemoveVolumeRequest extends FormRequest
     {
         return [
             'id' => 'required|numeric|exists:volumes,id',
+            'machine_id' => 'required|numeric|exists:machines,id'
         ];
     }
 }

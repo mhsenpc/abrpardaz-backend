@@ -9,6 +9,8 @@ class Volume extends Model
 {
     use SoftDeletes;
 
+    protected $guarded = ['id'];
+
     public function machine()
     {
         return $this->belongsTo('App\Models\Machine');

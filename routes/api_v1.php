@@ -81,8 +81,11 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('volumes')->group(function () {
             Route::get('list', 'VolumeController@index');
+            Route::post('createVolume', 'VolumeController@createVolume');
 
             Route::prefix('{id}')->group(function () {
+                Route::post('attachToMachine', 'VolumeController@attachToMachine');
+                Route::post('detachFromMachine', 'VolumeController@detachFromMachine');
                 Route::post('rename', 'VolumeController@rename');
                 Route::delete('remove', 'VolumeController@remove');
             });

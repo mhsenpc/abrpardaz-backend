@@ -36,12 +36,16 @@ class VolumeService
 
     function create(string $name, float $size)
     {
+        $a = new \stdClass();
+        $a->id = '54as4d';
+        return $a;
         $service = $this->service->blockStorageV2();
 
         $volume = $service->createVolume([
             'size' => $size,
             'name' => $name,
         ]);
+        return $volume;
     }
 
     function rename(string $remote_id, string $name)
@@ -63,7 +67,8 @@ class VolumeService
 
     function attachVolumeToMachine(string $machine_remote_id, string $volume_remote_id)
     {
-        $compute = $this->openstack->computeV2(['region' => '{region}']);
+        return;
+        $compute = $this->openstack->computeV2();
 
         /**@var OpenStack\Compute\v2\Models\Server $server */
         $server = $compute->getServer(['id' => $machine_remote_id]);
@@ -74,6 +79,7 @@ class VolumeService
 
     function detachVolumeFromMachine(string $machine_remote_id, string $volume_remote_id)
     {
+        return;
         $compute = $this->openstack->computeV2();
 
         /**@var OpenStack\Compute\v2\Models\Server $server */
@@ -84,6 +90,7 @@ class VolumeService
     }
 
     function findMachineRootVolume(string $machine_remote_id){
+        return "ad574";
         $compute = $this->openstack->computeV2();
 
         $server = $compute->getServer(['id' => $machine_remote_id]);

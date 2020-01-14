@@ -367,8 +367,8 @@ class MachineController extends BaseController
     function remove()
     {
         $machine = Machine::findorFail(\request('id'));
-        //$service = new MachineService();
-        //$service->remove($machine->remote_id);
+        $service = new MachineService();
+        $service->remove($machine->remote_id);
 
         $machine->delete();
 
