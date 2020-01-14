@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Volume;
+namespace App\Http\Requests\Snapshot;
 
 use App\Http\Requests\ApiRequest;
 
-class CreateNewVolumeRequest extends ApiRequest
+class RemoveSnapshotRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,7 @@ class CreateNewVolumeRequest extends ApiRequest
     public function rules()
     {
         return [
-            'size' => 'required',
-            'machine_id' => 'required|numeric|exists:machines,id'
+            'id' => 'required|numeric|exists:snapshots,id',
         ];
     }
 }

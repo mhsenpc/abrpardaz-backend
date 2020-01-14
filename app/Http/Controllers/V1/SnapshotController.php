@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Models\Snapshot;
@@ -158,7 +159,7 @@ class SnapshotController extends BaseController
      *     )
      *
      */
-    function remove(Request $request)
+    function remove(RemoveSnapshotRequest $request)
     {
         $service = new SnapshotService();
         $result = $service->remove(\request('id'));

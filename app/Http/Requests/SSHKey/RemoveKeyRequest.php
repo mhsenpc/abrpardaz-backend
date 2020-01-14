@@ -5,7 +5,7 @@ namespace App\Http\Requests\SSHKey;
 use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
 
-class EditKeyRequest extends ApiRequest
+class RemoveKeyRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**
@@ -26,9 +26,7 @@ class EditKeyRequest extends ApiRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric|exists:ssh_keys,id',
-            'name' => 'required',
-            'content' => 'required'
+            'id' => 'required|numeric|exists:ssh_keys,id'
         ];
     }
 }

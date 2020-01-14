@@ -5,8 +5,8 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\SSHKey\AddKeyRequest;
 use App\Http\Requests\SSHKey\EditKeyRequest;
+use App\Http\Requests\SSHKey\RemoveKeyRequest;
 use App\Repositories\SSHKeyRepository;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SSHKeyController extends BaseController
@@ -79,17 +79,17 @@ class SSHKeyController extends BaseController
     function add(AddKeyRequest $request)
     {
         $this->repository->create([
-            'name'=> $request->input('name'),
+            'name' => $request->input('name'),
             'content' => $request->input('content'),
             'user_id' => Auth::id()
         ]);
-        return responder()->success(['message'=>"کلید با موفقیت اضافه شد"]);
+        return responder()->success(['message' => "کلید با موفقیت اضافه شد"]);
     }
 
     /**
      * @OA\Post(
      *      tags={"Ssh key"},
-     *      path="/sshKeys/edit",
+     *      path="/sshKeys/{id}/edit",
      *      summary="Edit a ssh key using its id",
      *      description="",
      *
@@ -100,7 +100,7 @@ class SSHKeyController extends BaseController
      *
      *     @OA\Parameter(
      *         name="id",
-     *         in="query",
+     *         in="path",
      *         description="",
      *         required=true,
      *         @OA\Schema(
@@ -133,17 +133,17 @@ class SSHKeyController extends BaseController
      */
     function edit(EditKeyRequest $request)
     {
-        $this->repository->find($request->input('id'))->update([
-            'name'=> $request->input('name'),
-            'content' => $request->input('content')
+        $this->repository->find(\request('id'))->update([
+            'name' => \request('name'),
+            'content' => \request('content')
         ]);
-        return responder()->success(['message'=>"کلید با موفقیت ویرایش شد"]);
+        return responder()->success(['message' => "کلید با موفقیت ویرایش شد"]);
     }
 
     /**
      * @OA\Delete(
      *      tags={"Ssh key"},
-     *      path="/sshKeys/remove",
+     *      path="/sshKeys/{id}/remove",
      *      summary="Remove a ssh key using it",
      *      description="",
      *
@@ -154,7 +154,7 @@ class SSHKeyController extends BaseController
      *
      *     @OA\Parameter(
      *         name="id",
-     *         in="query",
+     *         in="path",
      *         description="",
      *         required=true,
      *         @OA\Schema(
@@ -165,9 +165,9 @@ class SSHKeyController extends BaseController
      *     )
      *
      */
-    function remove(Request $request)
+    function remove(RemoveKeyRequest $request)
     {
         $this->repository->delete(\request('id'));
-        return responder()->success(['message'=>"کلید با موفقیت حذف شد"]);
+        return responder()->success(['message' => "کلید با موفقیت حذف شد"]);
     }
 }
