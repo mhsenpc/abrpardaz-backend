@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Http\Requests\ApiRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyRequest extends ApiRequest
+class ChangePasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,9 @@ class VerifyRequest extends ApiRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'token' => 'required'
+            'current_password' => 'required',
+            'new_password' => 'required|min:6|confirmed',
+            'new_password_confirmation' => 'required|min:6',
         ];
     }
 }

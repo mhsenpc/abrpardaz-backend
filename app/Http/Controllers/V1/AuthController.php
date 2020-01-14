@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Auth\ChangePasswordRequest;
 use App\Http\Requests\Auth\ForgetPasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
@@ -239,6 +240,103 @@ class AuthController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/changePassword",
+     *      summary="Changes the user password",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="current_password",
+     *         in="query",
+     *         description="The current password of the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="new_password",
+     *         in="query",
+     *         description="The new password you want to set for the user",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="new_password_confirmation",
+     *         in="query",
+     *         description="Confirmation of the new password",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
+    function changePassword(ChangePasswordRequest $request){
+        $user = Auth::user();
+        if (Hash::check(request('current_password'), $user->password)) {
+            $this->repository->updatePassword(
+                $user->email,
+                Hash::make(request('new_password'))
+            );
+
+            return responder()->success(['message' => 'رمز عبور شما با موفقیت تغییر یافت']);
+        } else {
+            return responder()->success(['message' => 'رمز عبور قبلی شما صحیح نمی باشد']);
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *      tags={"Authentication"},
+     *      path="/auth/verify",
+     *      summary="Verify the user's email",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="query",
+     *         description="The email which user has been registered with",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="token",
+     *         in="query",
+     *         description="The token which has been sent to the user's email",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *
+     *     )
+     *
+     */
     function verify(VerifyRequest $request)
     {
         $token = Cache::get('verification_for_' . request('email'));
@@ -252,7 +350,7 @@ class AuthController extends BaseController
     }
 
     /**
-     * @OA\Post(
+     * @OA\Put(
      *      tags={"Authentication"},
      *      path="/auth/logout",
      *      summary="Removes your token",

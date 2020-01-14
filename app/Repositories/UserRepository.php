@@ -50,7 +50,8 @@ class UserRepository extends BaseRepository
         User::where('email', $email)->update(['is_active' => true, 'email_verified_at' => Carbon::now()]);
     }
 
-    function updatePassword(string $email,string $password){
-        User::where('email', $email)->update(['password' =>$password]);
+    function updatePassword(string $email, string $password)
+    {
+        User::where('email', $email)->update(['password' => $password]);
     }
 }

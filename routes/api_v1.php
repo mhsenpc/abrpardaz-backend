@@ -8,8 +8,9 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::post('login', 'AuthController@login');
         Route::post('forgetPassword', 'AuthController@forgetPassword');
         Route::post('resetPassword', 'AuthController@resetPassword');
-        Route::any('verify', 'AuthController@verify')->name('auth.verify');
-        Route::post('logout', 'AuthController@logout');
+        Route::post('changePassword', 'AuthController@changePassword');
+        Route::any('verify', 'AuthController@verify');
+        Route::put('logout', 'AuthController@logout');
     });
 
     Route::middleware([/*'auth:api'*/])->group(function () {
@@ -63,8 +64,11 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('sshKeys')->group(function () {
             Route::get('list', 'SSHKeyController@index');
             Route::post('add', 'SSHKeyController@add');
-            Route::post('edit', 'SSHKeyController@edit');
-            Route::delete('remove', 'SSHKeyController@remove');
+
+            Route::prefix('{id}')->group(function () {
+                Route::post('edit', 'SSHKeyController@edit');
+                Route::delete('remove', 'SSHKeyController@remove');
+            });
         });
 
         Route::prefix('tickets')->group(function () {

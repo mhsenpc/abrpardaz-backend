@@ -165,8 +165,87 @@
                 }
             }
         },
-        "/auth/logout": {
+        "/auth/changePassword": {
             "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Changes the user password",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\AuthController::changePassword",
+                "parameters": [
+                    {
+                        "name": "current_password",
+                        "in": "query",
+                        "description": "The current password of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "new_password",
+                        "in": "query",
+                        "description": "The new password you want to set for the user",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "new_password_confirmation",
+                        "in": "query",
+                        "description": "Confirmation of the new password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/auth/verify": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify the user's email",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\AuthController::verify",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "The email which user has been registered with",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "description": "The token which has been sent to the user's email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "put": {
                 "tags": [
                     "Authentication"
                 ],
@@ -501,7 +580,7 @@
                 }
             }
         },
-        "/sshKeys/edit": {
+        "/sshKeys/{id}/edit": {
             "post": {
                 "tags": [
                     "Ssh key"
@@ -545,7 +624,7 @@
                 }
             }
         },
-        "/sshKeys/remove": {
+        "/sshKeys/{id}/remove": {
             "delete": {
                 "tags": [
                     "Ssh key"
@@ -601,7 +680,7 @@
                         "description": "id of the machine your want its snapshots",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
