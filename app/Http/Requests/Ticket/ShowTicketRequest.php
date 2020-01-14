@@ -3,11 +3,12 @@
 namespace App\Http\Requests\Ticket;
 
 use App\Http\Requests\AddIDParameterTrait;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class ShowTicketRequest extends FormRequest
+class ShowTicketRequest extends ApiRequest
 {
     use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *

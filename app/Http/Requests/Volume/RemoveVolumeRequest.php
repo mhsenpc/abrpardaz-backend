@@ -3,11 +3,12 @@
 namespace App\Http\Requests\Volume;
 
 use App\Http\Requests\AddIDParameterTrait;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class RemoveVolumeRequest extends FormRequest
+class RemoveVolumeRequest extends ApiRequest
 {
     use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *

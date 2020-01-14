@@ -2,11 +2,13 @@
 
 namespace App\Http\Requests\Snapshot;
 
+use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
 class RenameSnapshotRequest extends ApiRequest
 {
+    use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -26,6 +28,7 @@ class RenameSnapshotRequest extends ApiRequest
     {
         return [
             'name' => 'required',
+            'id' => 'required|numeric|exists:snapshots,id',
         ];
     }
 }

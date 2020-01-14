@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Volume;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class CreateVolumeRequest extends FormRequest
+class CreateVolumeRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.

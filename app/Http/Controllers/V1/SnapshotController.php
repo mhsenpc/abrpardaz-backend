@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
-use App\Http\Requests\Snapshots\OfMachineRequest;
+use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Models\Snapshot;
 use App\Repositories\SnapshotRepository;
 use App\Services\SnapshotService;
@@ -55,7 +55,7 @@ class SnapshotController extends BaseController
      *         description="id of the machine your want its snapshots",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *

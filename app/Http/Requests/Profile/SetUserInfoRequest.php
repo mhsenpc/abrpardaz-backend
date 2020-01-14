@@ -4,11 +4,11 @@ namespace App\Http\Requests\Profile;
 
 use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
 class SetUserInfoRequest extends ApiRequest
 {
     use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *

@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Ticket;
 
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
 class NewTicketRequest extends ApiRequest
 {

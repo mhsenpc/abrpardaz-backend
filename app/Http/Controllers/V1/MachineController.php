@@ -5,7 +5,12 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
+use App\Http\Requests\Server\GetConsoleRequest;
+use App\Http\Requests\Server\PowerOffRequest;
+use App\Http\Requests\Server\PowerOnRequest;
+use App\Http\Requests\Server\RemoveServerRequest;
 use App\Http\Requests\Server\RenameServerRequest;
+use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
 use App\Jobs\TakeSnapshotJob;
@@ -104,7 +109,7 @@ class MachineController extends BaseController
 
             return responder()->success(['message' => "عملیات ساخت سرور شروع شد"]);
         } catch (\Exception $exception) {
-            Log::critical("Couldn't create server for user #".Auth::id());
+            Log::critical("Couldn't create server for user #" . Auth::id());
             Log::critical($exception);
             return responder()->error(500, "ساخت سرور انجام نشد");
         }
@@ -142,7 +147,7 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function console()
+    function console(GetConsoleRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
@@ -175,7 +180,7 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function powerOn()
+    function powerOn(PowerOnRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
@@ -207,7 +212,7 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function powerOff()
+    function powerOff(PowerOffRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
@@ -289,7 +294,7 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function resendInfo()
+    function resendInfo(ResendInfoRequest $request)
     {
         $machine = $this->repository->find(\request('id'));
         Auth::user()->notify(new SendMachineInfoNotification(Auth::user(), $machine));
@@ -364,7 +369,7 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function remove()
+    function remove(RemoveServerRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();

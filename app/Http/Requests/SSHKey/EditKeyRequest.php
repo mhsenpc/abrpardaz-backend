@@ -3,7 +3,6 @@
 namespace App\Http\Requests\SSHKey;
 
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
 class EditKeyRequest extends ApiRequest
 {

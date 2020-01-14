@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Snapshots;
+namespace App\Http\Requests\Server;
 
+use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
-class OfMachineRequest extends ApiRequest
+class GetConsoleRequest extends ApiRequest
 {
+    use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -25,7 +27,7 @@ class OfMachineRequest extends ApiRequest
     public function rules()
     {
         return [
-            'machine_id' => 'required|numeric|exists:machines,id'
+            'id' => 'required|numeric|exists:machines,id'
         ];
     }
 }

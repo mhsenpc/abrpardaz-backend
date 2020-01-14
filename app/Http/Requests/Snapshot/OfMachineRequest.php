@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Server;
+namespace App\Http\Requests\Snapshot;
 
 use App\Http\Requests\ApiRequest;
 
-class CreateFromImageRequest extends ApiRequest
+class OfMachineRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class CreateFromImageRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'plan_id' => 'required|numeric|exists:plans,id',
-            'image_id' => 'required|numeric|exists:images,id',
-            'ssh_key_id' => 'sometimes|numeric|exists:ssh_keys,id',
+            'machine_id' => 'required|numeric|exists:machines,id'
         ];
     }
 }

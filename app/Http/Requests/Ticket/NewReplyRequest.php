@@ -4,11 +4,11 @@ namespace App\Http\Requests\Ticket;
 
 use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
 class NewReplyRequest extends ApiRequest
 {
     use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *

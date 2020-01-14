@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\profile;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class UploadBirthCertificateRequest extends FormRequest
+class UploadBirthCertificateRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.

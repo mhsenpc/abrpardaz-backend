@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Profile;
 
 use App\Http\Requests\ApiRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
 class SetMobileRequest extends ApiRequest
 {

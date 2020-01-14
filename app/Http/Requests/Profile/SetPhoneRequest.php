@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Profile;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\ApiRequest;
 
-class SetPhoneRequest extends FormRequest
+class SetPhoneRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +25,7 @@ class SetPhoneRequest extends FormRequest
     {
         return [
             'phone' => 'required',
-            'code'  => 'required'
+            'code' => 'required'
         ];
     }
 }

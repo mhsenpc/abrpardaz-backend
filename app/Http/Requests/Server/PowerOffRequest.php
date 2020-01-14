@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\Server;
 
+use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
 
-class CreateFromImageRequest extends ApiRequest
+class PowerOffRequest extends ApiRequest
 {
+    use AddIDParameterTrait;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,10 +27,7 @@ class CreateFromImageRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'plan_id' => 'required|numeric|exists:plans,id',
-            'image_id' => 'required|numeric|exists:images,id',
-            'ssh_key_id' => 'sometimes|numeric|exists:ssh_keys,id',
+            'id' => 'required|numeric|exists:machines,id'
         ];
     }
 }
