@@ -59,7 +59,9 @@ class Handler extends ExceptionHandler
             return responder()->error(404,'Model not found')->respond();
         }
         else{
+            return responder()->error(400,$exception)->respond();
             return parent::render($request, $exception);
+            //return parent::render($request, $exception);
         }
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Server;
 
-use App\Http\Requests\AddIDParameterTrait;
 use App\Http\Requests\ApiRequest;
+use App\Traits\AddIDParameterTrait;
 
 class RemoveServerRequest extends ApiRequest
 {
