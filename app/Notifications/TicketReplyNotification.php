@@ -12,21 +12,20 @@ class TicketReplyNotification extends Notification
     use Queueable;
     private $ticket;
     private $reply;
-    private $user;
+    private $profile;
 
     /**
      * Create a new notification instance.
      *
      * @param $ticket
      * @param $reply
-     * @param $user
+     * @param $profile
      */
-    public function __construct($ticket, $reply, $user)
+    public function __construct($ticket, $reply, $profile)
     {
-        //
         $this->ticket = $ticket;
         $this->reply = $reply;
-        $this->user = $user;
+        $this->profile = $profile;
     }
 
     /**
@@ -51,7 +50,7 @@ class TicketReplyNotification extends Notification
         return (new MailMessage)
             ->subject("RE: {$this->ticket->title} (Ticket ID: {$this->ticket->ticket_id})")
             ->line($this->reply->comment)
-            ->line("پاسخ توسط:".$this->user->first_name . ' ' . $this->user->last_name)
+            ->line("پاسخ توسط:".$this->profile->first_name . ' ' . $this->profile->last_name)
             ->line('عناون:' . $this->ticket->title)
             ->line('شماره تیکت:' . $this->ticket->ticket_id)
             ->line('وضعیت:' . $this->ticket->status)

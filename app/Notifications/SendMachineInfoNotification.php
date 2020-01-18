@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Traits\GetUserNameTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,18 +11,19 @@ use Illuminate\Notifications\Notification;
 class SendMachineInfoNotification extends Notification
 {
     use Queueable;
-    private $user;
+    use GetUserNameTrait;
+    private $profile;
     private $machine;
 
     /**
      * Create a new notification instance.
      *
-     * @param $user
+     * @param $profile
      * @param $machine
      */
-    public function __construct($user, $machine)
+    public function __construct($profile, $machine)
     {
-        $this->user = $user;
+        $this->profile = $profile;
         $this->machine = $machine;
     }
 
@@ -46,7 +48,7 @@ class SendMachineInfoNotification extends Notification
     {
         return (new MailMessage)
             ->subject("اطلاعات سرور شما - ابرپرداز")
-            ->line($this->user->first_name . ' ' . $this->user->last_name. ' '. 'عزیز')
+            ->line($this->getUserName())
             ->line('سرور جدید شما با موفقیت ساخته شد')
             ->line('نام: ' . $this->machine->name)
             ->line('IP: ' . $this->machine->public_ipv4)

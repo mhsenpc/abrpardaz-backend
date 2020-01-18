@@ -120,7 +120,7 @@ class AuthController extends BaseController
      */
     function login(LoginRequest $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password'), 'is_active' => true])) {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')/*, 'is_active' => true*/])) {
             $user = Auth::user();
             $result = [];
             $token = $user->createToken('Abrpardaz');
@@ -130,7 +130,7 @@ class AuthController extends BaseController
 
             return responder()->success($result);
         } else {
-            return responder()->error(422, 'نام کاربری یا رمز عبور صحیح نمی باشد');
+            return responder()->error(400, 'نام کاربری یا رمز عبور صحیح نمی باشد');
         }
     }
 
@@ -345,7 +345,7 @@ class AuthController extends BaseController
             Cache::forget('verification_for_' . request('email'));
             return responder()->success(['message' => 'حساب شما با موفقیت تایید شد']);
         } else {
-            return responder()->error(422, 'تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
+            return responder()->error(400, 'تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Traits\GetUserNameTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,19 +11,20 @@ use Illuminate\Notifications\Notification;
 class NewTicketNotification extends Notification
 {
     use Queueable;
+    use GetUserNameTrait;
     private $ticket;
-    private $user;
+    private $profile;
 
     /**
      * Create a new notification instance.
      *
      * @param $ticket
-     * @param $user
+     * @param $profile
      */
-    public function __construct($ticket, $user)
+    public function __construct($ticket, $profile)
     {
         $this->ticket = $ticket;
-        $this->user = $user;
+        $this->profile = $profile;
     }
 
     /**
@@ -46,7 +48,7 @@ class NewTicketNotification extends Notification
     {
         return (new MailMessage)
             ->subject("[Ticket ID: {$this->ticket->ticket_id}] {$this->ticket->title}")
-            ->line($this->user->first_name.' '.$this->user->last_name. ' عزیز')
+            ->line($this->getUserName())
             ->line('از اینکه با پشتیبانی ابرپرداز تماس گرفتید متشکریم.')
             ->line('تیکتی برای شما باز شده و به محض پاسخ دهی به شما اطلاع داده خواهد شد')
             ->line('اطلاعات تیکت شما:')

@@ -12,7 +12,7 @@ class ApiRequest extends FormRequest
 {
     protected function failedValidation(Validator $validator)
     {
-        $response = new  ValidationResponse();
+        $response = new ValidationResponse();
         foreach ($validator->errors()->toArray() as $key => $item) {
             $response->errors[$key] = reset($item);
         }
@@ -26,7 +26,7 @@ class ApiRequest extends FormRequest
 class ValidationResponse
 {
     public $success = false;
-    public $code = 422;
+    public $code = 400;
     public $message = 'در اعتبارسنجی اطلاعات مشکلی وجود دارد';
     public $errors = [];
 }

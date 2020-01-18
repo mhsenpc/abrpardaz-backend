@@ -159,7 +159,7 @@ class TicketController extends BaseController
         }
         $ticket->save();
 
-        Auth::user()->notify(new NewTicketNotification($ticket,Auth::user()));
+        Auth::user()->notify(new NewTicketNotification($ticket,Auth::user()->profile));
         return responder()->success(['message' => 'تیکت جدید با موفقیت ایجاد شد']);
     }
 
@@ -207,7 +207,7 @@ class TicketController extends BaseController
 
         // send mail if the user commenting is not the ticket owner
         if ($reply->ticket->user->id !== Auth::id()) {
-            Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()));
+            Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
         }
 
         return responder()->success(['message' => 'پاسخ شما به تیکت با موفقیت ذخیره شد']);
@@ -245,7 +245,7 @@ class TicketController extends BaseController
         $ticket->save();
         $ticketOwner = $ticket->user;
 
-        Auth::user()->notify(new TicketStatusNotification($ticketOwner, $ticket));
+        Auth::user()->notify(new TicketStatusNotification($ticketOwner->profile, $ticket));
 
         return responder()->success(['message' => 'تسکت شما با موفقیت بسته شد']);
     }

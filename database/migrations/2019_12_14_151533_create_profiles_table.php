@@ -15,6 +15,8 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('mobile')->nullable()->unique();
             $table->timestamp('mobile_verified_at')->nullable();
             $table->string('phone')->nullable()->unique();
@@ -29,7 +31,7 @@ class CreateProfilesTable extends Migration
             $table->timestamp('national_card_back_verified_at')->nullable();
             $table->string('birth_certificate')->nullable();
             $table->timestamp('birth_certificate_verified_at')->nullable();
-            $table->timestamp('validatied_at')->nullable();
+            $table->timestamp('validated_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

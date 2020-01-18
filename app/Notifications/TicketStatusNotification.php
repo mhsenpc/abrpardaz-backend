@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Traits\GetUserNameTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,18 +11,19 @@ use Illuminate\Notifications\Notification;
 class TicketStatusNotification extends Notification
 {
     use Queueable;
-    private $ticketOwner;
+    use GetUserNameTrait;
+    private $profile;
     private $ticket;
 
     /**
      * Create a new notification instance.
      *
-     * @param $ticketOwner
+     * @param $profile
      * @param $ticket
      */
-    public function __construct($ticketOwner, $ticket)
+    public function __construct($profile, $ticket)
     {
-        $this->ticketOwner = $ticketOwner;
+        $this->profile = $profile;
         $this->ticket = $ticket;
     }
 
@@ -46,7 +48,7 @@ class TicketStatusNotification extends Notification
     {
         return (new MailMessage)
             ->subject("RE: {$this->ticket->title} (شماره تیکت: {$this->ticket->ticket_id})")
-            ->line($this->ticketOwner->first_name . ' ' . $this->ticketOwner->last_name. ' '. 'عزیز')
+            ->line($this->getUserName())
             ->line('تیکت شما به شماره '.$this->ticket->ticket_id .' بسته شد');
     }
 

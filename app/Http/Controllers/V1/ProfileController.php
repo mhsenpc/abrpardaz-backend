@@ -15,7 +15,6 @@ use App\Models\Profile;
 use App\Repositories\ProfileRepository;
 use App\Services\MobileService;
 use App\Services\PhoneService;
-use App\Traits\UploadTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +24,6 @@ use Illuminate\Support\Str;
 
 class ProfileController extends BaseController
 {
-    use UploadTrait;
     /**
      * @var ProfileRepository
      */
@@ -47,11 +45,11 @@ class ProfileController extends BaseController
 
     function setUserBasicInfo(SetUserInfoRequest $request)
     {
-        $user = Auth::user();
-        $user->first_name = \request('first_name');
-        $user->last_name = \request('last_name');
-        $user->save();
-        Profile::where('id', $user->profile_id)->update(['national_code' => \request('national_code')]);
+        Profile::where('id', Auth::user()->profile_id)->update([
+            'national_code' => \request('national_code'),
+            'first_name' => \request('first_name'),
+            'last_name' => \request('last_name')
+        ]);
 
         return responder()->success(['message' => 'اطلاعات شما با موفقیت ذخیره شد']);
     }
