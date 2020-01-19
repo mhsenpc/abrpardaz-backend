@@ -12,28 +12,14 @@ use App\Http\Requests\profile\UploadBirthCertificateRequest;
 use App\Http\Requests\profile\UploadNationalCardBackRequest;
 use App\Http\Requests\profile\UploadNationalCardFrontRequest;
 use App\Models\Profile;
-use App\Repositories\ProfileRepository;
 use App\Services\MobileService;
 use App\Services\PhoneService;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class ProfileController extends BaseController
 {
-    /**
-     * @var ProfileRepository
-     */
-    protected $repository;
-
-    public function __construct(ProfileRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     function getUserInfo()
     {
         $user = Auth::user();

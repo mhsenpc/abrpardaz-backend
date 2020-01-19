@@ -2,14 +2,17 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Profile;
+use App\Models\Project;
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens,Notifiable;
+    use HasApiTokens, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +20,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email','password','is_root','profile_id'
+        'email', 'password', 'is_root', 'profile_id'
     ];
 
     /**
@@ -40,11 +43,56 @@ class User extends Authenticatable
 
     public function profile()
     {
-        return $this->belongsTo('App\Models\Profile');
+        return $this->belongsTo(Profile::class);
     }
 
     public function project()
     {
-        return $this->belongsToMany('App\Models\Project');
+        return $this->belongsToMany(Project::class);
+    }
+
+    function getDefaultProject()
+    {
+        return Project::where('owner_id', $this->id)->first();
+    }
+
+    function __toString()
+    {
+        return $this->profile->first_name ;
+    }
+
+    static function newUser(string $email, string $password)
+    {
+        $project = (new Project());
+        $project->name = "Default";
+        $project->save();
+
+        $profile = (new Profile());
+        $profile->save();
+
+        $user = new User();
+        $user->password = $password;
+        $user->is_active = false;
+        $user->email = $email;
+        $user->profile_id = $profile->id;
+        $user->last_payment_date = Carbon::now();
+        $user->save();
+
+        $project->owner_id = $user->id;
+        $project->save();
+
+        $user->project()->attach($project->id);
+
+        return $user;
+    }
+
+    static function activateUserByEmail(string $email)
+    {
+        User::where('email', $email)->update(['is_active' => true, 'email_verified_at' => Carbon::now()]);
+    }
+
+    static function updatePassword(string $email, string $password)
+    {
+        User::where('email', $email)->update(['password' => $password]);
     }
 }

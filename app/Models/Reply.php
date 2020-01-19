@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Reply extends Model
 {
-    protected $fillable = [
-        'ticket_id', 'user_id', 'comment'
-    ];
+    protected $guarded = ['id'];
 
     public function ticket()
     {
@@ -17,6 +15,6 @@ class Reply extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\User::class);
     }
 }

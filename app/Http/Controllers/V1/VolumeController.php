@@ -4,27 +4,17 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Volume\AttachToMachineRequest;
+use App\Http\Requests\Volume\CreateVolumeRequest;
 use App\Http\Requests\Volume\DetachFromMachineRequest;
 use App\Http\Requests\Volume\RemoveVolumeRequest;
 use App\Http\Requests\Volume\RenameVolumeRequest;
-use App\Http\Requests\Volume\CreateVolumeRequest;
 use App\Models\Machine;
-use App\Repositories\VolumeRepository;
+use App\Models\Volume;
 use App\Services\VolumeService;
 use Illuminate\Support\Facades\Auth;
 
 class VolumeController extends BaseController
 {
-    /**
-     * @var VolumeRepository
-     */
-    protected $repository;
-
-    public function __construct(VolumeRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
      * @OA\Get(
      *      tags={"Volume"},
@@ -42,7 +32,7 @@ class VolumeController extends BaseController
      */
     public function index()
     {
-        $volumes = $this->repository->all();
+        $volumes = Volume::all();
         return responder()->success(['list' => $volumes]);
     }
 
@@ -81,10 +71,11 @@ class VolumeController extends BaseController
      *     )
      *
      */
-    function createVolume(CreateVolumeRequest $request){
+    function createVolume(CreateVolumeRequest $request)
+    {
         $service = new VolumeService();
-        $volume = $service->create(\request('name'),\request('size'));
-        $this->repository->create([
+        $volume = $service->create(\request('name'), \request('size'));
+        Volume::create([
             'remote_id' => $volume->id,
             'name' => \request('name'),
             'size' => \request('size'),
@@ -129,8 +120,9 @@ class VolumeController extends BaseController
      *     )
      *
      */
-    public function attachToMachine(AttachToMachineRequest $request){
-        $volume = $this->repository->find(\request('id'));
+    public function attachToMachine(AttachToMachineRequest $request)
+    {
+        $volume = Volume::find(\request('id'));
         $machine = Machine::find(\request('machine_id'));
 
         $service = new VolumeService();
@@ -174,8 +166,9 @@ class VolumeController extends BaseController
      *     )
      *
      */
-    function detachFromMachine(DetachFromMachineRequest $request){
-        $volume = $this->repository->find(\request('id'));
+    function detachFromMachine(DetachFromMachineRequest $request)
+    {
+        $volume = Volume::find(\request('id'));
         $machine = Machine::find(\request('machine_id'));
 
         $service = new VolumeService();
@@ -221,12 +214,11 @@ class VolumeController extends BaseController
      */
     function rename(RenameVolumeRequest $request)
     {
-        $volume = $this->repository->find(\request('id'));
-        $this->repository->update([
-            'name' => \request('name')
-        ], \request('id'));
+        $volume = Volume::find(\request('id'));
+        $volume->name = \request('name');
+        $volume->save();
 
-        return responder()->success(['message'=>'نام فضا با موفقیت تغییر یافت']);
+        return responder()->success(['message' => 'نام فضا با موفقیت تغییر یافت']);
     }
 
     /**
@@ -256,16 +248,16 @@ class VolumeController extends BaseController
      */
     function remove(RemoveVolumeRequest $request)
     {
-        $volume = $this->repository->find(\request('id'));
+        $volume = Volume::find(\request('id'));
 
-        if(!empty($volume->machine_id )){
-            return responder()->error(500,'لطفا قبل از حذف فضا اتصال آن را قطع کنید');
+        if (!empty($volume->machine_id)) {
+            return responder()->error(500, 'لطفا قبل از حذف فضا اتصال آن را قطع کنید');
         }
 
         $service = new VolumeService();
         $service->remove($volume->remote_id);
-        $this->repository->delete(\request('id'));
+        $volume->delete();
 
-        return responder()->success(['message'=>'فضا با موفقیت حذف شد']);
+        return responder()->success(['message' => 'فضا با موفقیت حذف شد']);
     }
 }

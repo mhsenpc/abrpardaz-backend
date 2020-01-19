@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProjectsTable extends Migration
+class CreateSnapshotBillingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateProjectsTable extends Migration
      */
     public function up()
     {
-        Schema::create('projects', function (Blueprint $table) {
+        Schema::create('snapshot_billing', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('owner_id');
-            $table->string('name');
+            $table->integer('snapshot_id');
+            $table->timestamp('last_payment_date');
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->foreign('snapshot_id')->references('id')->on('snapshots');
         });
     }
 
@@ -29,6 +30,6 @@ class CreateProjectsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('snapshot_billing');
     }
 }

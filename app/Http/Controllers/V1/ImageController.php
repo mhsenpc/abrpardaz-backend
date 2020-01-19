@@ -3,21 +3,11 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Repositories\ImageRepository;
+use App\Models\Image;
 use Illuminate\Http\Request;
 
 class ImageController extends BaseController
 {
-    /**
-     * @var ImageRepository
-     */
-    protected $repository;
-
-    public function __construct(ImageRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
      * @OA\Get(
      *      tags={"Image"},
@@ -34,6 +24,6 @@ class ImageController extends BaseController
      *
      */
     function os(){
-        return responder()->success(['list' => $this->repository->all()]);
+        return responder()->success(['list' => Image::all()]);
     }
 }

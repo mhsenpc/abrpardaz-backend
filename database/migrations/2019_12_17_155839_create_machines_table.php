@@ -21,6 +21,7 @@ class CreateMachinesTable extends Migration
             $table->string('password')->nullable();
             $table->integer('user_id');
             $table->integer('plan_id');
+            $table->integer('project_id');
             $table->integer('image_id');
             $table->integer('ssh_key_id')->nullable();
             $table->timestamps();
@@ -28,6 +29,7 @@ class CreateMachinesTable extends Migration
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('plan_id')->references('id')->on('plans');
+            $table->foreign('project_id')->references('id')->on('projects');
             $table->foreign('image_id')->references('id')->on('images');
             $table->foreign('ssh_key_id')->references('id')->on('ssh_keys');
         });

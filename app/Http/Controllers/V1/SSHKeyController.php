@@ -6,21 +6,11 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\SSHKey\AddKeyRequest;
 use App\Http\Requests\SSHKey\EditKeyRequest;
 use App\Http\Requests\SSHKey\RemoveKeyRequest;
-use App\Repositories\SSHKeyRepository;
+use App\Models\SshKey;
 use Illuminate\Support\Facades\Auth;
 
 class SSHKeyController extends BaseController
 {
-    /**
-     * @var SSHKeyRepository
-     */
-    protected $repository;
-
-    public function __construct(SSHKeyRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
      * @OA\Get(
      *      tags={"Ssh key"},
@@ -38,7 +28,7 @@ class SSHKeyController extends BaseController
      */
     function index()
     {
-        return responder()->success(['list' => $this->repository->all()]);
+        return responder()->success(['list' => SshKey::all()]);
     }
 
     /**
@@ -78,7 +68,7 @@ class SSHKeyController extends BaseController
      */
     function add(AddKeyRequest $request)
     {
-        $this->repository->create([
+        SshKey::create([
             'name' => $request->input('name'),
             'content' => $request->input('content'),
             'user_id' => Auth::id()
@@ -133,7 +123,7 @@ class SSHKeyController extends BaseController
      */
     function edit(EditKeyRequest $request)
     {
-        $this->repository->find(\request('id'))->update([
+        SshKey::find(\request('id'))->update([
             'name' => \request('name'),
             'content' => \request('content')
         ]);
@@ -167,7 +157,7 @@ class SSHKeyController extends BaseController
      */
     function remove(RemoveKeyRequest $request)
     {
-        $this->repository->delete(\request('id'));
+        SshKey::destroy(\request('id'));
         return responder()->success(['message' => "کلید با موفقیت حذف شد"]);
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Machine;
-use App\Models\User;
+use App\User;
 use App\Models\Volume;
 use App\Notifications\SendMachineInfoNotification;
 use App\Repositories\VolumeRepository;

@@ -18,4 +18,19 @@ class SshKey extends Model
     }
 
     protected $guarded = [];
+
+    static function createKey(string $name, string $content, int $user_id)
+    {
+        return static::create([
+            'user_id' => $user_id,
+            'name' => $name,
+            'content' => $content,
+        ]);
+    }
+
+    function edit(string $content){
+        $this->content = $content;
+        $this->save();
+        return $this;
+    }
 }

@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->integer('referrer_id')->nullable();
             $table->integer('profile_id');
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('last_payment_date');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

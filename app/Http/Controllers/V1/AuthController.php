@@ -13,9 +13,7 @@ use App\Http\Requests\Auth\VerifyRequest;
 use App\Models\Profile;
 use App\Notifications\RegisterUserNotification;
 use App\Notifications\ResetPasswordNotification;
-use App\Repositories\ProfileRepository;
-use App\Repositories\UserRepository;
-use App\Models\User;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -23,16 +21,6 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends BaseController
 {
-    /**
-     * @var UserRepository
-     */
-    protected $repository;
-
-    public function __construct(UserRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
      * @OA\Post(
      *      tags={"Authentication"},
@@ -70,7 +58,7 @@ class AuthController extends BaseController
      */
     function register(RegisterRequest $request)
     {
-        $user = $this->repository->newUser(
+        $user = User::newUser(
             request('email'),
             Hash::make(request('password'))
         );
@@ -228,7 +216,7 @@ class AuthController extends BaseController
     {
         $token = Cache::get('forget_token_for_' . request('email'));
         if (request('token') == $token) {
-            $this->repository->updatePassword(
+            User::updatePassword(
                 request('email'),
                 Hash::make(request('password'))
             );
@@ -289,7 +277,7 @@ class AuthController extends BaseController
     function changePassword(ChangePasswordRequest $request){
         $user = Auth::user();
         if (Hash::check(request('current_password'), $user->password)) {
-            $this->repository->updatePassword(
+            User::updatePassword(
                 $user->email,
                 Hash::make(request('new_password'))
             );
@@ -341,7 +329,7 @@ class AuthController extends BaseController
     {
         $token = Cache::get('verification_for_' . request('email'));
         if (request('token') == $token) {
-            $this->repository->activateUserByEmail(request('email'));
+            User::activateUserByEmail(request('email'));
             Cache::forget('verification_for_' . request('email'));
             return responder()->success(['message' => 'حساب شما با موفقیت تایید شد']);
         } else {

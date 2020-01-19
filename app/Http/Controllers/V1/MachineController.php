@@ -14,28 +14,15 @@ use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
 use App\Jobs\TakeSnapshotJob;
-use App\Models\Image;
 use App\Models\Machine;
-use App\Models\Plan;
 use App\Notifications\SendMachineInfoNotification;
-use App\Repositories\MachineRepository;
-use App\Repositories\SnapshotRepository;
 use App\Services\MachineService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class MachineController extends BaseController
 {
-    /**
-     * @var MachineRepository
-     */
-    protected $repository;
 
-    public function __construct(MachineRepository $repository)
-    {
-        $this->repository = $repository;
-    }
 
     /**
      * @OA\Get(
@@ -53,7 +40,7 @@ class MachineController extends BaseController
      */
     function index()
     {
-        $machines = $this->repository->with(['image', 'plan', 'sshKey'])->all();
+        $machines = Machine::with(['image', 'plan', 'sshKey'])->get();
         return responder()->success(['list' => $machines]);
     }
 
@@ -296,7 +283,7 @@ class MachineController extends BaseController
      */
     function resendInfo(ResendInfoRequest $request)
     {
-        $machine = $this->repository->find(\request('id'));
+        $machine = Machine::find(\request('id'));
         Auth::user()->notify(new SendMachineInfoNotification(Auth::user(), $machine));
         return responder()->success(['message' => "اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
     }

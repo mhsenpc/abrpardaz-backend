@@ -15,24 +15,12 @@ use App\Models\Ticket;
 use App\Notifications\NewTicketNotification;
 use App\Notifications\TicketReplyNotification;
 use App\Notifications\TicketStatusNotification;
-use App\Repositories\SSHKeyRepository;
-use App\Repositories\TicketRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class TicketController extends BaseController
 {
-    /**
-     * @var TicketRepository
-     */
-    protected $repository;
-
-    public function __construct(TicketRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
      * @OA\Get(
      *      tags={"Ticket"},
@@ -277,7 +265,7 @@ class TicketController extends BaseController
      */
     public function show(ShowTicketRequest $request)
     {
-        $ticket = $this->repository->with(['replies'])->find(\request('id'));
+        $ticket = Ticket::with(['replies'])->find(\request('id'));
         return responder()->success(['ticket' => $ticket]);
     }
 }

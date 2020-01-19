@@ -7,22 +7,11 @@ use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Models\Snapshot;
-use App\Repositories\SnapshotRepository;
 use App\Services\SnapshotService;
 use Illuminate\Http\Request;
 
 class SnapshotController extends BaseController
 {
-    /**
-     * @var SnapshotRepository
-     */
-    protected $repository;
-
-    public function __construct(SnapshotRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
     /**
      * @OA\Get(
      *      tags={"Snapshot"},
@@ -40,7 +29,7 @@ class SnapshotController extends BaseController
      */
     function index()
     {
-        return responder()->success(['list' => $this->repository->all()]);
+        return responder()->success(['list' => Snapshot::all()]);
     }
 
     /**
@@ -71,9 +60,7 @@ class SnapshotController extends BaseController
     function ofMachine(OfMachineRequest $request)
     {
         return responder()->success([
-            'list' => $this->repository->findWhere([
-                'machine_id' => \request('machine_id')
-            ])->all()
+            'list' => Snapshot::where('machine_id',\request('machine_id'))->get()
         ]);
     }
 
@@ -116,7 +103,7 @@ class SnapshotController extends BaseController
      */
     function rename(RenameSnapshotRequest $request)
     {
-        $snapshot = $this->repository->find(request('id'));
+        $snapshot = Snapshot::find(request('id'));
         $service = new SnapshotService();
         $result = $service->rename(
             $snapshot->remote_id,
@@ -124,7 +111,8 @@ class SnapshotController extends BaseController
         );
 
         if($result){
-            $this->repository->update(['name'=>\request('name')],\request('id'));
+            $snapshot->name = \request('name');
+            $snapshot->save();
             return responder()->success(['message' => "نام تصویر آنی با موفقیت تغییر کرد"]);
         }
         else{
@@ -164,7 +152,7 @@ class SnapshotController extends BaseController
         $service = new SnapshotService();
         $result = $service->remove(\request('id'));
         if($result){
-            $this->repository->delete(\request('id'));
+            Snapshot::destroy(\request('id'));
             return responder()->success(['message' => "تصویر آنی با موفقیت حذف شد"]);
         }
         else{
