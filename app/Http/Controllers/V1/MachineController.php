@@ -15,8 +15,10 @@ use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
 use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
+use App\Models\Snapshot;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
+use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -41,7 +43,7 @@ class MachineController extends BaseController
     function index()
     {
         $machines = Machine::with(['image', 'plan', 'sshKey'])->get();
-        return responder()->success(['list' => $machines]);
+        return Responder::result(['list' => $machines]);
     }
 
     /**
@@ -61,6 +63,46 @@ class MachineController extends BaseController
      *         )
      *     ),
      *
+     * @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="plan_id",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="image_id",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="ssh_key_id",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
      * @OA\Response(
      *         response="default",
      *         description=""
@@ -77,7 +119,7 @@ class MachineController extends BaseController
         $ssh_key_id = \request('ssh_key_id');
 
         try {
-            $machine = MachineRepository::createMachine(
+            $machine = Machine::createMachine(
                 $name,
                 $user_id,
                 $plan_id,
@@ -94,18 +136,17 @@ class MachineController extends BaseController
                 $machine->id
             );
 
-            return responder()->success(['message' => "عملیات ساخت سرور شروع شد"]);
+            return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
             Log::critical("Couldn't create server for user #" . Auth::id());
             Log::critical($exception);
-            return responder()->error(500, "ساخت سرور انجام نشد");
+            return Responder::error('ساخت سرور انجام نشد');
         }
     }
 
     function createFromSnapshot(CreateFromSnapshotRequest $request)
     {
-
-        return responder()->success(['message' => "سرور با موفقیت ساخته شد"]);
+        return Responder::success('عملیات ساخت سرور شروع شد');
     }
 
     /**
@@ -140,7 +181,7 @@ class MachineController extends BaseController
         $service = new MachineService();
         $link = $service->console($machine->remote_id);
 
-        return responder()->success(['link' => $link]);
+        return Responder::result(['link' => $link]);
     }
 
     /**
@@ -172,7 +213,7 @@ class MachineController extends BaseController
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOn($machine->remote_id);
-        return responder()->success(['message' => "سرور با موفقیت روشن شد"]);
+        return Responder::success('سرور با موفقیت روشن شد');
     }
 
     /**
@@ -203,8 +244,8 @@ class MachineController extends BaseController
     {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
-        $service->powerOf($machine->remote_id);
-        return responder()->success(['message' => "سرور با موفقیت خاموش شد"]);
+        $service->powerOff($machine->remote_id);
+        return Responder::success('سرور با موفقیت خاموش شد');
     }
 
     /**
@@ -245,7 +286,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::findorFail(\request('id'));
 
-        $snapshot = SnapshotRepository::newSnapshot(
+        $snapshot = Snapshot::newSnapshot(
             \request('name'),
             \request('id'),
             Auth::id()
@@ -253,7 +294,7 @@ class MachineController extends BaseController
 
         TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
-        return responder()->success(['message' => "عملیات ساخت شروع تصویر آنی شروع شد"]);
+        return Responder::success('عملیات ساخت تصویر آنی شروع شد');
     }
 
     /**
@@ -285,7 +326,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(\request('id'));
         Auth::user()->notify(new SendMachineInfoNotification(Auth::user(), $machine));
-        return responder()->success(['message' => "اطلاعات سرور مجددا به ایمیل شما ارسال گردید"]);
+        return Responder::success('اطلاعات سرور مجددا به ایمیل شما ارسال گردید');
     }
 
     /**
@@ -329,7 +370,7 @@ class MachineController extends BaseController
         $service = new MachineService();
         $service->rename($machine->remote_id, \request('name'));
 
-        return responder()->success(['message' => "نام سرور با موفقیت تغییر یافت"]);
+        return Responder::success('نام سرور با موفقیت تغییر یافت');
     }
 
     /**
@@ -364,6 +405,6 @@ class MachineController extends BaseController
 
         $machine->delete();
 
-        return responder()->success(['message' => "سرور با موفقیت حذف گردید"]);
+        return Responder::success('سرور با موفقیت حذف گردید');
     }
 }

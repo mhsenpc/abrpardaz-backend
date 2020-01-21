@@ -14,6 +14,7 @@ use App\Http\Requests\profile\UploadNationalCardFrontRequest;
 use App\Models\Profile;
 use App\Services\MobileService;
 use App\Services\PhoneService;
+use App\Services\Responder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -24,7 +25,7 @@ class ProfileController extends BaseController
     {
         $user = Auth::user();
         $profile = Auth::user()->profile;
-        return responder()->success([
+        return Responder::result([
             'user' => $user
         ]);
     }
@@ -37,7 +38,7 @@ class ProfileController extends BaseController
             'last_name' => \request('last_name')
         ]);
 
-        return responder()->success(['message' => 'اطلاعات شما با موفقیت ذخیره شد']);
+        return Responder::success('اطلاعات شما با موفقیت ذخیره شد');
     }
 
     function requestSetMobile(RequestSetMobileRequest $request)
@@ -49,7 +50,7 @@ class ProfileController extends BaseController
         Cache::put('validation_code_for_' . request('mobile'), $code, 5 * 60);
         MobileService::sendActivationCode(request('mobile'), $code);
 
-        return responder()->success(['message' => 'کد فعال سازی به شماره موبایل شما ارسال گردید']);
+        return Responder::success('کد فعال سازی به شماره موبایل شما ارسال گردید');
     }
 
     function setMobile(SetMobileRequest $request)
@@ -62,9 +63,9 @@ class ProfileController extends BaseController
                 'mobile_verified_at' => Carbon::now()
             ]);
 
-            return responder()->success(['message' => 'شماره موبایل شما با موفقیت ذخیره شد']);
+            return Responder::success('شماره موبایل شما با موفقیت ذخیره شد');
         } else {
-            return responder()->error(400, 'کد وارد شده صحیح نمی باشد');
+            return Responder::error('کد وارد شده صحیح نمی باشد');
         }
     }
 
@@ -77,7 +78,7 @@ class ProfileController extends BaseController
         Cache::put('validation_code_for_' . request('phone'), $code, 5 * 60);
         PhoneService::sendActivationCode(request('phone'), $code);
 
-        return responder()->success(['message' => 'منتظر دریافت کد فعال سازی روی این شماره باشید']);
+        return Responder::success('منتظر دریافت کد فعال سازی روی این شماره باشید');
     }
 
     function setPhone(SetPhoneRequest $request)
@@ -90,9 +91,9 @@ class ProfileController extends BaseController
                 'phone_verified_at' => Carbon::now()
             ]);
 
-            return responder()->success(['message' => 'شماره تلفن شما با موفقیت ذخیره شد']);
+            return Responder::success('شماره تلفن شما با موفقیت ذخیره شد');
         } else {
-            return responder()->error(400, 'کد وارد شده صحیح نمی باشد');
+            return Responder::error('کد وارد شده صحیح نمی باشد');
         }
     }
 
@@ -105,10 +106,10 @@ class ProfileController extends BaseController
                 'national_card_front' => $path,
             ]);
 
-            return responder()->success(['message' => 'تصویر با موفقیت بارگذاری شد']);
+            return Responder::success('تصویر با موفقیت بارگذاری شد');
         }
         else{
-            return responder()->error(400,'بارگذاری تصویر مشکلی وجود دارد');
+            return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
 
     }
@@ -122,10 +123,10 @@ class ProfileController extends BaseController
                 'national_card_back' => $path,
             ]);
 
-            return responder()->success(['message' => 'تصویر با موفقیت بارگذاری شد']);
+            return Responder::success('تصویر با موفقیت بارگذاری شد');
         }
         else{
-            return responder()->error(400,'بارگذاری تصویر مشکلی وجود دارد');
+            return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
     }
 
@@ -139,10 +140,10 @@ class ProfileController extends BaseController
             ]);
 
 
-            return responder()->success(['message' => 'تصویر با موفقیت بارگذاری شد']);
+            return Responder::success('تصویر با موفقیت بارگذاری شد');
         }
         else{
-            return responder()->error(400,'بارگذاری تصویر مشکلی وجود دارد');
+            return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
     }
 }

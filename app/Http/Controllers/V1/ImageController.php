@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Models\Image;
+use App\Services\Responder;
 use Illuminate\Http\Request;
 
 class ImageController extends BaseController
@@ -24,6 +25,6 @@ class ImageController extends BaseController
      *
      */
     function os(){
-        return responder()->success(['list' => Image::all()]);
+        return Responder::result(['list' => Image::all()]);
     }
 }

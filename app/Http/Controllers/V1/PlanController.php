@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Models\Plan;
+use App\Services\Responder;
 
 class PlanController extends BaseController
 {
@@ -22,8 +23,9 @@ class PlanController extends BaseController
      *     )
      *
      */
-    function index(){
+    function index()
+    {
         $plans = Plan::all();
-        return responder()->success(['list'=>$plans]);
+        return Responder::result(['list' => $plans]);
     }
 }

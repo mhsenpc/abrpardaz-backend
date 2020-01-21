@@ -66,6 +66,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::post('add', 'SSHKeyController@add');
 
             Route::prefix('{id}')->group(function () {
+                Route::get('show', 'SSHKeyController@show');
                 Route::post('edit', 'SSHKeyController@edit');
                 Route::delete('remove', 'SSHKeyController@remove');
             });

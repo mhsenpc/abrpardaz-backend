@@ -11,7 +11,6 @@
         "php": "^7.2",
         "darkaonline/l5-swagger": "^6.0",
         "fideloper/proxy": "^4.0",
-        "flugger/laravel-responder": "^3.0",
         "laravel/framework": "^6.2",
         "laravel/passport": "^8.0",
         "laravel/tinker": "^1.0",

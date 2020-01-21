@@ -545,6 +545,21 @@
                 }
             }
         },
+        "/sshKeys/{id}/show": {
+            "get": {
+                "tags": [
+                    "Ssh key"
+                ],
+                "summary": "Return a specific ssh key",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SSHKeyController::show",
+                "responses": {
+                    "default": {
+                        "description": "Return a specific ssh key"
+                    }
+                }
+            }
+        },
         "/sshKeys/add": {
             "post": {
                 "tags": [

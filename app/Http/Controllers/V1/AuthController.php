@@ -13,6 +13,7 @@ use App\Http\Requests\Auth\VerifyRequest;
 use App\Models\Profile;
 use App\Notifications\RegisterUserNotification;
 use App\Notifications\ResetPasswordNotification;
+use App\Services\Responder;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -68,7 +69,7 @@ class AuthController extends BaseController
 
         $user->notify(new RegisterUserNotification(request('email'), $token));
 
-        return responder()->success(['message' => 'لینک فعال سازی به ایمیل شما ارسال گردید']);
+        return Responder::success('لینک فعال سازی به ایمیل شما ارسال گردید');
     }
 
     /**
@@ -115,10 +116,11 @@ class AuthController extends BaseController
             $result['access_token'] = $token->accessToken;
             $result['token_type'] = 'Bearer';
             $result['expires_at'] = $token->token->expires_at;
+            $result['message'] = 'شما با موفقیت وارد شدید';
 
-            return responder()->success($result);
+            return Responder::result($result);
         } else {
-            return responder()->error(400, 'نام کاربری یا رمز عبور صحیح نمی باشد');
+            return Responder::error('نام کاربری یا رمز عبور صحیح نمی باشد');
         }
     }
 
@@ -154,7 +156,7 @@ class AuthController extends BaseController
 
         Auth::user()->notify(new ResetPasswordNotification(request('email'), $token));
 
-        return responder()->success(['message' => 'لینک بازنشانی رمز به ایمیل شما ارسال گردید']);
+        return Responder::success('لینک بازنشانی رمز به ایمیل شما ارسال گردید');
     }
 
     /**
@@ -222,9 +224,9 @@ class AuthController extends BaseController
             );
 
             Cache::forget('forget_token_for_' . request('email'));
-            return responder()->success(['message' => 'بازنشانی رمز عبور با موفقیت انجام شد']);
+            return Responder::success('بازنشانی رمز عبور با موفقیت انجام شد');
         } else {
-            return responder()->success(['message' => 'بازنشانی رمز با توکن وارد شده امکان پذیر نمی باشد']);
+            return Responder::error('بازنشانی رمز با توکن وارد شده امکان پذیر نمی باشد');
         }
     }
 
@@ -282,9 +284,9 @@ class AuthController extends BaseController
                 Hash::make(request('new_password'))
             );
 
-            return responder()->success(['message' => 'رمز عبور شما با موفقیت تغییر یافت']);
+            return Responder::success('رمز عبور شما با موفقیت تغییر یافت');
         } else {
-            return responder()->success(['message' => 'رمز عبور قبلی شما صحیح نمی باشد']);
+            return Responder::error('رمز عبور قبلی شما صحیح نمی باشد');
         }
     }
 
@@ -331,9 +333,9 @@ class AuthController extends BaseController
         if (request('token') == $token) {
             User::activateUserByEmail(request('email'));
             Cache::forget('verification_for_' . request('email'));
-            return responder()->success(['message' => 'حساب شما با موفقیت تایید شد']);
+            return Responder::success('حساب کاربری شما با موفقیت تایید شد');
         } else {
-            return responder()->error(400, 'تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
+            return Responder::error('تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
         }
     }
 
@@ -355,6 +357,6 @@ class AuthController extends BaseController
     function logout(LogoutRequest $request)
     {
         Auth::logout();
-        return responder()->success(['message' => 'شما با موفقیت خارج شدید']);
+        return Responder::success('شما با موفقیت خارج شدید');
     }
 }

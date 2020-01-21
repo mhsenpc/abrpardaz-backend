@@ -15,7 +15,7 @@ use App\Models\Ticket;
 use App\Notifications\NewTicketNotification;
 use App\Notifications\TicketReplyNotification;
 use App\Notifications\TicketStatusNotification;
-use Illuminate\Http\Request;
+use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -39,7 +39,7 @@ class TicketController extends BaseController
     public function index()
     {
         $tickets = Ticket::all();
-        return responder()->success(['list' => $tickets]);
+        return Responder::result(['list' => $tickets->toArray()]);
     }
 
     /**
@@ -60,7 +60,7 @@ class TicketController extends BaseController
     public function categories()
     {
         $tickets = Category::all();
-        return responder()->success(['list' => $tickets]);
+        return Responder::result(['list' => $tickets->toArray()]);
     }
 
 
@@ -147,8 +147,8 @@ class TicketController extends BaseController
         }
         $ticket->save();
 
-        Auth::user()->notify(new NewTicketNotification($ticket,Auth::user()->profile));
-        return responder()->success(['message' => 'تیکت جدید با موفقیت ایجاد شد']);
+        Auth::user()->notify(new NewTicketNotification($ticket, Auth::user()->profile));
+        return Responder::success('تیکت جدید با موفقیت ایجاد شد');
     }
 
     /**
@@ -198,7 +198,7 @@ class TicketController extends BaseController
             Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
         }
 
-        return responder()->success(['message' => 'پاسخ شما به تیکت با موفقیت ذخیره شد']);
+        return Responder::success('پاسخ شما به تیکت با موفقیت ارسال شد');
     }
 
     /**
@@ -235,7 +235,7 @@ class TicketController extends BaseController
 
         Auth::user()->notify(new TicketStatusNotification($ticketOwner->profile, $ticket));
 
-        return responder()->success(['message' => 'تسکت شما با موفقیت بسته شد']);
+        return Responder::success('تیکت شما با موفقیت بسته شد');
     }
 
     /**
@@ -266,6 +266,6 @@ class TicketController extends BaseController
     public function show(ShowTicketRequest $request)
     {
         $ticket = Ticket::with(['replies'])->find(\request('id'));
-        return responder()->success(['ticket' => $ticket]);
+        return Responder::result(['ticket' => $ticket]);
     }
 }

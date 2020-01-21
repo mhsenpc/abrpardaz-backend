@@ -6,7 +6,9 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\SSHKey\AddKeyRequest;
 use App\Http\Requests\SSHKey\EditKeyRequest;
 use App\Http\Requests\SSHKey\RemoveKeyRequest;
+use App\Http\Requests\SSHKey\ShowKeyRequest;
 use App\Models\SshKey;
+use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 
 class SSHKeyController extends BaseController
@@ -28,7 +30,27 @@ class SSHKeyController extends BaseController
      */
     function index()
     {
-        return responder()->success(['list' => SshKey::all()]);
+        return Responder::result(['list' => SshKey::all()]);
+    }
+
+    /**
+     * @OA\Get(
+     *      tags={"Ssh key"},
+     *      path="/sshKeys/{id}/show",
+     *      summary="Return a specific ssh key",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="Return a specific ssh key"
+     *     ),
+     *
+     *     )
+     *
+     */
+    function show(ShowKeyRequest $request){
+        $item = SshKey::find(request('id'));
+        return Responder::result(['item' => $item]);
     }
 
     /**
@@ -73,7 +95,7 @@ class SSHKeyController extends BaseController
             'content' => $request->input('content'),
             'user_id' => Auth::id()
         ]);
-        return responder()->success(['message' => "کلید با موفقیت اضافه شد"]);
+        return Responder::success("کلید با موفقیت اضافه شد");
     }
 
     /**
@@ -127,7 +149,7 @@ class SSHKeyController extends BaseController
             'name' => \request('name'),
             'content' => \request('content')
         ]);
-        return responder()->success(['message' => "کلید با موفقیت ویرایش شد"]);
+        return Responder::success("کلید با موفقیت ویرایش شد");
     }
 
     /**
@@ -158,6 +180,6 @@ class SSHKeyController extends BaseController
     function remove(RemoveKeyRequest $request)
     {
         SshKey::destroy(\request('id'));
-        return responder()->success(['message' => "کلید با موفقیت حذف شد"]);
+        return Responder::success("کلید با موفقیت حذف شد");
     }
 }

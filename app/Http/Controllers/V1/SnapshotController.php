@@ -7,6 +7,7 @@ use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Models\Snapshot;
+use App\Services\Responder;
 use App\Services\SnapshotService;
 use Illuminate\Http\Request;
 
@@ -29,7 +30,7 @@ class SnapshotController extends BaseController
      */
     function index()
     {
-        return responder()->success(['list' => Snapshot::all()]);
+        return Responder::result(['list' => Snapshot::all()]);
     }
 
     /**
@@ -59,7 +60,7 @@ class SnapshotController extends BaseController
      */
     function ofMachine(OfMachineRequest $request)
     {
-        return responder()->success([
+        return Responder::result([
             'list' => Snapshot::where('machine_id',\request('machine_id'))->get()
         ]);
     }
@@ -113,10 +114,10 @@ class SnapshotController extends BaseController
         if($result){
             $snapshot->name = \request('name');
             $snapshot->save();
-            return responder()->success(['message' => "نام تصویر آنی با موفقیت تغییر کرد"]);
+            return Responder::success("نام تصویر آنی با موفقیت تغییر کرد");
         }
         else{
-            return responder()->error(500, "تغییر نام تصویر آنی انجام نشد");
+            return Responder::error("تغییر نام تصویر آنی انجام نشد");
         }
 
     }
@@ -153,10 +154,10 @@ class SnapshotController extends BaseController
         $result = $service->remove(\request('id'));
         if($result){
             Snapshot::destroy(\request('id'));
-            return responder()->success(['message' => "تصویر آنی با موفقیت حذف شد"]);
+            return Responder::success("تصویر آنی با موفقیت حذف شد");
         }
         else{
-            return responder()->error(500, "حذف تصویر آنی امکانپذیر نمی باشد");
+            return Responder::error("حذف تصویر آنی امکانپذیر نمی باشد");
         }
     }
 }

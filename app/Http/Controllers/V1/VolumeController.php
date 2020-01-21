@@ -10,6 +10,7 @@ use App\Http\Requests\Volume\RemoveVolumeRequest;
 use App\Http\Requests\Volume\RenameVolumeRequest;
 use App\Models\Machine;
 use App\Models\Volume;
+use App\Services\Responder;
 use App\Services\VolumeService;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +34,7 @@ class VolumeController extends BaseController
     public function index()
     {
         $volumes = Volume::all();
-        return responder()->success(['list' => $volumes]);
+        return Responder::result(['list' => $volumes]);
     }
 
     /**
@@ -82,7 +83,7 @@ class VolumeController extends BaseController
             'is_root' => false,
             'user_id' => Auth::id()
         ]);
-        return responder()->success(['message' => 'فضا با موفقیت ساخته شد']);
+        return Responder::success('فضا با موفقیت ساخته شد');
     }
 
     /**
@@ -128,7 +129,7 @@ class VolumeController extends BaseController
         $service = new VolumeService();
         $service->attachVolumeToMachine($machine->remote_id, $volume->remote_id);
 
-        return responder()->success(['message' => 'اتصال با موفقیت انجام شد']);
+        return Responder::success('اتصال با موفقیت انجام شد');
     }
 
     /**
@@ -174,7 +175,7 @@ class VolumeController extends BaseController
         $service = new VolumeService();
         $service->detachVolumeFromMachine($machine->remote_id, $volume->remote_id);
 
-        return responder()->success(['message' => 'قطع ارتباط با موفقیت انجام شد']);
+        return Responder::success('قطع ارتباط با موفقیت انجام شد');
     }
 
     /**
@@ -218,7 +219,7 @@ class VolumeController extends BaseController
         $volume->name = \request('name');
         $volume->save();
 
-        return responder()->success(['message' => 'نام فضا با موفقیت تغییر یافت']);
+        return Responder::success('نام فضا با موفقیت تغییر یافت');
     }
 
     /**
@@ -251,13 +252,13 @@ class VolumeController extends BaseController
         $volume = Volume::find(\request('id'));
 
         if (!empty($volume->machine_id)) {
-            return responder()->error(500, 'لطفا قبل از حذف فضا اتصال آن را قطع کنید');
+            return Responder::error('لطفا قبل از حذف فضا اتصال آن را قطع کنید');
         }
 
         $service = new VolumeService();
         $service->remove($volume->remote_id);
         $volume->delete();
 
-        return responder()->success(['message' => 'فضا با موفقیت حذف شد']);
+        return Responder::success('فضا با موفقیت حذف شد');
     }
 }
