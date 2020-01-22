@@ -21,6 +21,22 @@ use Illuminate\Support\Facades\Cache;
 
 class ProfileController extends BaseController
 {
+    /**
+     * @OA\Get(
+     *      tags={"Profile"},
+     *      path="/profile/getUserInfo",
+     *      summary="Get user basic info",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function getUserInfo()
     {
         $user = Auth::user();
@@ -30,6 +46,51 @@ class ProfileController extends BaseController
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/setUserBasicInfo",
+     *      summary="Set user basic info",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="first_name",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="last_name",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="national_code",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function setUserBasicInfo(SetUserInfoRequest $request)
     {
         Profile::where('id', Auth::user()->profile_id)->update([
@@ -41,6 +102,32 @@ class ProfileController extends BaseController
         return Responder::success('اطلاعات شما با موفقیت ذخیره شد');
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/requestSetMobile",
+     *      summary="Request set mobile",
+     *      description="It sends a code to the mobile number",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="mobile",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function requestSetMobile(RequestSetMobileRequest $request)
     {
         if (config('app.env') == 'local')
@@ -53,6 +140,41 @@ class ProfileController extends BaseController
         return Responder::success('کد فعال سازی به شماره موبایل شما ارسال گردید');
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/setMobile",
+     *      summary="Set mobile",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="mobile",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="code",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function setMobile(SetMobileRequest $request)
     {
         $code = Cache::get('validation_code_for_' . request('mobile'));
@@ -69,6 +191,32 @@ class ProfileController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/requestSetPhone",
+     *      summary="Request set phone",
+     *      description="It calls to the phone number and tells a code",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="phone",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function requestSetPhone(RequestSetPhoneRequest $request)
     {
         if (config('app.env') == 'local')
@@ -81,6 +229,42 @@ class ProfileController extends BaseController
         return Responder::success('منتظر دریافت کد فعال سازی روی این شماره باشید');
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/setPhone",
+     *      summary="Set phone",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="phone",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     @OA\Parameter(
+     *         name="code",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
     function setPhone(SetPhoneRequest $request)
     {
         $code = Cache::get('validation_code_for_' . request('phone'));
@@ -97,6 +281,32 @@ class ProfileController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/uploadNationalCardFront",
+     *      summary="Upload national card front",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="image",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function uploadNationalCardFront(UploadNationalCardFrontRequest $request){
         if ($request->has('image')) {
             $path = $request->file('image')->store('images');
@@ -114,6 +324,32 @@ class ProfileController extends BaseController
 
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/uploadNationalCardBack",
+     *      summary="Upload national card back",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="image",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function uploadNationalCardBack(UploadNationalCardBackRequest  $request){
         if ($request->has('image')) {
             $path = $request->file('image')->store('images');
@@ -130,6 +366,32 @@ class ProfileController extends BaseController
         }
     }
 
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/uploadBirthCertificate",
+     *      summary="Upload birth certificate",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="image",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     *     )
+     *
+     */
     function uploadBirthCertificate(UploadBirthCertificateRequest $request){
         if ($request->has('image')) {
             $path = $request->file('image')->store('images');

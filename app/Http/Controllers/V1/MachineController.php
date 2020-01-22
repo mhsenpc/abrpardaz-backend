@@ -53,15 +53,6 @@ class MachineController extends BaseController
      *      summary="Create a new machine from an image",
      *      description="",
      *
-     * @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="int"
-     *         )
-     *     ),
      *
      * @OA\Parameter(
      *         name="name",

@@ -8,9 +8,6 @@ use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\Snapshot;
-use App\Repositories\ImageRepository;
-use App\Repositories\MachineRepository;
-use App\Repositories\SnapshotRepository;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -39,7 +36,7 @@ class MachineService
         try {
             $image = Image::find($image_id);
             $plan = Plan::find($plan_id);
-            MachineRepository::updateRemoteID($machine_id, 'test');
+            Machine::find($machine_id)->updateRemoteID('test');
             return true;
 
             $options = [
@@ -60,11 +57,11 @@ class MachineService
 
             $server->waitUntil('Active');
 
-            MachineRepository::updateRemoteID($machine_id, $server->id);
+            Machine::find($machine_id)->updateRemoteID($server->id);
         }
         catch (\Exception $exception){
             //TODO: save a notification for this user
-            MachineRepository::updateRemoteID($machine_id,'failed');
+            Machine::find($machine_id)->updateRemoteID('failed');
         }
     }
 
@@ -106,8 +103,7 @@ class MachineService
             $server->waitUntil('Active');
 
             //update size and remote id in snapshots
-            $snapshot = (new SnapshotRepository(Snapshot::find($snapshot_id)));
-            $snapshot->updateSizeAndRemoteId($remote_id,$image->size);
+            Snapshot::find($snapshot_id)->updateSizeAndRemoteId($remote_id,$image->size);
         }
         catch (\Exception $exception){
             $snapshot = Snapshot::find($snapshot_id);

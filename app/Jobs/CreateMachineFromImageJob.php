@@ -6,7 +6,6 @@ use App\Models\Machine;
 use App\User;
 use App\Models\Volume;
 use App\Notifications\SendMachineInfoNotification;
-use App\Repositories\VolumeRepository;
 use App\Services\MachineService;
 use App\Services\VolumeService;
 use Illuminate\Bus\Queueable;

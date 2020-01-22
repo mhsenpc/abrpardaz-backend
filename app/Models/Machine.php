@@ -43,8 +43,8 @@ class Machine extends Model
         $machine->plan_id = $plan_id;
         $machine->image_id = $image_id;
         $machine->ssh_key_id = $ssh_key_id;
-        $machine->last_payment_date = Carbon::now();
-        $machine->project_id = Auth::user()->getDefaultProject();
+        $machine->project_id = Auth::user()->getDefaultProject()->id;
+        print_r($machine->project_id );
         $machine->save();
 
         return $machine;

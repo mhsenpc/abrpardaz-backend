@@ -132,6 +132,8 @@ return [
         "size" => "اندازه",
 		"file" => "فایل",
 		"fullname" => "نام کامل",
-        "national_code" => "کد ملی"
+        "national_code" => "کد ملی",
+        'plan_id' => 'پلن',
+        'image_id' => 'سیستم عامل',
     ],
 ];

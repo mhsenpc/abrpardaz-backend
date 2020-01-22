@@ -299,12 +299,39 @@
                 "operationId": "App\\Http\\Controllers\\V1\\MachineController::createFromImage",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "name",
+                        "in": "query",
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "plan_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "image_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ssh_key_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
@@ -526,6 +553,265 @@
                 "responses": {
                     "default": {
                         "description": "List of plans"
+                    }
+                }
+            }
+        },
+        "/profile/getUserInfo": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Get user basic info",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::getUserInfo",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/setUserBasicInfo": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Set user basic info",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::setUserBasicInfo",
+                "parameters": [
+                    {
+                        "name": "first_name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "national_code",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/requestSetMobile": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Request set mobile",
+                "description": "It sends a code to the mobile number",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::requestSetMobile",
+                "parameters": [
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/setMobile": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Set mobile",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::setMobile",
+                "parameters": [
+                    {
+                        "name": "mobile",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/requestSetPhone": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Request set phone",
+                "description": "It calls to the phone number and tells a code",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::requestSetPhone",
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/setPhone": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Set phone",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::setPhone",
+                "parameters": [
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/uploadNationalCardFront": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Upload national card front",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::uploadNationalCardFront",
+                "parameters": [
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/uploadNationalCardBack": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Upload national card back",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::uploadNationalCardBack",
+                "parameters": [
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/uploadBirthCertificate": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Upload birth certificate",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::uploadBirthCertificate",
+                "parameters": [
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
                     }
                 }
             }

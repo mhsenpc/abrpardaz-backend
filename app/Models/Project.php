@@ -9,6 +9,8 @@ class Project extends Model
 {
     use SoftDeletes;
 
+    protected $guarded = ['id'];
+
     public function users()
     {
         return $this->belongsToMany(\App\User::class);
