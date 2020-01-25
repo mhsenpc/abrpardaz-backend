@@ -289,6 +289,32 @@
                 }
             }
         },
+        "/machines/{id}/details": {
+            "get": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Detailed information of a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::details",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "returns a list of machines"
+                    }
+                }
+            }
+        },
         "/machines/createFromImage": {
             "post": {
                 "tags": [
@@ -313,7 +339,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     },
                     {
@@ -322,16 +348,16 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     },
                     {
                         "name": "ssh_key_id",
                         "in": "query",
                         "description": "",
-                        "required": true,
+                        "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "int"
                         }
                     }
                 ],
@@ -503,6 +529,41 @@
                         "name": "name",
                         "in": "query",
                         "description": "The new name you want to put on the machine",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/rescale": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Change the plan of a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::rescale",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "int"
+                        }
+                    },
+                    {
+                        "name": "plan_id",
+                        "in": "query",
+                        "description": "The new plan you want for the machine",
                         "required": true,
                         "schema": {
                             "type": "string"

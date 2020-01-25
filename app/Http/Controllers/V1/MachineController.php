@@ -5,16 +5,20 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
+use App\Http\Requests\Server\DetailsRequest;
 use App\Http\Requests\Server\GetConsoleRequest;
 use App\Http\Requests\Server\PowerOffRequest;
 use App\Http\Requests\Server\PowerOnRequest;
 use App\Http\Requests\Server\RemoveServerRequest;
 use App\Http\Requests\Server\RenameServerRequest;
+use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
 use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
+use App\Models\MachineBilling;
+use App\Models\Plan;
 use App\Models\Snapshot;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
@@ -47,6 +51,39 @@ class MachineController extends BaseController
     }
 
     /**
+     * @OA\Get(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/details",
+     *      summary="Detailed information of a machine",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="returns a list of machines"
+     *     ),
+     *
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     *
+     *
+     */
+    function details(DetailsRequest $request){
+        $machines = Machine::where('id',request('id'))->with(['image', 'plan', 'sshKey'])->first();
+        return Responder::result(['machine' => $machines]);
+    }
+
+    /**
      * @OA\Post(
      *      tags={"Machine"},
      *      path="/machines/createFromImage",
@@ -70,7 +107,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -80,7 +117,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -88,9 +125,9 @@ class MachineController extends BaseController
      *         name="ssh_key_id",
      *         in="query",
      *         description="",
-     *         required=true,
+     *         required=false,
      *         @OA\Schema(
-     *             type="string"
+     *             type="int"
      *         )
      *     ),
      *
@@ -365,6 +402,51 @@ class MachineController extends BaseController
     }
 
     /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/rescale",
+     *      summary="Change the plan of a machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="int"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="plan_id",
+     *         in="query",
+     *         description="The new plan you want for the machine",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function rescale(RescaleServerRequest $request){
+        $machine = Machine::find(request('id'));
+        $plan = Plan::find(request('plan_id'));
+        if(request('plan_id') == $machine->plan->id){
+            return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
+        }
+        $machine->changePlan($plan);
+        return Responder::success('پلن با موفقیت تغییر یافت');
+    }
+
+    /**
      * @OA\Delete(
      *      tags={"Machine"},
      *      path="/machines/{id}/remove",
@@ -394,6 +476,7 @@ class MachineController extends BaseController
         $service = new MachineService();
         $service->remove($machine->remote_id);
 
+        $machine->billing->stopBilling();
         $machine->delete();
 
         return Responder::success('سرور با موفقیت حذف گردید');

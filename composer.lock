@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0213b70ba74a3af355f01d46bc7349bf",
+    "content-hash": "fec224b5538ccfc8bf86f18e754162af",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -113,6 +113,63 @@
                 "stream_filter_register"
             ],
             "time": "2019-04-09T12:31:48+00:00"
+        },
+        {
+            "name": "consoletvs/invoices",
+            "version": "1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ConsoleTVs/Invoices.git",
+                "reference": "4fff21acd46764158ffa8a8be8cc1e6cc6349cc3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ConsoleTVs/Invoices/zipball/4fff21acd46764158ffa8a8be8cc1e6cc6349cc3",
+                "reference": "4fff21acd46764158ffa8a8be8cc1e6cc6349cc3",
+                "shasum": ""
+            },
+            "require": {
+                "dompdf/dompdf": "^0.8",
+                "ext-bcmath": "*",
+                "illuminate/support": "^5.0|^6.0",
+                "illuminate/view": "^5.0|^6.0",
+                "nesbot/carbon": ">1.22"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "ConsoleTVs\\Invoices\\InvoicesServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ConsoleTVs\\Invoices\\": "."
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Erik Campobadal",
+                    "email": "ConsoleTVs@gmail.com"
+                }
+            ],
+            "description": "Generate PDF invoices for your customers in laravel",
+            "keywords": [
+                "Erik Campobadal",
+                "create",
+                "customers",
+                "generate",
+                "invoices",
+                "laravel",
+                "open source",
+                "pdf"
+            ],
+            "time": "2019-12-04T09:11:49+00:00"
         },
         {
             "name": "darkaonline/l5-swagger",
@@ -473,28 +530,28 @@
         },
         {
             "name": "dompdf/dompdf",
-            "version": "v0.8.3",
+            "version": "v0.8.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dompdf/dompdf.git",
-                "reference": "75f13c700009be21a1965dc2c5b68a8708c22ba2"
+                "reference": "8f49b3b01693f51037dd50da81090beba1b5c005"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/75f13c700009be21a1965dc2c5b68a8708c22ba2",
-                "reference": "75f13c700009be21a1965dc2c5b68a8708c22ba2",
+                "url": "https://api.github.com/repos/dompdf/dompdf/zipball/8f49b3b01693f51037dd50da81090beba1b5c005",
+                "reference": "8f49b3b01693f51037dd50da81090beba1b5c005",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-mbstring": "*",
-                "phenx/php-font-lib": "0.5.*",
-                "phenx/php-svg-lib": "0.3.*",
-                "php": ">=5.4.0"
+                "phenx/php-font-lib": "^0.5.1",
+                "phenx/php-svg-lib": "^0.3.3",
+                "php": "^7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8|^5.5|^6.5",
-                "squizlabs/php_codesniffer": "2.*"
+                "phpunit/phpunit": "^7.5",
+                "squizlabs/php_codesniffer": "^3.5"
             },
             "suggest": {
                 "ext-gd": "Needed to process images",
@@ -535,7 +592,7 @@
             ],
             "description": "DOMPDF is a CSS 2.1 compliant HTML to PDF converter",
             "homepage": "https://github.com/dompdf/dompdf",
-            "time": "2018-12-14T02:40:31+00:00"
+            "time": "2020-01-20T17:00:46+00:00"
         },
         {
             "name": "dragonmantank/cron-expression",
@@ -1521,22 +1578,23 @@
         },
         {
             "name": "laraveldaily/laravel-invoices",
-            "version": "1.3.6",
+            "version": "1.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LaravelDaily/laravel-invoices.git",
-                "reference": "e3db9fa1a39fe427bb89e827615d57c5c16b597d"
+                "reference": "918da383982f0dc06a1725562e969df2c63ff51b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LaravelDaily/laravel-invoices/zipball/e3db9fa1a39fe427bb89e827615d57c5c16b597d",
-                "reference": "e3db9fa1a39fe427bb89e827615d57c5c16b597d",
+                "url": "https://api.github.com/repos/LaravelDaily/laravel-invoices/zipball/918da383982f0dc06a1725562e969df2c63ff51b",
+                "reference": "918da383982f0dc06a1725562e969df2c63ff51b",
                 "shasum": ""
             },
             "require": {
                 "barryvdh/laravel-dompdf": "^0.8.5",
-                "php": ">=7",
-                "symfony/http-foundation": "^4.3.4"
+                "illuminate/http": "^5.5|^6",
+                "illuminate/support": "^5.5|^6",
+                "php": ">=7"
             },
             "require-dev": {
                 "phpunit/phpunit": "^8.4",
@@ -1577,7 +1635,7 @@
                 "invoices",
                 "laravel"
             ],
-            "time": "2019-12-10T10:36:55+00:00"
+            "time": "2020-01-22T11:00:14+00:00"
         },
         {
             "name": "lcobucci/jwt",
@@ -4250,16 +4308,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v4.4.1",
+            "version": "v4.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "8bccc59e61b41963d14c3dbdb23181e5c932a1d5"
+                "reference": "c33998709f3fe9b8e27e0277535b07fbf6fde37a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/8bccc59e61b41963d14c3dbdb23181e5c932a1d5",
-                "reference": "8bccc59e61b41963d14c3dbdb23181e5c932a1d5",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/c33998709f3fe9b8e27e0277535b07fbf6fde37a",
+                "reference": "c33998709f3fe9b8e27e0277535b07fbf6fde37a",
                 "shasum": ""
             },
             "require": {
@@ -4301,7 +4359,7 @@
             ],
             "description": "Symfony HttpFoundation Component",
             "homepage": "https://symfony.com",
-            "time": "2019-11-28T13:33:56+00:00"
+            "time": "2020-01-04T13:00:46+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -4395,16 +4453,16 @@
         },
         {
             "name": "symfony/mime",
-            "version": "v5.0.1",
+            "version": "v5.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mime.git",
-                "reference": "0e6a4ced216e49d457eddcefb61132173a876d79"
+                "reference": "2a3c7fee1f1a0961fa9cf360d5da553d05095e59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mime/zipball/0e6a4ced216e49d457eddcefb61132173a876d79",
-                "reference": "0e6a4ced216e49d457eddcefb61132173a876d79",
+                "url": "https://api.github.com/repos/symfony/mime/zipball/2a3c7fee1f1a0961fa9cf360d5da553d05095e59",
+                "reference": "2a3c7fee1f1a0961fa9cf360d5da553d05095e59",
                 "shasum": ""
             },
             "require": {
@@ -4453,7 +4511,7 @@
                 "mime",
                 "mime-type"
             ],
-            "time": "2019-11-30T14:12:50+00:00"
+            "time": "2020-01-04T14:08:26+00:00"
         },
         {
             "name": "symfony/options-resolver",

@@ -3,11 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\Machine;
+use App\Models\MachineBilling;
 use App\User;
 use App\Models\Volume;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\VolumeService;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -90,6 +92,12 @@ class CreateMachineFromImageJob implements ShouldQueue
             'is_root' => true,
             'machine_id' => $machine->id,
             'user_id' => $user->id
+        ]);
+
+        MachineBilling::create([
+            'machine_id' =>$this->machine_id,
+            'plan_id' => $this->plan_id,
+            'last_billing_date' => Carbon::now()
         ]);
 
         $user->notify(new SendMachineInfoNotification($user, $machine));

@@ -20,6 +20,7 @@ class CreatePlansTable extends Migration
             $table->integer('disk');
             $table->integer('ram');
             $table->integer('vcpu');
+            $table->float('hourly_price');
             $table->timestamps();
             $table->softDeletes();
         });

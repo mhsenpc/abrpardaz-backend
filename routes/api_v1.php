@@ -26,10 +26,12 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('machines/{id}')->group(function () {
             Route::post('console', 'MachineController@console');
+            Route::get('details', 'MachineController@details');
             Route::post('powerOn', 'MachineController@powerOn');
             Route::post('powerOff', 'MachineController@powerOff');
             Route::post('takeSnapshot', 'MachineController@takeSnapshot');
             Route::put('resendInfo', 'MachineController@resendInfo');
+            Route::post('rescale', 'MachineController@rescale');
             Route::post('rename', 'MachineController@rename');
             Route::delete('remove', 'MachineController@remove');
         });

@@ -11,5 +11,6 @@ $factory->define(\App\Models\Plan::class, function (Faker $faker) {
         'disk' => $faker->numberBetween(5,50),
         'ram'  => $faker->numberBetween(1,12),
         'vcpu' => $faker->numberBetween(1,20),
+        'hourly_price' => $faker->numberBetween(50,200)
     ];
 });

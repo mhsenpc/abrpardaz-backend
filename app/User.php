@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Machine;
 use App\Models\Profile;
 use App\Models\Project;
 use Carbon\Carbon;
@@ -46,6 +47,11 @@ class User extends Authenticatable
         return $this->belongsTo(Profile::class);
     }
 
+    public function machines()
+    {
+        return $this->hasMany(Machine::class);
+    }
+
     public function project()
     {
         return $this->belongsToMany(Project::class);
@@ -59,6 +65,12 @@ class User extends Authenticatable
     function __toString()
     {
         return $this->profile->first_name ;
+    }
+
+    function updateLastBillingDate(){
+        $this->last_billing_date = Carbon::now();
+        $this->save();
+        return $this;
     }
 
     static function newUser(string $email, string $password)
@@ -75,7 +87,7 @@ class User extends Authenticatable
         $user->is_active = false;
         $user->email = $email;
         $user->profile_id = $profile->id;
-        $user->last_payment_date = Carbon::now();
+        $user->last_billing_date = Carbon::now();
         $user->save();
 
         $project->owner_id = $user->id;

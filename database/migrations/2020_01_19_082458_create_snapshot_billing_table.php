@@ -16,7 +16,7 @@ class CreateSnapshotBillingTable extends Migration
         Schema::create('snapshot_billing', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('snapshot_id');
-            $table->timestamp('last_payment_date');
+            $table->timestamp('last_billing_date');
             $table->timestamps();
 
             $table->foreign('snapshot_id')->references('id')->on('snapshots');
