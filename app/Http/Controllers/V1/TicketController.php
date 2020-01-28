@@ -113,7 +113,7 @@ class TicketController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -123,7 +123,7 @@ class TicketController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -179,7 +179,7 @@ class TicketController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *     )
@@ -220,7 +220,7 @@ class TicketController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *     )
@@ -257,7 +257,7 @@ class TicketController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *     )

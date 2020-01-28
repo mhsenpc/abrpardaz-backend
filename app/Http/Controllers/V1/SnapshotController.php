@@ -46,7 +46,7 @@ class SnapshotController extends BaseController
      *         description="id of the machine your want its snapshots",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -79,7 +79,7 @@ class SnapshotController extends BaseController
      *         description="id of the snapshot",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -135,7 +135,7 @@ class SnapshotController extends BaseController
      *         description="id of the snapshot",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *

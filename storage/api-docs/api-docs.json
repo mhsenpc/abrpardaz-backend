@@ -304,7 +304,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -339,7 +339,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -348,7 +348,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -357,7 +357,7 @@
                         "description": "",
                         "required": false,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -383,7 +383,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -409,7 +409,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -435,7 +435,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -461,7 +461,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -496,7 +496,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -522,7 +522,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -557,7 +557,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -592,7 +592,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -877,6 +877,204 @@
                 }
             }
         },
+        "/projects/list": {
+            "get": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Get list of your projects",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::index",
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/projects/add": {
+            "post": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Create a new project",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::add",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/projects/{id}/rename": {
+            "post": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Rename the project",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::rename",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/projects/{id}/addMember": {
+            "post": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Add a member to the project",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::addMember",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/projects/{id}/removeMember": {
+            "post": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Remove a member from the project",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::removeMember",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/projects/{id}/leave": {
+            "put": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Removes the current user from the project",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::leave",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/projects/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "Project"
+                ],
+                "summary": "Removes the project",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProjectController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
         "/sshKeys/list": {
             "get": {
                 "tags": [
@@ -1042,7 +1240,7 @@
                         "description": "id of the machine your want its snapshots",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1068,7 +1266,7 @@
                         "description": "id of the snapshot",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -1103,7 +1301,7 @@
                         "description": "id of the snapshot",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1186,7 +1384,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -1195,7 +1393,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1230,7 +1428,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1256,7 +1454,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1282,7 +1480,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1358,7 +1556,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -1367,7 +1565,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1393,7 +1591,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -1402,7 +1600,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],
@@ -1428,7 +1626,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     },
                     {
@@ -1463,7 +1661,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "int"
+                            "type": "integer"
                         }
                     }
                 ],

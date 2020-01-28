@@ -104,7 +104,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -114,7 +114,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -150,7 +150,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -160,7 +160,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -196,7 +196,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -240,7 +240,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *

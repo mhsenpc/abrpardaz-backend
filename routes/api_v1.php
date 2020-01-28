@@ -74,6 +74,19 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
+        Route::prefix('projects')->group(function () {
+            Route::get('list', 'ProjectController@index');
+            Route::post('add', 'ProjectController@add');
+
+            Route::prefix('{id}')->group(function () {
+                Route::post('rename', 'ProjectController@rename');
+                Route::post('addMember', 'ProjectController@addMember');
+                Route::post('removeMember', 'ProjectController@removeMember');
+                Route::put('leave', 'ProjectController@leave');
+                Route::delete('remove', 'ProjectController@remove');
+            });
+        });
+
         Route::prefix('tickets')->group(function () {
             Route::get('list', 'TicketController@index');
             Route::get('categories', 'TicketController@categories');

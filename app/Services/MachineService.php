@@ -41,7 +41,7 @@ class MachineService
 
             $options = [
                 // Required
-                'name' => $name,
+                'name' => $name."-".$machine_id,
                 'imageId' => $image->remote_id,
                 'flavorId' => $plan->remote_id,
 
@@ -85,6 +85,7 @@ class MachineService
 
     function rename(string $id, string $newname)
     {
+        return true;
         $server = $this->compute->getServer(['id' => $id]);
         $server->name = $newname;
         $server->update();

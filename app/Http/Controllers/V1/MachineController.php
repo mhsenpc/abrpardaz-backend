@@ -69,7 +69,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -107,7 +107,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -117,7 +117,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -127,7 +127,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=false,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -190,7 +190,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -225,7 +225,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -257,7 +257,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -289,7 +289,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      * @OA\Parameter(
@@ -338,7 +338,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -370,7 +370,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -398,6 +398,9 @@ class MachineController extends BaseController
         $service = new MachineService();
         $service->rename($machine->remote_id, \request('name'));
 
+        $machine->name = request('name');
+        $machine->save();
+
         return Responder::success('نام سرور با موفقیت تغییر یافت');
     }
 
@@ -414,7 +417,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
@@ -459,7 +462,7 @@ class MachineController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="int"
+     *             type="integer"
      *         )
      *     ),
      *
