@@ -23,13 +23,12 @@ use App\Models\Snapshot;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\Responder;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class MachineController extends BaseController
 {
-
-
     /**
      * @OA\Get(
      *      tags={"Machine"},
@@ -144,7 +143,12 @@ class MachineController extends BaseController
         $name = \request('name');
         $plan_id = \request('plan_id');
         $image_id = \request('image_id');
+        $project_id = request('project_id');
         $ssh_key_id = \request('ssh_key_id');
+
+        if(!User::find($user_id)->projects->contains($project_id)){
+            return Responder::error('شما به این پروژه دسترسی ندارید');
+        }
 
         try {
             $machine = Machine::createMachine(
@@ -152,6 +156,7 @@ class MachineController extends BaseController
                 $user_id,
                 $plan_id,
                 $image_id,
+                $project_id,
                 $ssh_key_id
             );
 

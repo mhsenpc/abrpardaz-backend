@@ -52,7 +52,7 @@ class User extends Authenticatable
         return $this->hasMany(Machine::class);
     }
 
-    public function project()
+    public function projects()
     {
         return $this->belongsToMany(Project::class);
     }
@@ -93,7 +93,7 @@ class User extends Authenticatable
         $project->owner_id = $user->id;
         $project->save();
 
-        $user->project()->attach($project->id);
+        $user->projects()->attach($project->id);
 
         return $user;
     }

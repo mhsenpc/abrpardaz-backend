@@ -38,7 +38,7 @@ class Machine extends Model
         return $this->hasMany(MachineBilling::class);
     }
 
-    static function createMachine(string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null): Machine
+    static function createMachine(string $name, int $user_id, int $plan_id, int $image_id,int $project_id, $ssh_key_id = null): Machine
     {
         /** @var Machine $machine */
         $machine = new Machine();
@@ -47,7 +47,7 @@ class Machine extends Model
         $machine->plan_id = $plan_id;
         $machine->image_id = $image_id;
         $machine->ssh_key_id = $ssh_key_id;
-        $machine->project_id = Auth::user()->getDefaultProject()->id;
+        $machine->project_id = $project_id;
         print_r($machine->project_id);
         $machine->save();
 

@@ -68,7 +68,7 @@ class ProjectController extends BaseController
             'owner_id' => Auth::id(),
             'name' => request('name')
         ]);
-        Auth::user()->project()->attach($project->id);
+        Auth::user()->projects()->attach($project->id);
 
         return Responder::success('پروژه با موفقیت ایجاد شد');
     }
@@ -234,7 +234,7 @@ class ProjectController extends BaseController
     function leave(LeaveRequest $request){
         $project = Project::find(request('id'));
 
-        Auth::user()->project()->detach($project->id);
+        Auth::user()->projects()->detach($project->id);
         return Responder::success('کاربر با موفقیت از پروژه حذف گردید');
     }
 
