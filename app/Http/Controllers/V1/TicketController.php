@@ -198,6 +198,7 @@ class TicketController extends BaseController
         // send mail if the user commenting is not the ticket owner
         if ($reply->ticket->user->id !== Auth::id()) {
             Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
+            //TODO: save a notification for this user
         }
 
         Log::info('new reply for ticket #'.request('ticket_id').',user #'.Auth::id());

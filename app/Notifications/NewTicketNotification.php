@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewTicketNotification extends Notification
+class NewTicketNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use GetUserNameTrait;

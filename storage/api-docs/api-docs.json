@@ -603,6 +603,62 @@
                 }
             }
         },
+        "/notifications/list": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "List of the notifications",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\NotificationController::index",
+                "responses": {
+                    "default": {
+                        "description": "List of the notifications"
+                    }
+                }
+            }
+        },
+        "/notifications/markAllRead": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "mark all notifications as read",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\NotificationController::markAllRead",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/notifications/{id}/delete": {
+            "delete": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "delete a notifications",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\NotificationController::delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/plans/list": {
             "get": {
                 "tags": [

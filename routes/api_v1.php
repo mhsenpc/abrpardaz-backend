@@ -111,5 +111,13 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
+        Route::prefix('notifications')->group(function () {
+            Route::get('list', 'NotificationController@index');
+            Route::post('markAllRead', 'NotificationController@markAllRead');
+            Route::prefix('{id}')->group(function () {
+                Route::delete('delete', 'NotificationController@delete');
+            });
+        });
+
     });
 });
