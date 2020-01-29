@@ -18,6 +18,7 @@ use App\Services\Responder;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends BaseController
 {
@@ -99,6 +100,7 @@ class ProfileController extends BaseController
             'last_name' => \request('last_name')
         ]);
 
+        Log::info('set user basic info user #'.Auth::id());
         return Responder::success('اطلاعات شما با موفقیت ذخیره شد');
     }
 
@@ -137,6 +139,7 @@ class ProfileController extends BaseController
         Cache::put('validation_code_for_' . request('mobile'), $code, 5 * 60);
         MobileService::sendActivationCode(request('mobile'), $code);
 
+        Log::info('request set mobile .mobile #'.request('mobile').' ,user #'.Auth::id());
         return Responder::success('کد فعال سازی به شماره موبایل شما ارسال گردید');
     }
 
@@ -185,8 +188,10 @@ class ProfileController extends BaseController
                 'mobile_verified_at' => Carbon::now()
             ]);
 
+            Log::info('successful set mobile .mobile #'.request('mobile').' ,user #'.Auth::id());
             return Responder::success('شماره موبایل شما با موفقیت ذخیره شد');
         } else {
+            Log::warning('failed to match token for set mobile.mobile #'.request('mobile').' token #'.request('token').' ,user #'.Auth::id());
             return Responder::error('کد وارد شده صحیح نمی باشد');
         }
     }
@@ -226,6 +231,7 @@ class ProfileController extends BaseController
         Cache::put('validation_code_for_' . request('phone'), $code, 5 * 60);
         PhoneService::sendActivationCode(request('phone'), $code);
 
+        Log::info('request set phone .phone #'.request('phone').' ,user #'.Auth::id());
         return Responder::success('منتظر دریافت کد فعال سازی روی این شماره باشید');
     }
 
@@ -275,8 +281,10 @@ class ProfileController extends BaseController
                 'phone_verified_at' => Carbon::now()
             ]);
 
+            Log::info('successful set phone .phone #'.request('phone').' ,user #'.Auth::id());
             return Responder::success('شماره تلفن شما با موفقیت ذخیره شد');
         } else {
+            Log::warning('failed to match token for set phone.phone #'.request('phone').' token #'.request('token').' ,user #'.Auth::id());
             return Responder::error('کد وارد شده صحیح نمی باشد');
         }
     }
@@ -316,9 +324,12 @@ class ProfileController extends BaseController
                 'national_card_front' => $path,
             ]);
 
+            Log::info('national card front uploaded.user #'.Auth::id());
+
             return Responder::success('تصویر با موفقیت بارگذاری شد');
         }
         else{
+            Log::warning('failed to upload national card front.user #'.Auth::id());
             return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
 
@@ -359,9 +370,11 @@ class ProfileController extends BaseController
                 'national_card_back' => $path,
             ]);
 
+            Log::info('national card back uploaded.user #'.Auth::id());
             return Responder::success('تصویر با موفقیت بارگذاری شد');
         }
         else{
+            Log::warning('failed to upload national card back .user #'.Auth::id());
             return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
     }
@@ -401,10 +414,11 @@ class ProfileController extends BaseController
                 'birth_certificate' => $path,
             ]);
 
-
+            Log::info('birth certificate uploaded.user #'.Auth::id());
             return Responder::success('تصویر با موفقیت بارگذاری شد');
         }
         else{
+            Log::warning('failed to upload birth certificate .user #'.Auth::id());
             return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
     }

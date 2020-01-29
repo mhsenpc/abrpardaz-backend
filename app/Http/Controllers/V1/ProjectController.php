@@ -15,6 +15,7 @@ use App\Models\Project;
 use App\Services\Responder;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProjectController extends BaseController
 {
@@ -70,6 +71,7 @@ class ProjectController extends BaseController
         ]);
         Auth::user()->projects()->attach($project->id);
 
+        Log::info('new project added.user #'.Auth::id());
         return Responder::success('پروژه با موفقیت ایجاد شد');
     }
 
@@ -112,6 +114,7 @@ class ProjectController extends BaseController
         $project = Project::find(request('id'));
         $project->name = request('name');
         $project->save();
+        Log::info('project renamed.user #'.Auth::id());
         return Responder::success('نام پروژه با موفقیت تغییر یافت');
     }
 
@@ -157,6 +160,8 @@ class ProjectController extends BaseController
             return Responder::error('شما اجازه تغییر این پروزه را ندارید');
 
         $user->project()->syncWithoutDetaching($project->id);
+
+        Log::info('member added to the project. project #'.request('id').',member #'.request('user_id').'.user #'.Auth::id());
         return Responder::success('کاربر با موفقیت به پروژه اضافه شد');
     }
 
@@ -202,6 +207,8 @@ class ProjectController extends BaseController
             return Responder::error('شما اجازه تغییر این پروزه را ندارید');
 
         $user->project()->detach($project->id);
+
+        Log::info('member removed from the project. project #'.request('id').',member #'.request('user_id').'.user #'.Auth::id());
         return Responder::success('کاربر با موفقیت از پروژه حذف گردید');
     }
 
@@ -235,6 +242,8 @@ class ProjectController extends BaseController
         $project = Project::find(request('id'));
 
         Auth::user()->projects()->detach($project->id);
+
+        Log::info('Leave project #'.request('id').',user #'.Auth::id());
         return Responder::success('کاربر با موفقیت از پروژه حذف گردید');
     }
 
@@ -270,6 +279,7 @@ class ProjectController extends BaseController
             return Responder::error('شما اجازه حذف این پروزه را ندارید');
 
         $project->delete();
+        Log::info('remove project #'.request('id').',user #'.Auth::id());
         return Responder::success('پروژه با موفقیت حذف شد');
     }
 }

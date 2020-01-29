@@ -17,6 +17,7 @@ use App\Notifications\TicketReplyNotification;
 use App\Notifications\TicketStatusNotification;
 use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class TicketController extends BaseController
@@ -148,6 +149,7 @@ class TicketController extends BaseController
         $ticket->save();
 
         Auth::user()->notify(new NewTicketNotification($ticket, Auth::user()->profile));
+        Log::info('new ticket created. user #'.Auth::id());
         return Responder::success('تیکت جدید با موفقیت ایجاد شد');
     }
 
@@ -198,6 +200,7 @@ class TicketController extends BaseController
             Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
         }
 
+        Log::info('new reply for ticket #'.request('ticket_id').',user #'.Auth::id());
         return Responder::success('پاسخ شما به تیکت با موفقیت ارسال شد');
     }
 
@@ -228,13 +231,14 @@ class TicketController extends BaseController
      */
     public function close(CloseTicketRequest $request)
     {
-        $ticket = Ticket::findOrFail(\request('id'));
+        $ticket = Ticket::find(\request('id'));
         $ticket->status = "Closed";
         $ticket->save();
         $ticketOwner = $ticket->user;
 
         Auth::user()->notify(new TicketStatusNotification($ticketOwner->profile, $ticket));
 
+        Log::info('close ticket #'.request('id').',user #'.Auth::id());
         return Responder::success('تیکت شما با موفقیت بسته شد');
     }
 

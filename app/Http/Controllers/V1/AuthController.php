@@ -18,6 +18,7 @@ use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends BaseController
@@ -68,6 +69,7 @@ class AuthController extends BaseController
         Cache::put('verification_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
         $user->notify(new RegisterUserNotification(request('email'), $token));
+        Log::info('register user . sent token to email '.request('email'));
 
         return Responder::success('لینک فعال سازی به ایمیل شما ارسال گردید');
     }
@@ -118,6 +120,8 @@ class AuthController extends BaseController
             $result['expires_at'] = $token->token->expires_at;
             $result['message'] = 'شما با موفقیت وارد شدید';
 
+            Log::info('user logged in '.request('email'));
+
             return Responder::result($result);
         } else {
             return Responder::error('نام کاربری یا رمز عبور صحیح نمی باشد');
@@ -156,6 +160,7 @@ class AuthController extends BaseController
 
         Auth::user()->notify(new ResetPasswordNotification(request('email'), $token));
 
+        Log::info('user forgot his password '.request('email'));
         return Responder::success('لینک بازنشانی رمز به ایمیل شما ارسال گردید');
     }
 
@@ -224,8 +229,10 @@ class AuthController extends BaseController
             );
 
             Cache::forget('forget_token_for_' . request('email'));
+            Log::info('reset password successful for '.request('email'));
             return Responder::success('بازنشانی رمز عبور با موفقیت انجام شد');
         } else {
+            Log::warning('invalid reset password token for '.request('email').' token: '.request('token'));
             return Responder::error('بازنشانی رمز با توکن وارد شده امکان پذیر نمی باشد');
         }
     }
@@ -284,8 +291,10 @@ class AuthController extends BaseController
                 Hash::make(request('new_password'))
             );
 
+            Log::info('change password successful for '.$user->email);
             return Responder::success('رمز عبور شما با موفقیت تغییر یافت');
         } else {
+            Log::warning('change password failed for '.$user->email);
             return Responder::error('رمز عبور قبلی شما صحیح نمی باشد');
         }
     }
@@ -333,8 +342,11 @@ class AuthController extends BaseController
         if (request('token') == $token) {
             User::activateUserByEmail(request('email'));
             Cache::forget('verification_for_' . request('email'));
+
+            Log::info('user verification successful for '.request('email'));
             return Responder::success('حساب کاربری شما با موفقیت تایید شد');
         } else {
+            Log::warning('user verification failed for '.request('email').' with token '.request('token'));
             return Responder::error('تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
         }
     }

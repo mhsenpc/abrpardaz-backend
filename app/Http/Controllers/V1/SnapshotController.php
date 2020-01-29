@@ -10,6 +10,8 @@ use App\Models\Snapshot;
 use App\Services\Responder;
 use App\Services\SnapshotService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SnapshotController extends BaseController
 {
@@ -114,9 +116,11 @@ class SnapshotController extends BaseController
         if($result){
             $snapshot->name = \request('name');
             $snapshot->save();
+            Log::info('snapshot renamed snapshot #'.request('id').',user #'.Auth::id());
             return Responder::success("نام تصویر آنی با موفقیت تغییر کرد");
         }
         else{
+            Log::warning('failed to rename snapshot. snapshot #'.request('id').',user #'.Auth::id());
             return Responder::error("تغییر نام تصویر آنی انجام نشد");
         }
 
@@ -154,9 +158,11 @@ class SnapshotController extends BaseController
         $result = $service->remove(\request('id'));
         if($result){
             Snapshot::destroy(\request('id'));
+            Log::info('snapshot removed snapshot #'.request('id').',user #'.Auth::id());
             return Responder::success("تصویر آنی با موفقیت حذف شد");
         }
         else{
+            Log::warning('failed to remove snapshot. snapshot #'.request('id').',user #'.Auth::id());
             return Responder::error("حذف تصویر آنی امکانپذیر نمی باشد");
         }
     }

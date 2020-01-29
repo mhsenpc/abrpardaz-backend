@@ -170,9 +170,10 @@ class MachineController extends BaseController
                 $machine->id
             );
 
+            Log::info('create server from image user #'.$user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
-            Log::critical("Couldn't create server for user #" . Auth::id());
+            Log::critical("Couldn't create server from image for user #" . Auth::id());
             Log::critical($exception);
             return Responder::error('ساخت سرور انجام نشد');
         }
@@ -213,9 +214,10 @@ class MachineController extends BaseController
                 $machine->id
             );
 
+            Log::info('create server from snapshot user #'.$user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
-            Log::critical("Couldn't create server for user #" . Auth::id());
+            Log::critical("Couldn't create server from snapshot for user #" . Auth::id());
             Log::critical($exception);
             return Responder::error('ساخت سرور انجام نشد');
         }
@@ -253,6 +255,7 @@ class MachineController extends BaseController
         $service = new MachineService();
         $link = $service->console($machine->remote_id);
 
+        Log::info('get console machine #'.$machine->id.',user #'.Auth::id());
         return Responder::result(['link' => $link]);
     }
 
@@ -285,6 +288,7 @@ class MachineController extends BaseController
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOn($machine->remote_id);
+        Log::info('power on machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('سرور با موفقیت روشن شد');
     }
 
@@ -317,6 +321,7 @@ class MachineController extends BaseController
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOff($machine->remote_id);
+        Log::info('power off machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('سرور با موفقیت خاموش شد');
     }
 
@@ -367,6 +372,7 @@ class MachineController extends BaseController
 
         TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
+        Log::info('take snapshot machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('عملیات ساخت تصویر آنی شروع شد');
     }
 
@@ -399,6 +405,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(\request('id'));
         Auth::user()->notify(new SendMachineInfoNotification(Auth::user(), $machine));
+        Log::info('resend info machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('اطلاعات سرور مجددا به ایمیل شما ارسال گردید');
     }
 
@@ -446,6 +453,7 @@ class MachineController extends BaseController
         $machine->name = request('name');
         $machine->save();
 
+        Log::info('rename machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('نام سرور با موفقیت تغییر یافت');
     }
 
@@ -492,6 +500,7 @@ class MachineController extends BaseController
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
         }
         $machine->changePlan($plan);
+        Log::info('rescale machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('پلن با موفقیت تغییر یافت');
     }
 
@@ -528,6 +537,7 @@ class MachineController extends BaseController
         $machine->billing->stopBilling();
         $machine->delete();
 
+        Log::info('remove machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('سرور با موفقیت حذف گردید');
     }
 }

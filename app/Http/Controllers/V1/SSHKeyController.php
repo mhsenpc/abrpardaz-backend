@@ -10,6 +10,7 @@ use App\Http\Requests\SSHKey\ShowKeyRequest;
 use App\Models\SshKey;
 use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SSHKeyController extends BaseController
 {
@@ -95,6 +96,7 @@ class SSHKeyController extends BaseController
             'content' => $request->input('content'),
             'user_id' => Auth::id()
         ]);
+        Log::info('new sshkey created .user #'.Auth::id());
         return Responder::success("کلید با موفقیت اضافه شد");
     }
 
@@ -149,6 +151,7 @@ class SSHKeyController extends BaseController
             'name' => \request('name'),
             'content' => \request('content')
         ]);
+        Log::info('sshkey edited. key #'.request('id').',user #'.Auth::id());
         return Responder::success("کلید با موفقیت ویرایش شد");
     }
 
@@ -180,6 +183,7 @@ class SSHKeyController extends BaseController
     function remove(RemoveKeyRequest $request)
     {
         SshKey::destroy(\request('id'));
+        Log::info('sshkey removed. key #'.request('id').',user #'.Auth::id());
         return Responder::success("کلید با موفقیت حذف شد");
     }
 }
