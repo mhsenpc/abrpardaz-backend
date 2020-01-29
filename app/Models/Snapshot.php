@@ -18,11 +18,12 @@ class Snapshot extends Model
         static::addGlobalScope(new UserIDScope());
     }
 
-    static function newSnapshot(string $name,int $machine_id,int $user_id){
+    static function newSnapshot(string $name,int $machine_id,int $user_id,int $image_id){
         return Snapshot::create([
             'name' => $name,
             'machine_id' => $machine_id,
-            'user_id' => $user_id
+            'user_id' => $user_id,
+            'image_id' => $image_id
         ]);
     }
 

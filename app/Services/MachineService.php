@@ -36,13 +36,45 @@ class MachineService
         try {
             $image = Image::find($image_id);
             $plan = Plan::find($plan_id);
-            Machine::find($machine_id)->updateRemoteID('test');
             return true;
 
             $options = [
                 // Required
                 'name' => $name."-".$machine_id,
                 'imageId' => $image->remote_id,
+                'flavorId' => $plan->remote_id,
+
+                // Required if multiple network is defined
+                'networks' => [
+                    ['uuid' => config('openstack.networkId')]
+                ],
+            ];
+
+            // Create the server
+            /**@var OpenStack\Compute\v2\Models\Server $server */
+            $server = $this->compute->createServer($options);
+
+            $server->waitUntil('Active');
+
+            Machine::find($machine_id)->updateRemoteID($server->id);
+        }
+        catch (\Exception $exception){
+            //TODO: save a notification for this user
+            Machine::find($machine_id)->updateRemoteID('failed');
+        }
+    }
+
+    function createMachineFromSnapshot(int $machine_id, string $name, int $user_id, int $plan_id, int $snapshot_id, $ssh_key_id = null): bool
+    {
+        try {
+            $snapshot = Image::find($snapshot_id);
+            $plan = Plan::find($plan_id);
+            return true;
+
+            $options = [
+                // Required
+                'name' => $name."-".$machine_id,
+                'imageId' => $snapshot->remote_id,
                 'flavorId' => $plan->remote_id,
 
                 // Required if multiple network is defined

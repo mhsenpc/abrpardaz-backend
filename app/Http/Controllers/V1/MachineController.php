@@ -15,9 +15,9 @@ use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
+use App\Jobs\CreateMachineFromSnapshotJob;
 use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
-use App\Models\MachineBilling;
 use App\Models\Plan;
 use App\Models\Snapshot;
 use App\Notifications\SendMachineInfoNotification;
@@ -77,8 +77,9 @@ class MachineController extends BaseController
      *
      *
      */
-    function details(DetailsRequest $request){
-        $machines = Machine::where('id',request('id'))->with(['image', 'plan', 'sshKey'])->first();
+    function details(DetailsRequest $request)
+    {
+        $machines = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
         return Responder::result(['machine' => $machines]);
     }
 
@@ -146,7 +147,7 @@ class MachineController extends BaseController
         $project_id = request('project_id');
         $ssh_key_id = \request('ssh_key_id');
 
-        if(!User::find($user_id)->projects->contains($project_id)){
+        if (!User::find($user_id)->projects->contains($project_id)) {
             return Responder::error('شما به این پروژه دسترسی ندارید');
         }
 
@@ -179,7 +180,45 @@ class MachineController extends BaseController
 
     function createFromSnapshot(CreateFromSnapshotRequest $request)
     {
-        return Responder::success('عملیات ساخت سرور شروع شد');
+        $user_id = Auth::id();
+        $name = \request('name');
+        $plan_id = \request('plan_id');
+        $snapshot_id = \request('snapshot_id');
+        $project_id = request('project_id');
+        $ssh_key_id = \request('ssh_key_id');
+
+        if (!User::find($user_id)->projects->contains($project_id)) {
+            return Responder::error('شما به این پروژه دسترسی ندارید');
+        }
+
+        $snapshot = Snapshot::find($snapshot_id);
+        $image_id = $snapshot->image_id;
+
+        try {
+            $machine = Machine::createMachine(
+                $name,
+                $user_id,
+                $plan_id,
+                $image_id,
+                $project_id,
+                $ssh_key_id
+            );
+
+            CreateMachineFromSnapshotJob::dispatch(
+                $user_id,
+                $name,
+                $plan_id,
+                $image_id,
+                $ssh_key_id,
+                $machine->id
+            );
+
+            return Responder::success('عملیات ساخت سرور شروع شد');
+        } catch (\Exception $exception) {
+            Log::critical("Couldn't create server for user #" . Auth::id());
+            Log::critical($exception);
+            return Responder::error('ساخت سرور انجام نشد');
+        }
     }
 
     /**
@@ -322,7 +361,8 @@ class MachineController extends BaseController
         $snapshot = Snapshot::newSnapshot(
             \request('name'),
             \request('id'),
-            Auth::id()
+            Auth::id(),
+            $machine->image_id
         );
 
         TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
@@ -444,10 +484,11 @@ class MachineController extends BaseController
      *     )
      *
      */
-    function rescale(RescaleServerRequest $request){
+    function rescale(RescaleServerRequest $request)
+    {
         $machine = Machine::find(request('id'));
         $plan = Plan::find(request('plan_id'));
-        if(request('plan_id') == $machine->plan->id){
+        if (request('plan_id') == $machine->plan->id) {
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
         }
         $machine->changePlan($plan);

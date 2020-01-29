@@ -25,6 +25,10 @@ class CreateFromSnapshotRequest extends ApiRequest
     {
         return [
             'name' => 'required',
+            'plan_id' => 'required|numeric|exists:plans,id',
+            'snapshot_id' => 'required|numeric|exists:snapshots,id',
+            'ssh_key_id' => 'sometimes|numeric|exists:ssh_keys,id',
+            'project_id' => 'required|numeric|exists:projects,id',
         ];
     }
 }
