@@ -88,7 +88,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
-        Route::middleware(['auth:api'])->prefix('tickets')->group(function () {
+        Route::prefix('tickets')->group(function () {
             Route::get('list', 'TicketController@index');
             Route::get('categories', 'TicketController@categories');
             Route::post('newTicket', 'TicketController@newTicket');

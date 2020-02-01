@@ -270,7 +270,7 @@ class TicketController extends BaseController
      */
     public function show(ShowTicketRequest $request)
     {
-        $ticket = Ticket::with(['replies'])->find(\request('id'));
+        $ticket = Ticket::with(['replies','replies.user.profile'])->find(\request('id'));
         return Responder::result(['ticket' => $ticket]);
     }
 }

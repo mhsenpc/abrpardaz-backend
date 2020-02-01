@@ -108,11 +108,12 @@ class SnapshotController extends BaseController
     {
         $snapshot = Snapshot::find(request('id'));
         $service = new SnapshotService();
-        $result = $service->rename(
+/*        $result = $service->rename(
             $snapshot->remote_id,
             \request('name')
-        );
+        );*/
 
+        $result = true;
         if($result){
             $snapshot->name = \request('name');
             $snapshot->save();
