@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use App\Scopes\UserIDScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
 class Machine extends Model
 {
@@ -15,7 +15,7 @@ class Machine extends Model
     {
         parent::boot();
 
-        //static::addGlobalScope(new UserIDScope());
+        static::addGlobalScope(new UserIDScope());
     }
 
     public function image()

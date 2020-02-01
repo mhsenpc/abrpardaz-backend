@@ -7,6 +7,7 @@ use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
 use App\Http\Requests\Server\DetailsRequest;
 use App\Http\Requests\Server\GetConsoleRequest;
+use App\Http\Requests\Server\ListRequest;
 use App\Http\Requests\Server\PowerOffRequest;
 use App\Http\Requests\Server\PowerOnRequest;
 use App\Http\Requests\Server\RemoveServerRequest;
@@ -46,6 +47,37 @@ class MachineController extends BaseController
     function index()
     {
         $machines = Machine::with(['image', 'plan', 'sshKey'])->get();
+        return Responder::result(['list' => $machines]);
+    }
+
+    /**
+     * @OA\Get(
+     *      tags={"Machine"},
+     *      path="/machines/ofProject/{projectId}",
+     *      summary="List Your machines",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="returns a list of machines"
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="projectId",
+     *         in="path",
+     *         description="id of the project you want to work on its machines",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
+    function ofProject(ListRequest $request)
+    {
+        $machines = Machine::with(['image', 'plan', 'sshKey'])->where('project_id',request('id'))->get();
         return Responder::result(['list' => $machines]);
     }
 
@@ -370,7 +402,7 @@ class MachineController extends BaseController
             $machine->image_id
         );
 
-        TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
+        //TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
         Log::info('take snapshot machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('عملیات ساخت تصویر آنی شروع شد');

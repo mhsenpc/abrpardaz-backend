@@ -289,6 +289,32 @@
                 }
             }
         },
+        "/machines/ofProject/{projectId}": {
+            "get": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "List Your machines",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::ofProject",
+                "parameters": [
+                    {
+                        "name": "projectId",
+                        "in": "path",
+                        "description": "id of the project you want to work on its machines",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "returns a list of machines"
+                    }
+                }
+            }
+        },
         "/machines/{id}/details": {
             "get": {
                 "tags": [

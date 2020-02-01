@@ -20,6 +20,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('machines')->group(function () {
             Route::get('list', 'MachineController@index');
+            Route::get('ofProject/{id}', 'MachineController@ofProject');
             Route::post('createFromImage', 'MachineController@createFromImage');
             Route::post('createFromSnapshot', 'MachineController@createFromSnapshot');
         });
@@ -87,7 +88,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
-        Route::prefix('tickets')->group(function () {
+        Route::middleware(['auth:api'])->prefix('tickets')->group(function () {
             Route::get('list', 'TicketController@index');
             Route::get('categories', 'TicketController@categories');
             Route::post('newTicket', 'TicketController@newTicket');
