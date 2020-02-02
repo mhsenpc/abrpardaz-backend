@@ -8,6 +8,7 @@ use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\Snapshot;
+use App\Models\SshKey;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -36,6 +37,9 @@ class MachineService
         try {
             $image = Image::find($image_id);
             $plan = Plan::find($plan_id);
+            if(!empty($ssh_key_id)){
+                $ssh_key = SshKey::find($ssh_key_id);
+            }
             return true;
 
             $options = [

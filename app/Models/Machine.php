@@ -48,7 +48,6 @@ class Machine extends Model
         $machine->image_id = $image_id;
         $machine->ssh_key_id = $ssh_key_id;
         $machine->project_id = $project_id;
-        print_r($machine->project_id);
         $machine->save();
 
         return $machine;

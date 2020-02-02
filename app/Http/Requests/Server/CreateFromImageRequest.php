@@ -27,7 +27,7 @@ class CreateFromImageRequest extends ApiRequest
             'name' => 'required',
             'plan_id' => 'required|numeric|exists:plans,id',
             'image_id' => 'required|numeric|exists:images,id',
-            'ssh_key_id' => 'sometimes|numeric|exists:ssh_keys,id',
+            'ssh_key_id' => 'sometimes|nullable|numeric|exists:ssh_keys,id',
             'project_id' => 'required|numeric|exists:projects,id',
         ];
     }

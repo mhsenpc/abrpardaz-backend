@@ -16,7 +16,6 @@ class AddAcceptJsonToHeader
      */
     public function handle($request, Closure $next)
     {
-        Auth::loginUsingId(1);
         $request->headers->set('Accept', 'application/json');
         return $next($request);
     }

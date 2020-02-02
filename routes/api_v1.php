@@ -13,7 +13,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::put('logout', 'AuthController@logout');
     });
 
-    Route::middleware([/*'auth:api'*/])->group(function () {
+    Route::middleware(['auth:api'])->group(function () {
         Route::prefix('images')->group(function () {
             Route::get('os', 'ImageController@os');
         });

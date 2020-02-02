@@ -52,7 +52,7 @@ class CreateMachineFromImageJob implements ShouldQueue
      * @param $ssh_key_id
      * @param int $machine_id
      */
-    public function __construct(int $user_id, string $name, int $plan_id, int $image_id, $ssh_key_id, int $machine_id)
+    public function __construct(int $user_id, string $name, int $plan_id, int $image_id, int $machine_id,$ssh_key_id)
     {
         $this->user_id = $user_id;
         $this->name = $name;
@@ -80,6 +80,7 @@ class CreateMachineFromImageJob implements ShouldQueue
         );
 
         $machine = Machine::find($this->machine_id);
+        $machine->updateRemoteID('fake_remote_id'); //TOOD: remove this on production
         $user = User::find($this->user_id);
 
         //find its root volume

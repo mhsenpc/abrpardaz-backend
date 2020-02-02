@@ -163,6 +163,16 @@ class MachineController extends BaseController
      *         )
      *     ),
      *
+     * @OA\Parameter(
+     *         name="project_id",
+     *         in="query",
+     *         description="",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
      * @OA\Response(
      *         response="default",
      *         description=""
@@ -198,8 +208,8 @@ class MachineController extends BaseController
                 $name,
                 $plan_id,
                 $image_id,
-                $ssh_key_id,
-                $machine->id
+                $machine->id,
+                $ssh_key_id
             );
 
             Log::info('create server from image user #'.$user_id);

@@ -30,6 +30,8 @@ class SetUserInfoRequest extends ApiRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'national_code' => 'required',
+            'postal_code' => 'required',
+            'address' => 'required',
         ];
     }
 }

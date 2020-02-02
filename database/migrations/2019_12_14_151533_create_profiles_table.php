@@ -20,6 +20,7 @@ class CreateProfilesTable extends Migration
             $table->string('mobile')->nullable()->unique();
             $table->timestamp('mobile_verified_at')->nullable();
             $table->string('phone')->nullable()->unique();
+            $table->string('postal_code')->nullable();
             $table->string('address')->nullable();
             $table->boolean('organization')->default(false);
             $table->timestamp('phone_verified_at')->nullable();
