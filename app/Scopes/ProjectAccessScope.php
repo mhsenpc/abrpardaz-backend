@@ -3,12 +3,13 @@
 
 namespace App\Scopes;
 
+use App\User;
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
-class OwnerIDScope implements Scope
+class ProjectAccessScope implements Scope
 {
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -19,6 +20,9 @@ class OwnerIDScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
+        if (strpos(php_sapi_name(), 'cli') !== false)
+            return;
+
         $builder->where('owner_id',  Auth::id());
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Events\MachineCreated;
+use App\Events\SnapshotCreated;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
@@ -212,6 +214,8 @@ class MachineController extends BaseController
                 $ssh_key_id
             );
 
+            MachineCreated::dispatch($machine);
+
             Log::info('create server from image user #'.$user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
@@ -414,6 +418,7 @@ class MachineController extends BaseController
 
         //TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
+        SnapshotCreated::dispatch(Auth::id(),$snapshot->id);
         Log::info('take snapshot machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('عملیات ساخت تصویر آنی شروع شد');
     }

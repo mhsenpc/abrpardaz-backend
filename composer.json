@@ -17,6 +17,7 @@
         "laravel/tinker": "^1.0",
         "laraveldaily/laravel-invoices": "^1.3",
         "php-opencloud/openstack": "^3.0",
+        "pusher/pusher-php-server": "~4.0",
         "sentry/sentry-laravel": "1.5.0",
         "spatie/laravel-permission": "^3.3"
     },

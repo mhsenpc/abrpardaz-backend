@@ -19,6 +19,8 @@ class UserIDScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
+        if (strpos(php_sapi_name(), 'cli') !== false)
+            return;
         $builder->where('user_id',  Auth::id());
     }
 }

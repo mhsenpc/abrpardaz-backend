@@ -11,6 +11,12 @@
 |
 */
 
-Broadcast::channel('App.User.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+use App\User;
+
+Broadcast::channel('user-{id}', function ($user, $id) {
+    return (int)$user->id === (int)$id;
+});
+
+Broadcast::channel('project-{id}', function ($user, $id) {
+    return (User::find($user->id)->projects->contains($id));
 });

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Scopes\OwnerIDScope;
+use App\Scopes\ProjectAccessScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -21,6 +21,6 @@ class Project extends Model
     {
         parent::boot();
 
-        static::addGlobalScope(new OwnerIDScope());
+        static::addGlobalScope(new ProjectAccessScope());
     }
 }

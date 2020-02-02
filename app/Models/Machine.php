@@ -28,6 +28,11 @@ class Machine extends Model
         return $this->belongsTo(Plan::class);
     }
 
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function sshKey()
     {
         return $this->belongsTo(SshKey::class);

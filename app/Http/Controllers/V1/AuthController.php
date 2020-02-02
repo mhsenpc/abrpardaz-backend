@@ -119,6 +119,7 @@ class AuthController extends BaseController
             $result['token_type'] = 'Bearer';
             $result['expires_at'] = $token->token->expires_at;
             $result['message'] = 'شما با موفقیت وارد شدید';
+            $result['user_id'] = Auth::id();
 
             Log::info('user logged in '.request('email'));
 
