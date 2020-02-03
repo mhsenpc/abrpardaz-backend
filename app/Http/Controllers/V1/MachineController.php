@@ -8,6 +8,8 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\CreateFromImageRequest;
 use App\Http\Requests\Server\CreateFromSnapshotRequest;
 use App\Http\Requests\Server\DetailsRequest;
+use App\Http\Requests\Server\DisableBackupRequest;
+use App\Http\Requests\Server\EnableBackupRequest;
 use App\Http\Requests\Server\GetConsoleRequest;
 use App\Http\Requests\Server\ListRequest;
 use App\Http\Requests\Server\PowerOffRequest;
@@ -549,6 +551,74 @@ class MachineController extends BaseController
         $machine->changePlan($plan);
         Log::info('rescale machine #'.$machine->id.',user #'.Auth::id());
         return Responder::success('پلن با موفقیت تغییر یافت');
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/enableBackup",
+     *      summary="Enables authomatic backups for machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function enableBackup(EnableBackupRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $machine->enableBackup();
+        Log::info('backup enabled for machine #'.$machine->id.',user #'.Auth::id());
+        return Responder::success('نسخه پشتیبان با موفقیت فعال شد');
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/disableBackup",
+     *      summary="Disables authomatic backups for machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function disableBackup(DisableBackupRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $machine->disableBackup();
+        Log::info('backup disabled for machine #'.$machine->id.',user #'.Auth::id());
+        return Responder::success('نسخه پشتیبان با موفقیت غیرفعال شد');
     }
 
     /**

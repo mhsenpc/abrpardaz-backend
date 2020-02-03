@@ -77,4 +77,16 @@ class Machine extends Model
             'last_billing_date' => Carbon::now()
         ]);
     }
+
+    function enableBackup(){
+        $this->backup = true;
+        $this->save();
+        return $this;
+    }
+
+    function disableBackup(){
+        $this->backup = false;
+        $this->save();
+        return $this;
+    }
 }

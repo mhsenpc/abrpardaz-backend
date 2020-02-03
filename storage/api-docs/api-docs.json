@@ -612,6 +612,58 @@
                 }
             }
         },
+        "/machines/{id}/enableBackup": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Enables authomatic backups for machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::enableBackup",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/disableBackup": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Disables authomatic backups for machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::disableBackup",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/machines/{id}/remove": {
             "delete": {
                 "tags": [
