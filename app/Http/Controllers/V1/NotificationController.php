@@ -4,11 +4,12 @@
 namespace App\Http\Controllers\V1;
 
 
+use App\Http\Controllers\BaseController;
 use App\Http\Requests\Notification\DeleteRequest;
 use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationController
+class NotificationController extends BaseController
 {
     /**
      * @OA\Get(

@@ -20,6 +20,7 @@ class CreateInvoicesTable extends Migration
             $table->float('vat');
             $table->float('total');
             $table->boolean('is_paid');
+            $table->string('data',20000);
             $table->timestamps();
             $table->softDeletes();
         });

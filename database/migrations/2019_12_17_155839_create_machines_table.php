@@ -24,6 +24,7 @@ class CreateMachinesTable extends Migration
             $table->integer('project_id');
             $table->integer('image_id');
             $table->integer('ssh_key_id')->nullable();
+            $table->timestamp('last_billing_date');
             $table->timestamps();
             $table->softDeletes();
 

@@ -120,5 +120,13 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
+        Route::prefix('invoices')->group(function () {
+            Route::get('list', 'InvoiceController@index');
+        });
+
+        Route::prefix('transactions')->group(function () {
+            Route::get('list', 'TransactionsController@index');
+        });
+
     });
 });
