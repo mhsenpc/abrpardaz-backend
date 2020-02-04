@@ -35,7 +35,7 @@ class TicketStatusNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail','database'];
     }
 
     /**
@@ -61,7 +61,7 @@ class TicketStatusNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+            'message' => 'تیکت شما به شماره '.$this->ticket->ticket_id .' بسته شد'
         ];
     }
 }

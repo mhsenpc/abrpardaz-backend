@@ -128,5 +128,10 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::get('list', 'TransactionsController@index');
         });
 
+        //---------------------- Admin only routes -------------------------
+        Route::prefix('admin')->middleware(['role:super-admin'])->group(function () {
+
+        });
+
     });
 });

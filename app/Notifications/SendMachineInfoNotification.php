@@ -65,7 +65,6 @@ class SendMachineInfoNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
         ];
     }
 }

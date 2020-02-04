@@ -65,6 +65,8 @@ class AuthController extends BaseController
             Hash::make(request('password')),
         );
 
+        $user->assignRole('Normal User');
+
         $token = uniqid();
         Cache::put('verification_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
@@ -111,7 +113,7 @@ class AuthController extends BaseController
      */
     function login(LoginRequest $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')/*, 'is_active' => true*/])) {
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password'), 'is_active' => true])) {
             $user = Auth::user();
             $result = [];
             $token = $user->createToken('Abrpardaz');
@@ -120,6 +122,7 @@ class AuthController extends BaseController
             $result['expires_at'] = $token->token->expires_at;
             $result['message'] = 'شما با موفقیت وارد شدید';
             $result['user_id'] = Auth::id();
+            $result['permissions'] = $user->getAllPermissions()->pluck('name');
 
             Log::info('user logged in '.request('email'));
 
