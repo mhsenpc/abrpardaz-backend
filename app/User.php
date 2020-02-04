@@ -42,6 +42,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'last_billing_date'
+    ];
+
     public function profile()
     {
         return $this->belongsTo(Profile::class);

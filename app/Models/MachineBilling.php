@@ -11,6 +11,13 @@ class MachineBilling extends Model
     protected $guarded = ['id'];
     protected $table = 'machine_billing';
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'end_date',
+        'last_billing_date'
+    ];
+
     public function machine()
     {
         return $this->belongsTo(Machine::class);

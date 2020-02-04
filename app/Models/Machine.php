@@ -18,6 +18,13 @@ class Machine extends Model
         static::addGlobalScope(new UserIDScope());
     }
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'last_billing_date'
+    ];
+
     public function image()
     {
         return $this->belongsTo(Image::class);
@@ -43,7 +50,7 @@ class Machine extends Model
         return $this->hasMany(MachineBilling::class);
     }
 
-    static function createMachine(string $name, int $user_id, int $plan_id, int $image_id,int $project_id, $ssh_key_id = null): Machine
+    static function createMachine(string $name, int $user_id, int $plan_id, int $image_id, int $project_id, $ssh_key_id = null): Machine
     {
         /** @var Machine $machine */
         $machine = new Machine();
@@ -53,6 +60,7 @@ class Machine extends Model
         $machine->image_id = $image_id;
         $machine->ssh_key_id = $ssh_key_id;
         $machine->project_id = $project_id;
+        $machine->last_billing_date = Carbon::now();
         $machine->save();
 
         return $machine;
@@ -78,14 +86,22 @@ class Machine extends Model
         ]);
     }
 
-    function enableBackup(){
+    function enableBackup()
+    {
         $this->backup = true;
         $this->save();
         return $this;
     }
 
-    function disableBackup(){
+    function disableBackup()
+    {
         $this->backup = false;
+        $this->save();
+        return $this;
+    }
+
+    function updateLastBillingDate(){
+        $this->last_billing_date = Carbon::now();
         $this->save();
         return $this;
     }

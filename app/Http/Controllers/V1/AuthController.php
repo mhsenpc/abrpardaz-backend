@@ -62,7 +62,7 @@ class AuthController extends BaseController
     {
         $user = User::newUser(
             request('email'),
-            Hash::make(request('password'))
+            Hash::make(request('password')),
         );
 
         $token = uniqid();

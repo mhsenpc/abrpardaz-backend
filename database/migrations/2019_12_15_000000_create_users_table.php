@@ -23,7 +23,6 @@ class CreateUsersTable extends Migration
             $table->integer('profile_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('last_billing_date');
-            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
 

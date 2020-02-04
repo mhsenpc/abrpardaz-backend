@@ -14,6 +14,12 @@ class Billing extends Command
      */
     protected $signature = 'billing';
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'end_date'
+    ];
+
     /**
      * The console command description.
      *
