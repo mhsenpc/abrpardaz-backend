@@ -149,7 +149,7 @@ class MachineController extends BaseController
      *
      */
     function activities(ActivitiesRequest $request){
-        $activities = ServerActivity::where('machine_id',request(['id']))->get();
+        $activities = ServerActivity::where('machine_id',request('id'))->get();
         return Responder::result(['list' => $activities]);
     }
 

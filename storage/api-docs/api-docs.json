@@ -336,7 +336,33 @@
                 ],
                 "responses": {
                     "default": {
-                        "description": "returns a list of machines"
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/activities": {
+            "get": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Get acitivities of a server",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::activities",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
                     }
                 }
             }
