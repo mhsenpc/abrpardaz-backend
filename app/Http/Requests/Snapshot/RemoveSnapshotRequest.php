@@ -3,9 +3,11 @@
 namespace App\Http\Requests\Snapshot;
 
 use App\Http\Requests\ApiRequest;
+use App\Traits\AddIDParameterTrait;
 
 class RemoveSnapshotRequest extends ApiRequest
 {
+    use AddIDParameterTrait;
     /**
      * Determine if the user is authorized to make this request.
      *

@@ -19,7 +19,7 @@ class BillingService
 
         foreach ($users as $user) {
             $data = [];
-            $total_cost = 0;
+            $total_amount = 0;
             $total_vat = 0;
             echo $user->email . "\n";
             $machines = Machine::where('user_id', $user->id)->
@@ -36,30 +36,32 @@ class BillingService
                 foreach ($billings as $billing) {
                     echo $billing->id;
                     $now = Carbon::now();
-                    $cost = 0;
+                    $amount = 0;
                     if (empty($billing->end_date)) {
                         $hours = $billing->created_at->diffInHours($now);
-                        $cost = $hours * $billing->plan->hourly_price;
-                        $total_cost += $cost;
+                        $amount = $hours * $billing->plan->hourly_price;
+                        $total_amount += $amount;
                         $end_date = $now;
                     } else {
                         $end_date = new Carbon($billing->end_date);
                         $hours = $billing->created_at->diffInHours($end_date);
-                        $cost = $hours * $billing->plan->hourly_price;
-                        $total_cost += $cost;
+                        $amount = $hours * $billing->plan->hourly_price;
+                        $total_amount += $amount;
                     }
 
-                    $vat = $cost * 0.9;
+                    $vat = $amount * 0.09;
                     $total_vat += $vat;
                     $billing_item = [
                         'title' => 'Server usage period',
-                        'machine_id' => $machine->id,
+                        'type' => 'machine',
                         'start' => $billing->created_at,
                         'end' => $end_date,
-                        'plan' => $billing->plan,
-                        'cost' => $cost,
+                        'hours' => $hours,
+                        'amount' => $amount,
                         'vat' => $vat,
-                        'total' => $cost + $vat
+                        'total' => $amount + $vat,
+                        'machine' => $machine,
+                        'plan' => $billing->plan,
                     ];
                     $data[] = $billing_item;
                     //$billing->updateLastBillingDate();
@@ -79,9 +81,9 @@ class BillingService
 
             Invoice::create([
                 'user_id' => $user->id,
-                'amount' => $total_cost,
+                'amount' => $total_amount,
                 'vat' => $total_vat,
-                'total' => $total_cost + $total_vat,
+                'total' => $total_amount + $total_vat,
                 'is_paid' => false,
                 'data' => json_encode($data)
             ]);
