@@ -50,7 +50,7 @@ class TicketReplyAdminNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("RE: {$this->ticket->title} (Ticket ID: {$this->ticket->ticket_id})")
             ->line($this->reply->comment)
-            ->line('عناون:' . $this->ticket->title)
+            ->line('عنوان:' . $this->ticket->title)
             ->line('شماره تیکت:' . $this->ticket->ticket_id)
             ->action('نمایش تیکت', url('tickets/' . $this->ticket->ticket_id));
     }

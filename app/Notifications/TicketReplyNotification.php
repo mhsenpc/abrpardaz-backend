@@ -51,7 +51,7 @@ class TicketReplyNotification extends Notification implements ShouldQueue
             ->subject("RE: {$this->ticket->title} (Ticket ID: {$this->ticket->ticket_id})")
             ->line($this->reply->comment)
             ->line("پاسخ توسط:".$this->profile->first_name . ' ' . $this->profile->last_name)
-            ->line('عناون:' . $this->ticket->title)
+            ->line('عنوان:' . $this->ticket->title)
             ->line('شماره تیکت:' . $this->ticket->ticket_id)
             ->line('وضعیت:' . $this->ticket->status)
             ->line('هر زمان که تمایل داشته باشید می توانید از طریق لینک زیر تیکت خود را مشاهده کنید')
