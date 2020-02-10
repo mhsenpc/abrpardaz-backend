@@ -7,25 +7,24 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewTicketNotification extends Notification implements ShouldQueue
+class NewInvoiceNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    private $ticket;
     private $profile;
     private $user;
+    private $invoice;
 
     /**
      * Create a new notification instance.
      *
-     * @param $ticket
      * @param $user
-     * @param $profile
+     * @param $invoice
      */
-    public function __construct($ticket, $user, $profile)
+    public function __construct($user,$profile, $invoice)
     {
-        $this->ticket = $ticket;
         $this->user = $user;
         $this->profile = $profile;
+        $this->invoice = $invoice;
     }
 
     /**
@@ -48,16 +47,10 @@ class NewTicketNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[Ticket ID: {$this->ticket->ticket_id}] {$this->ticket->title}")
+            ->subject("[invoice ID: {$this->invoice->invoice_id}]  صورتجساب جدید")
             ->line($this->profile->name)
-            ->line('از اینکه با پشتیبانی ابرپرداز تماس گرفتید متشکریم.')
-            ->line('تیکتی برای شما باز شده و به محض پاسخ دهی به شما اطلاع داده خواهد شد')
-            ->line('اطلاعات تیکت شما:')
-            ->line('عنوان:' . $this->ticket->title)
-            ->line('اولویت:' . $this->ticket->priority)
-            ->line('وضعیت:' . $this->ticket->status)
-            ->line('هر زمان که تمایل داشته باشید می توانید از طریق لینک زیر تیکت خود را مشاهده کنید')
-            ->action('نمایش تیکت', url('tickets/' . $this->ticket->ticket_id));
+            ->line('صورت حساب جدیدی برای شما ایجاد گردید')
+            ->line('لطفا هر چه سریع تر جهت پرداخت آن از طریق پنل اقدام نمایید');
     }
 
     /**
@@ -69,7 +62,7 @@ class NewTicketNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-
+            'message' => 'صورت حساب جدید با شماره '.$this->invoice->invoice_id.' برای شما ایجاد گردید'
         ];
     }
 }

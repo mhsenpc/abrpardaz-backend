@@ -67,7 +67,7 @@ class TicketReplyNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            //
+            'message' => 'به تیکت شما پاسخ جدیدی داده شد',
         ];
     }
 }

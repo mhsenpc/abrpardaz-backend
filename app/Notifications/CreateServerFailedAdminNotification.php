@@ -7,28 +7,28 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TicketStatusNotification extends Notification implements ShouldQueue
+class CreateServerFailedAdminNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    private $profile;
-    private $ticket;
+    private $machine;
+    private $user;
 
     /**
      * Create a new notification instance.
      *
+     * @param $machine
      * @param $profile
-     * @param $ticket
      */
-    public function __construct($profile, $ticket)
+    public function __construct($machine, $profile)
     {
-        $this->profile = $profile;
-        $this->ticket = $ticket;
+        $this->user = $profile;
+        $this->machine = $machine;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -39,27 +39,26 @@ class TicketStatusNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("RE: {$this->ticket->title} (شماره تیکت: {$this->ticket->ticket_id})")
-            ->line($this->profile->name)
-            ->line('تیکت شما به شماره '.$this->ticket->ticket_id .' بسته شد');
+            ->subject("[Machine #: {$this->machine->id}] ساخت سرور با شکست مواجه شد")
+            ->line("تلاش ".$this->profile->name ." برای ساخت سرور ".$this->machine->name." با شکست مواجه گردید");
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            'message' => 'تیکت شما به شماره '.$this->ticket->ticket_id .' بسته شد'
+            'message' => "تلاش ".$this->profile->name ." برای ساخت سرور ".$this->machine->name." با شکست مواجه گردید"
         ];
     }
 }

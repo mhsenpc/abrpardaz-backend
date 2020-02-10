@@ -20,12 +20,13 @@ use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
-use App\Jobs\CreateMachineFromSnapshotJob;
 use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\ServerActivity;
 use App\Models\Snapshot;
+use App\Notifications\CreateServerFailedAdminNotification;
+use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\Responder;
@@ -231,16 +232,16 @@ class MachineController extends BaseController
             return Responder::error('شما به این پروژه دسترسی ندارید');
         }
 
-        try {
-            $machine = Machine::createMachine(
-                $name,
-                $user_id,
-                $plan_id,
-                $image_id,
-                $project_id,
-                $ssh_key_id
-            );
+        $machine = Machine::createMachine(
+            $name,
+            $user_id,
+            $plan_id,
+            $image_id,
+            $project_id,
+            $ssh_key_id
+        );
 
+        try {
             CreateMachineFromImageJob::dispatch(
                 $user_id,
                 $name,
@@ -255,6 +256,13 @@ class MachineController extends BaseController
             Log::info('create server from image user #'.$user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
+            $admins = User::role('Super Admin')->get();
+            foreach ($admins as $admin){
+                $admin->notify(new CreateServerFailedAdminNotification($machine,Auth::user()->profile ));
+            }
+
+            Auth::user()->notify(new CreateServerFailedNotification($machine,Auth::user()->profile));
+
             Log::critical("Couldn't create server from image for user #" . Auth::id());
             Log::critical($exception);
             return Responder::error('ساخت سرور انجام نشد');

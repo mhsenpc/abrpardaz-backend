@@ -15,4 +15,16 @@ class Profile extends Model
     {
         return $this->hasOne(\App\User::class);
     }
+
+    function getNameAttribute()
+    {
+        if (!empty($this->first_name && $this->last_name))
+            return $this->first_name . ' ' . $this->last_name;
+        else if (!empty($this->first_name))
+            return $this->first_name;
+        else if (!empty($this->last_name))
+            return 'جناب ' . $this->last_name;
+        else
+            return "کاربر";
+    }
 }

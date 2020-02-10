@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewTicketNotification extends Notification implements ShouldQueue
+class NewTicketAdminNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     private $ticket;
@@ -36,7 +36,7 @@ class NewTicketNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -50,13 +50,11 @@ class NewTicketNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject("[Ticket ID: {$this->ticket->ticket_id}] {$this->ticket->title}")
             ->line($this->profile->name)
-            ->line('از اینکه با پشتیبانی ابرپرداز تماس گرفتید متشکریم.')
-            ->line('تیکتی برای شما باز شده و به محض پاسخ دهی به شما اطلاع داده خواهد شد')
-            ->line('اطلاعات تیکت شما:')
+            ->line('تیکت جدیدی ایجاد کرده است')
+            ->line('اطلاعات تیکت :')
             ->line('عنوان:' . $this->ticket->title)
             ->line('اولویت:' . $this->ticket->priority)
             ->line('وضعیت:' . $this->ticket->status)
-            ->line('هر زمان که تمایل داشته باشید می توانید از طریق لینک زیر تیکت خود را مشاهده کنید')
             ->action('نمایش تیکت', url('tickets/' . $this->ticket->ticket_id));
     }
 
@@ -69,7 +67,7 @@ class NewTicketNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-
+            'message' => 'تیکت جدیدی به شماره ' . $this->ticket->ticket_id . ' از طرف ' . $this->profile->name . ' ارسال شده است'
         ];
     }
 }

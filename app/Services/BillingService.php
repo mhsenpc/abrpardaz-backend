@@ -6,8 +6,11 @@ namespace App\Services;
 use App\Models\Invoice;
 use App\Models\Machine;
 use App\Models\MachineBilling;
+use App\Notifications\NewInvoiceNotification;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class BillingService
 {
@@ -83,14 +86,17 @@ class BillingService
             $user->updateLastBillingDate();
 
             if ($total_amount > 0) {
-                Invoice::create([
+                $invoice = Invoice::create([
                     'user_id' => $user->id,
                     'amount' => $total_amount,
                     'vat' => $total_vat,
                     'total' => $total_amount + $total_vat,
                     'is_paid' => false,
-                    'data' => json_encode($data)
+                    'data' => json_encode($data),
+                    'invoice_id' => strtoupper(Str::random(10))
                 ]);
+
+                $user = User::find($user->id)->notify(new NewInvoiceNotification(Auth::user(),Auth::user()->profile,$invoice ));
             }
         }
     }

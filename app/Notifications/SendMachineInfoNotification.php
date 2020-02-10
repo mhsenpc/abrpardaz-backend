@@ -2,7 +2,6 @@
 
 namespace App\Notifications;
 
-use App\Traits\GetUserNameTrait;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -11,7 +10,6 @@ use Illuminate\Notifications\Notification;
 class SendMachineInfoNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    use GetUserNameTrait;
     private $profile;
     private $machine;
 
@@ -48,7 +46,7 @@ class SendMachineInfoNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("اطلاعات سرور شما - ابرپرداز")
-            ->line($this->getUserName())
+            ->line($this->profile->name)
             ->line('سرور جدید شما با موفقیت ساخته شد')
             ->line('نام: ' . $this->machine->name)
             ->line('IP: ' . $this->machine->public_ipv4)

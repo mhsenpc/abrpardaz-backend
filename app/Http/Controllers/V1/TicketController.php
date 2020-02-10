@@ -12,10 +12,13 @@ use App\Http\Requests\Ticket\ShowTicketRequest;
 use App\Models\Category;
 use App\Models\Reply;
 use App\Models\Ticket;
+use App\Notifications\NewTicketAdminNotification;
 use App\Notifications\NewTicketNotification;
+use App\Notifications\TicketReplyAdminNotification;
 use App\Notifications\TicketReplyNotification;
 use App\Notifications\TicketStatusNotification;
 use App\Services\Responder;
+use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -148,7 +151,13 @@ class TicketController extends BaseController
         }
         $ticket->save();
 
-        Auth::user()->notify(new NewTicketNotification($ticket, Auth::user()->profile));
+        //notif to user himself
+        Auth::user()->notify(new NewTicketNotification($ticket,Auth::user() , Auth::user()->profile));
+        //notif to admins
+        $admins = User::role('Super Admin')->get();
+        foreach ($admins as $admin){
+            $admin->notify(new NewTicketAdminNotification($ticket,Auth::user() , Auth::user()->profile));
+        }
         Log::info('new ticket created. user #'.Auth::id());
         return Responder::success('تیکت جدید با موفقیت ایجاد شد');
     }
@@ -195,10 +204,18 @@ class TicketController extends BaseController
             'comment' => \request('comment')
         ]);
 
-        // send mail if the user commenting is not the ticket owner
-        if ($reply->ticket->user->id !== Auth::id()) {
-            Auth::user()->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
-            //TODO: save a notification for this user
+
+        if ($reply->ticket->user_id === Auth::id()) {
+            //notif to admins if ticket owner has more questions
+            $admins = User::role('Super Admin')->get();
+            foreach ($admins as $admin){
+                $admin->notify(new TicketReplyAdminNotification($reply->ticket, $reply, Auth::user()->profile));
+            }
+        }
+        else{
+            // send mail if the user commenting is not the ticket owner
+            $user = Ticket::find(\request('id'))->user;
+            $user->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
         }
 
         Log::info('new reply for ticket #'.request('ticket_id').',user #'.Auth::id());
