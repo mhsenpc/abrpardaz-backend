@@ -5,6 +5,7 @@ namespace App;
 use App\Models\Machine;
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\UserGroup;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -96,6 +97,7 @@ class User extends Authenticatable
         $user->email = $email;
         $user->profile_id = $profile->id;
         $user->last_billing_date = Carbon::now();
+        $user->user_group_id = UserGroup::findDefaultGroup()->id;
         $user->save();
 
         $project->owner_id = $user->id;

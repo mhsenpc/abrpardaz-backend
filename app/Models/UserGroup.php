@@ -10,4 +10,8 @@ class UserGroup extends Model
 {
     protected $guarded = ['id'];
     protected $table = 'user_groups';
+
+    static function findDefaultGroup(){
+        return UserGroup::where('default',true)->first();
+    }
 }

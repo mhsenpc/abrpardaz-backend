@@ -695,7 +695,6 @@ class MachineController extends BaseController
         $service = new MachineService();
         $service->remove($machine->remote_id);
 
-        $machine->stopBilling();
         $machine->delete();
 
         Log::info('remove machine #'.$machine->id.',user #'.Auth::id());
