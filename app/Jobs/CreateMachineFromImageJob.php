@@ -92,7 +92,8 @@ class CreateMachineFromImageJob implements ShouldQueue
             'size' => $machine->plan->disk,
             'is_root' => true,
             'machine_id' => $machine->id,
-            'user_id' => $user->id
+            'user_id' => $user->id,
+            'last_billing_date' => Carbon::now()
         ]);
 
         MachineBilling::create([

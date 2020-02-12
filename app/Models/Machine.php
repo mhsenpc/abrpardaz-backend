@@ -24,7 +24,6 @@ class Machine extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'last_billing_date'
     ];
 
     public function image()
@@ -98,12 +97,6 @@ class Machine extends Model
     function disableBackup()
     {
         $this->backup = false;
-        $this->save();
-        return $this;
-    }
-
-    function updateLastBillingDate(){
-        $this->last_billing_date = Carbon::now();
         $this->save();
         return $this;
     }

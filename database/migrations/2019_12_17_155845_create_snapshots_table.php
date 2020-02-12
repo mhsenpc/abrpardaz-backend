@@ -21,6 +21,8 @@ class CreateSnapshotsTable extends Migration
             $table->integer('machine_id');
             $table->integer('user_id');
             $table->integer('image_id');
+            $table->timestamp('last_billing_date');
+            $table->timestamp('end_date');
             $table->timestamps();
             $table->softDeletes();
 

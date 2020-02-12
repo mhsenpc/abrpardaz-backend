@@ -7,6 +7,7 @@ use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Models\Snapshot;
+use App\Models\SnapshotBilling;
 use App\Services\Responder;
 use App\Services\SnapshotService;
 use Illuminate\Http\Request;
@@ -108,10 +109,10 @@ class SnapshotController extends BaseController
     {
         $snapshot = Snapshot::find(request('id'));
         $service = new SnapshotService();
-/*        $result = $service->rename(
+        $result = $service->rename(
             $snapshot->remote_id,
             \request('name')
-        );*/
+        );
 
         $result = true;
         if($result){
@@ -158,7 +159,9 @@ class SnapshotController extends BaseController
         $service = new SnapshotService();
         $result = $service->remove(\request('id'));
         if($result){
-            Snapshot::destroy(\request('id'));
+            $snapshot = Snapshot::find(\request('id'));
+            $snapshot->stopBilling();
+            $snapshot->delete();
             Log::info('snapshot removed snapshot #'.request('id').',user #'.Auth::id());
             return Responder::success("تصویر آنی با موفقیت حذف شد");
         }

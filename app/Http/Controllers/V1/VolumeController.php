@@ -12,6 +12,7 @@ use App\Models\Machine;
 use App\Models\Volume;
 use App\Services\Responder;
 use App\Services\VolumeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -82,7 +83,8 @@ class VolumeController extends BaseController
             'name' => \request('name'),
             'size' => \request('size'),
             'is_root' => false,
-            'user_id' => Auth::id()
+            'user_id' => Auth::id(),
+            'last_billing_date' => Carbon::now()
         ]);
 
         Log::info('new volume created size'.request('size').',user #'.Auth::id());
@@ -264,6 +266,7 @@ class VolumeController extends BaseController
 
         $service = new VolumeService();
         $service->remove($volume->remote_id);
+        $volume->stopBilling();
         $volume->delete();
 
         Log::info('volume remove #'.request('id').',user #'.Auth::id());

@@ -17,8 +17,8 @@ class CreateMachineBillingTable extends Migration
             $table->increments('id');
             $table->integer('machine_id');
             $table->integer('plan_id');
-            $table->timestamp('end_date')->nullable();
             $table->timestamp('last_billing_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->timestamps();
 
             $table->foreign('plan_id')->references('id')->on('plans');

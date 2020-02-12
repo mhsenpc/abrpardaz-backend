@@ -21,6 +21,8 @@ class CreateVolumesTable extends Migration
             $table->boolean('is_root')->default(false);
             $table->integer('machine_id')->nullable();
             $table->integer('user_id');
+            $table->timestamp('last_billing_date');
+            $table->timestamp('end_date');
             $table->timestamps();
             $table->softDeletes();
 

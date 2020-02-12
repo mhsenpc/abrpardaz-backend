@@ -31,6 +31,7 @@ use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\Responder;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -694,7 +695,7 @@ class MachineController extends BaseController
         $service = new MachineService();
         $service->remove($machine->remote_id);
 
-        $machine->billing->stopBilling();
+        $machine->stopBilling();
         $machine->delete();
 
         Log::info('remove machine #'.$machine->id.',user #'.Auth::id());
