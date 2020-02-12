@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->integer('parent_id')->nullable();
             $table->integer('referrer_id')->nullable();
+            $table->integer('user_group_id')->nullable();
             $table->integer('profile_id');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('last_billing_date');
@@ -27,6 +28,7 @@ class CreateUsersTable extends Migration
             $table->softDeletes();
 
             $table->foreign('profile_id')->references('id')->on('profiles');
+            $table->foreign('user_group_id')->references('id')->on('user_groups');
             $table->foreign('parent_id')->references('id')->on('users');
         });
     }

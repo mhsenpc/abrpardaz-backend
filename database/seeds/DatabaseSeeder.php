@@ -13,7 +13,5 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(FillSampleImages::class);
         $this->call(FillSamplePlans::class);
-        $this->call(RolesAndPermissionsSeeder::class);
-        $this->call(SampleUserSeeder::class);
     }
 }
