@@ -9,9 +9,11 @@ use App\Http\Requests\Volume\DetachFromMachineRequest;
 use App\Http\Requests\Volume\RemoveVolumeRequest;
 use App\Http\Requests\Volume\RenameVolumeRequest;
 use App\Models\Machine;
+use App\Models\Snapshot;
 use App\Models\Volume;
 use App\Services\Responder;
 use App\Services\VolumeService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -77,6 +79,15 @@ class VolumeController extends BaseController
     function createVolume(CreateVolumeRequest $request)
     {
         $service = new VolumeService();
+
+        $user_group = User::find(Auth::id())->userGroup;
+        if ($user_group) {
+            $user_volumes_size = Snapshot::where('user_id', Auth::id())->where('is_root', false)->sum('size');
+            if ($user_volumes_size + \request('size') > $user_group->max_volumes_size) {
+                return Responder::error('شما اجازه ایجاد فضا بیش از ' . $user_group->max_volumes_size . ' گیگابایت را ندارید');
+            }
+        }
+
         $volume = $service->create(\request('name'), \request('size'));
         Volume::create([
             'remote_id' => $volume->id,
@@ -87,7 +98,7 @@ class VolumeController extends BaseController
             'last_billing_date' => Carbon::now()
         ]);
 
-        Log::info('new volume created size'.request('size').',user #'.Auth::id());
+        Log::info('new volume created size' . request('size') . ',user #' . Auth::id());
         return Responder::success('فضا با موفقیت ساخته شد');
     }
 
@@ -134,7 +145,7 @@ class VolumeController extends BaseController
         $service = new VolumeService();
         $service->attachVolumeToMachine($machine->remote_id, $volume->remote_id);
 
-        Log::info('volume attach to machine #'.request('machine_id').', volume #'.request('id'). ',user #'.Auth::id());
+        Log::info('volume attach to machine #' . request('machine_id') . ', volume #' . request('id') . ',user #' . Auth::id());
         return Responder::success('اتصال با موفقیت انجام شد');
     }
 
@@ -181,7 +192,7 @@ class VolumeController extends BaseController
         $service = new VolumeService();
         $service->detachVolumeFromMachine($machine->remote_id, $volume->remote_id);
 
-        Log::info('volume detach from machine #'.request('machine_id').', volume #'.request('id').',user #'.Auth::id());
+        Log::info('volume detach from machine #' . request('machine_id') . ', volume #' . request('id') . ',user #' . Auth::id());
         return Responder::success('قطع ارتباط با موفقیت انجام شد');
     }
 
@@ -226,7 +237,7 @@ class VolumeController extends BaseController
         $volume->name = \request('name');
         $volume->save();
 
-        Log::info('volume rename #'.request('id').',user #'.Auth::id());
+        Log::info('volume rename #' . request('id') . ',user #' . Auth::id());
 
         return Responder::success('نام فضا با موفقیت تغییر یافت');
     }
@@ -269,7 +280,7 @@ class VolumeController extends BaseController
         $volume->stopBilling();
         $volume->delete();
 
-        Log::info('volume remove #'.request('id').',user #'.Auth::id());
+        Log::info('volume remove #' . request('id') . ',user #' . Auth::id());
         return Responder::success('فضا با موفقیت حذف شد');
     }
 }

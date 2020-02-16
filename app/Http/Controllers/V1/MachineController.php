@@ -18,9 +18,7 @@ use App\Http\Requests\Server\RemoveServerRequest;
 use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
-use App\Http\Requests\Server\TakeSnapshotRequest;
 use App\Jobs\CreateMachineFromImageJob;
-use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\ServerActivity;
@@ -31,7 +29,6 @@ use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\Responder;
 use App\User;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -84,7 +81,7 @@ class MachineController extends BaseController
      */
     function ofProject(ListRequest $request)
     {
-        $machines = Machine::with(['image', 'plan', 'sshKey'])->where('project_id',request('id'))->get();
+        $machines = Machine::with(['image', 'plan', 'sshKey'])->where('project_id', request('id'))->get();
         return Responder::result(['list' => $machines]);
     }
 
@@ -150,8 +147,9 @@ class MachineController extends BaseController
      *
      *
      */
-    function activities(ActivitiesRequest $request){
-        $activities = ServerActivity::where('machine_id',request('id'))->get();
+    function activities(ActivitiesRequest $request)
+    {
+        $activities = ServerActivity::where('machine_id', request('id'))->get();
         return Responder::result(['list' => $activities]);
     }
 
@@ -233,6 +231,14 @@ class MachineController extends BaseController
             return Responder::error('شما به این پروژه دسترسی ندارید');
         }
 
+        $user_group = User::find($user_id)->userGroup;
+        if ($user_group) {
+            $user_machines = Machine::where('user_id', $user_id)->get();
+            if ($user_machines->count() >= $user_group->max_machines) {
+                return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_machines . ' سرور را ندارید');
+            }
+        }
+
         $machine = Machine::createMachine(
             $name,
             $user_id,
@@ -254,15 +260,15 @@ class MachineController extends BaseController
 
             MachineCreated::dispatch($machine);
 
-            Log::info('create server from image user #'.$user_id);
+            Log::info('create server from image user #' . $user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
             $admins = User::role('Super Admin')->get();
-            foreach ($admins as $admin){
-                $admin->notify(new CreateServerFailedAdminNotification($machine,Auth::user()->profile ));
+            foreach ($admins as $admin) {
+                $admin->notify(new CreateServerFailedAdminNotification($machine, Auth::user()->profile));
             }
 
-            Auth::user()->notify(new CreateServerFailedNotification($machine,Auth::user()->profile));
+            Auth::user()->notify(new CreateServerFailedNotification($machine, Auth::user()->profile));
 
             Log::critical("Couldn't create server from image for user #" . Auth::id());
             Log::critical($exception);
@@ -302,7 +308,7 @@ class MachineController extends BaseController
         $service = new MachineService();
         $link = $service->console($machine->remote_id);
 
-        Log::info('get console machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('get console machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -340,7 +346,7 @@ class MachineController extends BaseController
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOn($machine->remote_id);
-        Log::info('power on machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('power on machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -378,70 +384,13 @@ class MachineController extends BaseController
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
         $service->powerOff($machine->remote_id);
-        Log::info('power off machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('power off machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
             'message' => 'سرور خاموش شد'
         ]);
         return Responder::success('سرور با موفقیت خاموش شد');
-    }
-
-    /**
-     * @OA\Post(
-     *      tags={"Machine"},
-     *      path="/machines/{id}/takeSnapshot",
-     *      summary="Take snapshot from a machine",
-     *      description="",
-     *
-     * @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     * @OA\Parameter(
-     *         name="name",
-     *         in="query",
-     *         description="The name you want to put on the snapshot",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *
-     * @OA\Response(
-     *         response="default",
-     *         description=""
-     *     ),
-     *     )
-     *
-     */
-    function takeSnapshot(TakeSnapshotRequest $request)
-    {
-        $machine = Machine::findorFail(\request('id'));
-
-        $snapshot = Snapshot::newSnapshot(
-            \request('name'),
-            \request('id'),
-            Auth::id(),
-            $machine->image_id
-        );
-
-        //TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
-
-        SnapshotCreated::dispatch(Auth::id(),$snapshot->id);
-        Log::info('take snapshot machine #'.$machine->id.',user #'.Auth::id());
-        ServerActivity::create([
-            'machine_id' => request('id'),
-            'user_id' => Auth::id(),
-            'message' => 'درخواست ساخت تصویر آنی از سرور دریافت شد'
-        ]);
-        return Responder::success('عملیات ساخت تصویر آنی شروع شد');
     }
 
     /**
@@ -473,7 +422,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(\request('id'));
         Auth::user()->notify(new SendMachineInfoNotification(Auth::user(), $machine));
-        Log::info('resend info machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('resend info machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -526,7 +475,7 @@ class MachineController extends BaseController
         $machine->name = request('name');
         $machine->save();
 
-        Log::info('rename machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('rename machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -578,7 +527,7 @@ class MachineController extends BaseController
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
         }
         $machine->changePlan($plan);
-        Log::info('rescale machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('rescale machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -617,7 +566,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(request('id'));
         $machine->enableBackup();
-        Log::info('backup enabled for machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('backup enabled for machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -656,7 +605,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(request('id'));
         $machine->disableBackup();
-        Log::info('backup disabled for machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('backup disabled for machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
             'machine_id' => request('id'),
             'user_id' => Auth::id(),
@@ -697,7 +646,7 @@ class MachineController extends BaseController
 
         $machine->delete();
 
-        Log::info('remove machine #'.$machine->id.',user #'.Auth::id());
+        Log::info('remove machine #' . $machine->id . ',user #' . Auth::id());
         return Responder::success('سرور با موفقیت حذف گردید');
     }
 }

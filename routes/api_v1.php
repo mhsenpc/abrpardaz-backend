@@ -31,7 +31,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::get('activities', 'MachineController@activities');
             Route::post('powerOn', 'MachineController@powerOn');
             Route::post('powerOff', 'MachineController@powerOff');
-            Route::post('takeSnapshot', 'MachineController@takeSnapshot');
             Route::put('resendInfo', 'MachineController@resendInfo');
             Route::post('rescale', 'MachineController@rescale');
             Route::post('rename', 'MachineController@rename');
@@ -57,6 +56,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('snapshots')->group(function () {
             Route::get('list', 'SnapshotController@index');
             Route::get('ofMachine', 'SnapshotController@ofMachine');
+            Route::post('takeSnapshot', 'SnapshotController@takeSnapshot');
 
             Route::prefix('{id}')->group(function () {
                 Route::get('getProgress', 'SnapshotController@getProgress');

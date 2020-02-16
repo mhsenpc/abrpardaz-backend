@@ -56,6 +56,11 @@ class User extends Authenticatable
         return $this->belongsTo(Profile::class);
     }
 
+    public function userGroup()
+    {
+        return $this->belongsTo(UserGroup::class);
+    }
+
     public function machines()
     {
         return $this->hasMany(Machine::class);

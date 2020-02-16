@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Events\SnapshotCreated;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
+use App\Http\Requests\Snapshot\TakeSnapshotRequest;
+use App\Models\Machine;
+use App\Models\ServerActivity;
 use App\Models\Snapshot;
 use App\Models\SnapshotBilling;
 use App\Services\Responder;
 use App\Services\SnapshotService;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -66,6 +71,71 @@ class SnapshotController extends BaseController
         return Responder::result([
             'list' => Snapshot::where('machine_id',\request('machine_id'))->get()
         ]);
+    }
+
+    /**
+     * @OA\Post(
+     *      tags={"Snapshot"},
+     *      path="/snapshots/takeSnapshot",
+     *      summary="Take snapshot from a machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     * @OA\Parameter(
+     *         name="name",
+     *         in="query",
+     *         description="The name you want to put on the snapshot",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function takeSnapshot(TakeSnapshotRequest $request)
+    {
+        $machine = Machine::findorFail(\request('machine_id'));
+
+        $user_group = User::find(Auth::id())->userGroup;
+        if ($user_group) {
+            $user_snapshots = Snapshot::where('user_id', Auth::id())->get();
+            if ($user_snapshots->count() >= $user_group->max_snapshots) {
+                return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_snapshots . ' تصویر آنی را ندارید');
+            }
+        }
+
+        $snapshot = Snapshot::newSnapshot(
+            \request('name'),
+            \request('machine_id'),
+            Auth::id(),
+            $machine->image_id
+        );
+
+        //TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
+
+        SnapshotCreated::dispatch(Auth::id(), $snapshot->id);
+        Log::info('take snapshot machine #' . $machine->id . ',user #' . Auth::id());
+        ServerActivity::create([
+            'machine_id' => request('machine_id'),
+            'user_id' => Auth::id(),
+            'message' => 'درخواست ساخت تصویر آنی از سرور دریافت شد'
+        ]);
+        return Responder::success('عملیات ساخت تصویر آنی شروع شد');
     }
 
 

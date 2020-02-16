@@ -61,7 +61,6 @@ class Machine extends Model
         $machine->image_id = $image_id;
         $machine->ssh_key_id = $ssh_key_id;
         $machine->project_id = $project_id;
-        $machine->last_billing_date = Carbon::now();
         $machine->save();
 
         return $machine;

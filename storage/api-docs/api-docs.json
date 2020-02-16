@@ -507,41 +507,6 @@
                 }
             }
         },
-        "/machines/{id}/takeSnapshot": {
-            "post": {
-                "tags": [
-                    "Machine"
-                ],
-                "summary": "Take snapshot from a machine",
-                "description": "",
-                "operationId": "App\\Http\\Controllers\\V1\\MachineController::takeSnapshot",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "The name you want to put on the snapshot",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "default": {
-                        "description": ""
-                    }
-                }
-            }
-        },
         "/machines/{id}/resendInfo": {
             "put": {
                 "tags": [
@@ -1434,6 +1399,41 @@
                 "responses": {
                     "default": {
                         "description": "List snapshots of a specific machine"
+                    }
+                }
+            }
+        },
+        "/snapshots/takeSnapshot": {
+            "post": {
+                "tags": [
+                    "Snapshot"
+                ],
+                "summary": "Take snapshot from a machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::takeSnapshot",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "The name you want to put on the snapshot",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
                     }
                 }
             }

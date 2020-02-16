@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Server;
+namespace App\Http\Requests\Snapshot;
 
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
@@ -27,8 +27,8 @@ class TakeSnapshotRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'id' => 'required|numeric|exists:machines,id'
+            'machine_id' => 'required|numeric|exists:machines,id',
+            'name' => 'required'
         ];
     }
 }
