@@ -19,7 +19,7 @@ class CreateUserGroupsTable extends Migration
             $table->string('name');
             $table->integer('max_machines');
             $table->integer('max_snapshots');
-            $table->integer('max_volumes_size');
+            $table->integer('max_volumes_usage');
             $table->timestamps();
             $table->softDeletes();
         });

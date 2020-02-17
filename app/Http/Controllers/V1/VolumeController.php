@@ -9,7 +9,6 @@ use App\Http\Requests\Volume\DetachFromMachineRequest;
 use App\Http\Requests\Volume\RemoveVolumeRequest;
 use App\Http\Requests\Volume\RenameVolumeRequest;
 use App\Models\Machine;
-use App\Models\Snapshot;
 use App\Models\Volume;
 use App\Services\Responder;
 use App\Services\VolumeService;
@@ -82,9 +81,8 @@ class VolumeController extends BaseController
 
         $user_group = User::find(Auth::id())->userGroup;
         if ($user_group) {
-            $user_volumes_size = Snapshot::where('user_id', Auth::id())->where('is_root', false)->sum('size');
-            if ($user_volumes_size + \request('size') > $user_group->max_volumes_size) {
-                return Responder::error('شما اجازه ایجاد فضا بیش از ' . $user_group->max_volumes_size . ' گیگابایت را ندارید');
+            if (Auth::user()->VolumesUsage + \request('size') > $user_group->max_volumes_usage) {
+                return Responder::error('شما اجازه ایجاد فضا بیش از ' . $user_group->max_volumes_usage . ' گیگابایت را ندارید');
             }
         }
 

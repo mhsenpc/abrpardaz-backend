@@ -11,7 +11,6 @@ use App\Http\Requests\Snapshot\TakeSnapshotRequest;
 use App\Models\Machine;
 use App\Models\ServerActivity;
 use App\Models\Snapshot;
-use App\Models\SnapshotBilling;
 use App\Services\Responder;
 use App\Services\SnapshotService;
 use App\User;
@@ -113,8 +112,7 @@ class SnapshotController extends BaseController
 
         $user_group = User::find(Auth::id())->userGroup;
         if ($user_group) {
-            $user_snapshots = Snapshot::where('user_id', Auth::id())->get();
-            if ($user_snapshots->count() >= $user_group->max_snapshots) {
+            if (Auth::user()->SnapshotCount >= $user_group->max_snapshots) {
                 return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_snapshots . ' تصویر آنی را ندارید');
             }
         }

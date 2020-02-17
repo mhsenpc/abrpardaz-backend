@@ -274,6 +274,21 @@
                 }
             }
         },
+        "/limits/list": {
+            "get": {
+                "tags": [
+                    "Limit"
+                ],
+                "summary": "List all user limits",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\LimitController::index",
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/machines/list": {
             "get": {
                 "tags": [

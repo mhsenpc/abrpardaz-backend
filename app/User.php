@@ -5,11 +5,12 @@ namespace App;
 use App\Models\Machine;
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\Snapshot;
 use App\Models\UserGroup;
+use App\Models\Volume;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -78,10 +79,11 @@ class User extends Authenticatable
 
     function __toString()
     {
-        return $this->profile->first_name ;
+        return $this->profile->first_name;
     }
 
-    function updateLastBillingDate(){
+    function updateLastBillingDate()
+    {
         $this->last_billing_date = Carbon::now();
         $this->save();
         return $this;
@@ -121,5 +123,20 @@ class User extends Authenticatable
     static function updatePassword(string $email, string $password)
     {
         User::where('email', $email)->update(['password' => $password]);
+    }
+
+    function getMachineCountAttribute()
+    {
+        return Machine::where('user_id', $this->id)->count();
+    }
+
+    function getSnapshotCountAttribute()
+    {
+        return Snapshot::where('user_id', $this->id)->count();
+    }
+
+    function getVolumesUsageAttribute()
+    {
+        return Volume::where('user_id', $this->id)->where('is_root', false)->sum('size');
     }
 }

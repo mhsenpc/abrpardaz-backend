@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\Events\MachineCreated;
-use App\Events\SnapshotCreated;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\ActivitiesRequest;
 use App\Http\Requests\Server\CreateFromImageRequest;
@@ -22,7 +21,6 @@ use App\Jobs\CreateMachineFromImageJob;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\ServerActivity;
-use App\Models\Snapshot;
 use App\Notifications\CreateServerFailedAdminNotification;
 use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\SendMachineInfoNotification;
@@ -233,8 +231,7 @@ class MachineController extends BaseController
 
         $user_group = User::find($user_id)->userGroup;
         if ($user_group) {
-            $user_machines = Machine::where('user_id', $user_id)->get();
-            if ($user_machines->count() >= $user_group->max_machines) {
+            if (Auth::user()->MachineCount >= $user_group->max_machines) {
                 return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_machines . ' سرور را ندارید');
             }
         }

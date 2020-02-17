@@ -17,7 +17,7 @@ class SampleUserGroupsSeeder extends Seeder
             'name' => 'کاربر استاندارد',
             'max_machines' => 11,
             'max_snapshots' => 30,
-            'max_volumes_size' => 1024,
+            'max_volumes_usage' => 1024,
         ]);
     }
 }
