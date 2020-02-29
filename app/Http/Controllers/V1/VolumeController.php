@@ -68,7 +68,7 @@ class VolumeController extends BaseController
      *         description="",
      *         required=true,
      *         @OA\Schema(
-     *             type="float"
+     *             type="number"
      *         )
      *     ),
      *

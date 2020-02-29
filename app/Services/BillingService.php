@@ -54,7 +54,7 @@ class BillingService
     /**
      * @param \Illuminate\Database\Eloquent\Model $user
      * @param $total_amount
-     * @param float $total_vat
+     * @param number $total_vat
      * @param array $data
      * @return array
      * @throws \Exception
@@ -139,7 +139,7 @@ class BillingService
     /**
      * @param \Illuminate\Database\Eloquent\Model $user
      * @param $total_amount
-     * @param float $total_vat
+     * @param number $total_vat
      * @param array $data
      * @return array
      * @throws \Exception
@@ -195,7 +195,7 @@ class BillingService
     /**
      * @param \Illuminate\Database\Eloquent\Model $user
      * @param $total_amount
-     * @param float $total_vat
+     * @param number $total_vat
      * @param array $data
      * @return array
      * @throws \Exception

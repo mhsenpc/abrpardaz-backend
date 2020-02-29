@@ -22,7 +22,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::get('list', 'MachineController@index');
             Route::get('ofProject/{id}', 'MachineController@ofProject');
             Route::post('createFromImage', 'MachineController@createFromImage');
-            Route::post('createFromSnapshot', 'MachineController@createFromSnapshot');
+            /*Route::post('createFromSnapshot', 'MachineController@createFromSnapshot');*/
         });
 
         Route::prefix('machines/{id}')->group(function () {

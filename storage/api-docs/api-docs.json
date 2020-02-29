@@ -1428,8 +1428,8 @@
                 "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::takeSnapshot",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "machine_id",
+                        "in": "query",
                         "description": "",
                         "required": true,
                         "schema": {
@@ -1732,7 +1732,7 @@
                         "description": "",
                         "required": true,
                         "schema": {
-                            "type": "float"
+                            "type": "number"
                         }
                     }
                 ],

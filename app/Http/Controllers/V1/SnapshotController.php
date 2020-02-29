@@ -80,8 +80,8 @@ class SnapshotController extends BaseController
      *      description="",
      *
      * @OA\Parameter(
-     *         name="id",
-     *         in="path",
+     *         name="machine_id",
+     *         in="query",
      *         description="",
      *         required=true,
      *         @OA\Schema(
