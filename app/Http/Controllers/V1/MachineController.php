@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Events\MachineCreated;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\ActivitiesRequest;
 use App\Http\Requests\Server\CreateFromImageRequest;
@@ -80,6 +79,30 @@ class MachineController extends BaseController
     function ofProject(ListRequest $request)
     {
         $machines = Machine::with(['image', 'plan', 'sshKey'])->where('project_id', request('id'))->get();
+        $service = new MachineService();
+        foreach ($machines as &$machine) {
+            switch ($machine->remote_id) {
+                case '-1':
+                    $machine->status = 'failed';
+                    break;
+                case '0':
+                    $machine->status = 'creating';
+                    break;
+                default:
+                    try {
+                        $server = $service->getServer($machine->remote_id);
+                        if ($server->status == 'ACTIVE')
+                            $machine->status = 'power_on';
+                        else if($server->status == 'SHUTOFF')
+                            $machine->status = 'power_off';
+
+                        $machine->power = $server;
+                    } catch (\Exception $exception) {
+                        $machine->status = 'failed';
+                    }
+                    break;
+            }
+        }
         return Responder::result(['list' => $machines]);
     }
 
@@ -255,11 +278,10 @@ class MachineController extends BaseController
                 $ssh_key_id
             );
 
-            MachineCreated::dispatch($machine);
-
             Log::info('create server from image user #' . $user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
+            $machine->updateRemoteID('-1');
             $admins = User::role('Super Admin')->get();
             foreach ($admins as $admin) {
                 $admin->notify(new CreateServerFailedAdminNotification($machine, Auth::user()->profile));
@@ -467,7 +489,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::findorFail(\request('id'));
         $service = new MachineService();
-        $service->rename($machine->remote_id, \request('name'));
+        $service->rename($machine->remote_id, \request('name') . '-' . \request('id'));
 
         $machine->name = request('name');
         $machine->save();
@@ -638,12 +660,18 @@ class MachineController extends BaseController
     function remove(RemoveServerRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
-        $service->remove($machine->remote_id);
+        try {
+            $machine->delete();
+            $service = new MachineService();
+            $service->remove($machine->remote_id);
 
-        $machine->delete();
+        } catch (\Exception $exception) {
+            Log::critical('failed to delete machine #' . \request('id'));
+            Log::critical($exception);
+        } finally {
+            Log::info('remove machine #' . $machine->id . ',user #' . Auth::id());
+        }
 
-        Log::info('remove machine #' . $machine->id . ',user #' . Auth::id());
         return Responder::success('سرور با موفقیت حذف گردید');
     }
 }

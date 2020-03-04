@@ -8,6 +8,7 @@ use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Http\Requests\Snapshot\TakeSnapshotRequest;
+use App\Jobs\TakeSnapshotJob;
 use App\Models\Machine;
 use App\Models\ServerActivity;
 use App\Models\Snapshot;
@@ -124,7 +125,7 @@ class SnapshotController extends BaseController
             $machine->image_id
         );
 
-        //TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
+        TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
         SnapshotCreated::dispatch(Auth::id(), $snapshot->id);
         Log::info('take snapshot machine #' . $machine->id . ',user #' . Auth::id());

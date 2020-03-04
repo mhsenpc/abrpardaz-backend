@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\MachineCreated;
 use App\Models\Machine;
 use App\Models\MachineBilling;
 use App\User;
@@ -79,12 +80,20 @@ class CreateMachineFromImageJob implements ShouldQueue
             $this->ssh_key_id
         );
 
+        //update machine record
         $machine = Machine::find($this->machine_id);
-        $machine->updateRemoteID('fake_remote_id'); //TOOD: remove this on production
+        $machine->updateRemoteID($result->id);
+
+        foreach ($result->addresses['external'] as $address){
+            if($address['version'] == 4){
+                $machine->updateIpv4($address['addr']);
+            }
+        }
+
         $user = User::find($this->user_id);
 
         //find its root volume
-        $volumeService = new VolumeService();
+/*        $volumeService = new VolumeService();
         $volume_id = $volumeService->findMachineRootVolume($machine->remote_id);
         Volume::create([
             'remote_id' => $volume_id,
@@ -94,13 +103,15 @@ class CreateMachineFromImageJob implements ShouldQueue
             'machine_id' => $machine->id,
             'user_id' => $user->id,
             'last_billing_date' => Carbon::now()
-        ]);
+        ]);*/
 
         MachineBilling::create([
             'machine_id' =>$this->machine_id,
             'plan_id' => $this->plan_id,
             'last_billing_date' => Carbon::now()
         ]);
+
+        MachineCreated::dispatch($machine);
 
         $user->notify(new SendMachineInfoNotification($user, $machine));
     }

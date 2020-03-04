@@ -2,12 +2,18 @@
 
 namespace App\Jobs;
 
+use App\Models\Snapshot;
+use App\Notifications\CreateServerFailedNotification;
+use App\Notifications\CreateSnapshotFailedNotification;
 use App\Services\MachineService;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TakeSnapshotJob implements ShouldQueue
 {
@@ -46,7 +52,17 @@ class TakeSnapshotJob implements ShouldQueue
      */
     public function handle()
     {
-        $service = new MachineService();
-        $service->takeSnapshot($this->remote_id, $this->name,$this->snapshot_id);
+        try {
+            $service = new MachineService();
+            $image = $service->takeSnapshot($this->remote_id, $this->name, $this->snapshot_id);
+            //update size and remote id in snapshots
+            Snapshot::find($this->snapshot_id)->updateSizeAndRemoteId($image->id, $image->size);
+        } catch (\Exception $exception) {
+            Log::critical('failed to remove snapshot #'.$this->snapshot_id);
+            Log::critical($exception);
+            $snapshot = Snapshot::find($this->snapshot_id);
+            $snapshot->user->notify(new CreateSnapshotFailedNotification($snapshot, $snapshot->user->profile));
+            $snapshot->delete();
+        }
     }
 }

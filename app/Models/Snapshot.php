@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Scopes\UserIDScope;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -17,6 +18,11 @@ class Snapshot extends Model
         parent::boot();
 
         static::addGlobalScope(new UserIDScope());
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     protected $dates = [

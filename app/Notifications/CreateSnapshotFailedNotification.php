@@ -7,22 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CreateServerFailedAdminNotification extends Notification implements ShouldQueue
+class CreateSnapshotFailedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-    private $machine;
+    private $snapshot;
     private $profile;
 
     /**
      * Create a new notification instance.
      *
-     * @param $machine
+     * @param $snapshot
      * @param $profile
      */
-    public function __construct($machine, $profile)
+    public function __construct($snapshot, $profile)
     {
         $this->profile = $profile;
-        $this->machine = $machine;
+        $this->snapshot = $snapshot;
     }
 
     /**
@@ -45,8 +45,9 @@ class CreateServerFailedAdminNotification extends Notification implements Should
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[Machine #: {$this->machine->id}] ساخت سرور با شکست مواجه شد")
-            ->line("تلاش ".$this->profile->name ." برای ساخت سرور ".$this->machine->name." با شکست مواجه گردید");
+            ->subject("[Snapshot #: {$this->snapshot->name}] ساخت تصویر آنی با شکست مواجه شد")
+            ->line("تلاش برای ساخت تصویر آنی ".$this->snapshot->name." با شکست مواجه گردید")
+            ->line("از این رویداد متاسفیم و مراتب به اطلاع تیم پشتیبانی ابرپرداز ارسال گردید");
     }
 
     /**
@@ -58,7 +59,7 @@ class CreateServerFailedAdminNotification extends Notification implements Should
     public function toArray($notifiable)
     {
         return [
-            'message' => "تلاش ".$this->profile->name ." برای ساخت سرور ".$this->machine->name." با شکست مواجه گردید"
+            'message' => "تلاش برای ساخت تصویر آنی ".$this->snapshot->name." با شکست مواجه گردید"
         ];
     }
 }

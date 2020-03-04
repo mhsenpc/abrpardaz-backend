@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Scopes\UserIDScope;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,6 +52,11 @@ class Machine extends Model
         return $this->hasMany(MachineBilling::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     static function createMachine(string $name, int $user_id, int $plan_id, int $image_id, int $project_id, $ssh_key_id = null): Machine
     {
         /** @var Machine $machine */
@@ -61,6 +67,7 @@ class Machine extends Model
         $machine->image_id = $image_id;
         $machine->ssh_key_id = $ssh_key_id;
         $machine->project_id = $project_id;
+        $machine->remote_id = 0;
         $machine->save();
 
         return $machine;
@@ -69,6 +76,13 @@ class Machine extends Model
     public function updateRemoteID(string $remote_id)
     {
         $this->remote_id = $remote_id;
+        $this->save();
+        return $this;
+    }
+
+    public function updateIpv4(string $ipv4)
+    {
+        $this->public_ipv4 = $ipv4;
         $this->save();
         return $this;
     }

@@ -5,10 +5,9 @@ namespace App\Services;
 
 
 use App\Models\Image;
-use App\Models\Machine;
 use App\Models\Plan;
-use App\Models\Snapshot;
 use App\Models\SshKey;
+use Illuminate\Support\Facades\Log;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -18,7 +17,6 @@ class MachineService
 
     function __construct()
     {
-        return;
         $this->openstack = new OpenStack([
             'authUrl' => config('openstack.authUrl'),
             'region' => config('openstack.region'),
@@ -32,40 +30,40 @@ class MachineService
         $this->compute = $this->openstack->computeV2(['region' => config('openstack.region')]);
     }
 
-    function createMachineFromImage(int $machine_id, string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null): bool
+    function getServer(string $remote_id)
     {
-        try {
-            $image = Image::find($image_id);
-            $plan = Plan::find($plan_id);
-            if(!empty($ssh_key_id)){
-                $ssh_key = SshKey::find($ssh_key_id);
-            }
-            return true;
+        $server = $this->compute->getServer(['id' => $remote_id]);
+        $server->retrieve();
+        return $server;
+    }
 
-            $options = [
-                // Required
-                'name' => $name."-".$machine_id,
-                'imageId' => $image->remote_id,
-                'flavorId' => $plan->remote_id,
-
-                // Required if multiple network is defined
-                'networks' => [
-                    ['uuid' => config('openstack.networkId')]
-                ],
-            ];
-
-            // Create the server
-            /**@var OpenStack\Compute\v2\Models\Server $server */
-            $server = $this->compute->createServer($options);
-
-            $server->waitUntil('Active');
-
-            Machine::find($machine_id)->updateRemoteID($server->id);
+    function createMachineFromImage(int $machine_id, string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null)
+    {
+        $image = Image::find($image_id);
+        $plan = Plan::find($plan_id);
+        if (!empty($ssh_key_id)) {
+            $ssh_key = SshKey::find($ssh_key_id);
         }
-        catch (\Exception $exception){
-            //TODO: save a notification for this user
-            Machine::find($machine_id)->updateRemoteID('failed');
-        }
+
+        $options = [
+            // Required
+            'name' => $name . "-" . $machine_id,
+            'imageId' => $image->remote_id,
+            'flavorId' => $plan->remote_id,
+
+            // Required if multiple network is defined
+            'networks' => [
+                ['uuid' => config('openstack.networkId')]
+            ],
+        ];
+
+        // Create the server
+        /**@var OpenStack\Compute\v2\Models\Server $server */
+        $server = $this->compute->createServer($options);
+
+        $server->waitUntil('Active');
+
+        return $server;
     }
 
     function powerOn(string $id)
@@ -88,7 +86,6 @@ class MachineService
 
     function rename(string $id, string $newname)
     {
-        return true;
         $server = $this->compute->getServer(['id' => $id]);
         $server->name = $newname;
         $server->update();
@@ -96,28 +93,18 @@ class MachineService
 
     function takeSnapshot(string $remote_id, string $name, int $snapshot_id)
     {
-        return true;
-        try {
-            $server = $this->compute->getServer(['id' => $remote_id]);
+        $server = $this->compute->getServer(['id' => $remote_id]);
 
-            $image = $server->createImage([
-                'name' => $name,
-            ]);
+        $server->createImage([
+            'name' => $name,
+        ]);
 
-            $server->waitUntil('Active');
+        $server->waitUntil('Active');
 
-            //update size and remote id in snapshots
-            Snapshot::find($snapshot_id)->updateSizeAndRemoteId($remote_id,$image->size);
-        }
-        catch (\Exception $exception){
-            $snapshot = Snapshot::find($snapshot_id);
-            $snapshot->delete();
-        }
     }
 
     function remove(string $remote_id)
     {
-        return;
         $server = $this->compute->getServer(['id' => $remote_id]);
         $server->delete();
     }
