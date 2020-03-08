@@ -113,4 +113,5 @@ class Machine extends Model
         $this->save();
         return $this;
     }
+
 }

@@ -21,18 +21,20 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('machines')->group(function () {
             Route::get('list', 'MachineController@index');
             Route::get('ofProject/{id}', 'MachineController@ofProject');
-            Route::post('createFromImage', 'MachineController@createFromImage');
-            /*Route::post('createFromSnapshot', 'MachineController@createFromSnapshot');*/
+            Route::post('create', 'MachineController@create');
         });
 
         Route::prefix('machines/{id}')->group(function () {
             Route::post('console', 'MachineController@console');
             Route::get('details', 'MachineController@details');
             Route::get('activities', 'MachineController@activities');
-            Route::post('powerOn', 'MachineController@powerOn');
-            Route::post('powerOff', 'MachineController@powerOff');
+            Route::put('powerOn', 'MachineController@powerOn');
+            Route::put('powerOff', 'MachineController@powerOff');
+            Route::put('enableBackup', 'MachineController@enableBackup');
+            Route::put('disableBackup', 'MachineController@disableBackup');
             Route::put('resendInfo', 'MachineController@resendInfo');
             Route::post('rescale', 'MachineController@rescale');
+            Route::post('rebuild', 'MachineController@rebuild');
             Route::post('rename', 'MachineController@rename');
             Route::delete('remove', 'MachineController@remove');
         });

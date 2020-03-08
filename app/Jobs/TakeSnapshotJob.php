@@ -54,7 +54,7 @@ class TakeSnapshotJob implements ShouldQueue
     {
         try {
             $service = new MachineService();
-            $image = $service->takeSnapshot($this->remote_id, $this->name, $this->snapshot_id);
+            $image = $service->takeSnapshot($this->remote_id, $this->name);
             //update size and remote id in snapshots
             Snapshot::find($this->snapshot_id)->updateSizeAndRemoteId($image->id, $image->size);
         } catch (\Exception $exception) {

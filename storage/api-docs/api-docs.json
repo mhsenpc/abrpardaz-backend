@@ -382,14 +382,14 @@
                 }
             }
         },
-        "/machines/createFromImage": {
+        "/machines/create": {
             "post": {
                 "tags": [
                     "Machine"
                 ],
                 "summary": "Create a new machine from an image",
                 "description": "",
-                "operationId": "App\\Http\\Controllers\\V1\\MachineController::createFromImage",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::create",
                 "parameters": [
                     {
                         "name": "name",
@@ -656,6 +656,41 @@
                     {
                         "name": "id",
                         "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/rebuild": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Writes a new image on instance",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::rebuild",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "image_id",
+                        "in": "query",
                         "description": "",
                         "required": true,
                         "schema": {

@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\Image;
 use App\Models\Plan;
 use App\Models\SshKey;
-use Illuminate\Support\Facades\Log;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -91,7 +90,7 @@ class MachineService
         $server->update();
     }
 
-    function takeSnapshot(string $remote_id, string $name, int $snapshot_id)
+    function takeSnapshot(string $remote_id, string $name)
     {
         $server = $this->compute->getServer(['id' => $remote_id]);
 
@@ -100,7 +99,20 @@ class MachineService
         ]);
 
         $server->waitUntil('Active');
+    }
 
+    function rebuild(string $remote_id, string $image_remote_id,string $admin_pass)
+    {
+        $server = $this->compute->getServer([
+            'id' => $remote_id,
+        ]);
+
+        $server->rebuild([
+            'imageId' => $image_remote_id,
+            'adminPass' => $admin_pass
+        ]);
+        $server->waitUntil('Active');
+        return true;
     }
 
     function remove(string $remote_id)

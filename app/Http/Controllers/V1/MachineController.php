@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\ActivitiesRequest;
-use App\Http\Requests\Server\CreateFromImageRequest;
+use App\Http\Requests\Server\CreateMachineRequest;
 use App\Http\Requests\Server\DetailsRequest;
 use App\Http\Requests\Server\DisableBackupRequest;
 use App\Http\Requests\Server\EnableBackupRequest;
@@ -12,16 +12,19 @@ use App\Http\Requests\Server\GetConsoleRequest;
 use App\Http\Requests\Server\ListRequest;
 use App\Http\Requests\Server\PowerOffRequest;
 use App\Http\Requests\Server\PowerOnRequest;
+use App\Http\Requests\Server\RebuildServerRequest;
 use App\Http\Requests\Server\RemoveServerRequest;
 use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Jobs\CreateMachineFromImageJob;
+use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\ServerActivity;
 use App\Notifications\CreateServerFailedAdminNotification;
 use App\Notifications\CreateServerFailedNotification;
+use App\Notifications\RebuildMachineNotification;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\Responder;
@@ -93,7 +96,7 @@ class MachineController extends BaseController
                         $server = $service->getServer($machine->remote_id);
                         if ($server->status == 'ACTIVE')
                             $machine->status = 'power_on';
-                        else if($server->status == 'SHUTOFF')
+                        else if ($server->status == 'SHUTOFF')
                             $machine->status = 'power_off';
 
                         $machine->power = $server;
@@ -136,8 +139,12 @@ class MachineController extends BaseController
      */
     function details(DetailsRequest $request)
     {
-        $machines = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
-        return Responder::result(['machine' => $machines]);
+        $service = new MachineService();
+        $machine = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
+        $server = $service->getServer($machine->remote_id);
+        $machine->powerState = $server->powerState;
+        $machine->status = $server->status;
+        return Responder::result(['machine' => $machine]);
     }
 
     /**
@@ -177,7 +184,7 @@ class MachineController extends BaseController
     /**
      * @OA\Post(
      *      tags={"Machine"},
-     *      path="/machines/createFromImage",
+     *      path="/machines/create",
      *      summary="Create a new machine from an image",
      *      description="",
      *
@@ -239,12 +246,13 @@ class MachineController extends BaseController
      *    )
      *
      */
-    function createFromImage(CreateFromImageRequest $request)
+    function create(CreateMachineRequest $request)
     {
         $user_id = Auth::id();
         $name = \request('name');
         $plan_id = \request('plan_id');
         $image_id = \request('image_id');
+        $snapshot_id = \request('snapshot_id');
         $project_id = request('project_id');
         $ssh_key_id = \request('ssh_key_id');
 
@@ -257,6 +265,10 @@ class MachineController extends BaseController
             if (Auth::user()->MachineCount >= $user_group->max_machines) {
                 return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_machines . ' سرور را ندارید');
             }
+        }
+
+        if(empty($snapshot_id) && empty($image_id)){
+            return Responder::error('منبع سرور جدید مشخص نشده است');
         }
 
         $machine = Machine::createMachine(
@@ -631,6 +643,60 @@ class MachineController extends BaseController
             'message' => 'پشتیبان گیری خودکار سرور غیرفعال گردید'
         ]);
         return Responder::success('نسخه پشتیبان با موفقیت غیرفعال شد');
+    }
+
+    /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/rebuild",
+     *      summary="Writes a new image on instance",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="image_id",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function rebuild(RebuildServerRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $image = Image::find(request('image_id'));
+        $new_pass = 'root';
+        $service = new MachineService();
+        $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
+        $machine->password = $new_pass;
+        $machine->save();
+        Auth::user()->notify(new RebuildMachineNotification(Auth::user()->profile, $machine));
+        Log::info('rebuild machine #' . $machine->id . ', image #' . request('image_id') . ', user #' . Auth::id());
+        ServerActivity::create([
+            'machine_id' => request('id'),
+            'user_id' => Auth::id(),
+            'message' => 'تصویر جدید بر روی ماشین بارگذاری شد'
+        ]);
+        return Responder::success('فرآیند نصب مجدد تصویر بر روی ماشین شما شروع شد.');
     }
 
     /**
