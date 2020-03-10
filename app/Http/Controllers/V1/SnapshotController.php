@@ -125,7 +125,7 @@ class SnapshotController extends BaseController
             $machine->image_id
         );
 
-        TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
+        //TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
 
         SnapshotCreated::dispatch(Auth::id(), $snapshot->id);
         Log::info('take snapshot machine #' . $machine->id . ',user #' . Auth::id());

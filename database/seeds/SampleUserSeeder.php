@@ -18,13 +18,9 @@ class SampleUserSeeder extends Seeder
             Hash::make('admin')
         );
 
+        $admin->is_active = true;
+        $admin->save();
+
         $admin->assignRole('Super Admin');
-
-        $user = User::newUser(
-            'user@user.com',
-            Hash::make('user')
-        );
-
-        $user->assignRole('Normal User');
     }
 }

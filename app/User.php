@@ -91,10 +91,6 @@ class User extends Authenticatable
 
     static function newUser(string $email, string $password)
     {
-        $project = (new Project());
-        $project->name = "Default";
-        $project->save();
-
         $profile = (new Profile());
         $profile->save();
 
@@ -106,11 +102,6 @@ class User extends Authenticatable
         $user->last_billing_date = Carbon::now();
         $user->user_group_id = UserGroup::findDefaultGroup()->id;
         $user->save();
-
-        $project->owner_id = $user->id;
-        $project->save();
-
-        $user->projects()->attach($project->id);
 
         return $user;
     }
