@@ -141,9 +141,16 @@ class MachineController extends BaseController
     {
         $service = new MachineService();
         $machine = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
-        $server = $service->getServer($machine->remote_id);
-        $machine->powerState = $server->powerState;
-        $machine->status = $server->status;
+        try{
+            $server = $service->getServer($machine->remote_id);
+            $machine->powerState = $server->powerState;
+            $machine->status = $server->status;
+        }
+        catch(\Exception $exception){
+            $machine->powerState = 0;
+            $machine->status = 'ERROR';
+        }
+
         return Responder::result(['machine' => $machine]);
     }
 
