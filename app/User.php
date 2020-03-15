@@ -130,4 +130,16 @@ class User extends Authenticatable
     {
         return Volume::where('user_id', $this->id)->where('is_root', false)->sum('size');
     }
+
+    function activate(){
+        $this->is_active = true;
+        $this->save();
+        return $this;
+    }
+
+    function deactivate(){
+        $this->is_active = false;
+        $this->save();
+        return $this;
+    }
 }

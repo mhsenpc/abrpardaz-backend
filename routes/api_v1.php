@@ -136,7 +136,41 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         });
 
         //---------------------- Admin only routes -------------------------
-        Route::prefix('admin')->middleware(['role:super-admin'])->group(function () {
+        Route::prefix('admin')->group(function () {
+            Route::prefix('users')->group(function () {
+                Route::get('list', 'UserController@index');
+                Route::post('add', 'UserController@add');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('show', 'UserController@show');
+                    Route::post('edit', 'UserController@edit');
+                    Route::put('activate', 'UserController@activate');
+                    Route::put('deactivate', 'UserController@deactivate');
+                    Route::delete('remove', 'UserController@remove');
+                });
+            });
+
+            Route::prefix('images')->group(function () {
+                Route::get('list', 'ImageController@index');
+                Route::post('add', 'ImageController@add');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('show', 'ImageController@show');
+                    Route::post('edit', 'ImageController@edit');
+                    Route::delete('remove', 'ImageController@remove');
+                });
+            });
+
+            Route::prefix('plans')->group(function () {
+                Route::get('list', 'PlanController@index');
+                Route::post('add', 'PlanController@add');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('show', 'PlanController@show');
+                    Route::post('edit', 'PlanController@edit');
+                    Route::delete('remove', 'PlanController@remove');
+                });
+            });
 
         });
 
