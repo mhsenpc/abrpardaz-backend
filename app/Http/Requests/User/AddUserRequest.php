@@ -25,9 +25,7 @@ class AddUserRequest extends ApiRequest
     {
         return [
             'email' => 'required',
-            'is_active' => 'required',
             'password' => 'required',
-            'referrer_id' => 'sometimes|nullable|numeric',
         ];
     }
 }

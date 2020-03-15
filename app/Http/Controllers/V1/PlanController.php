@@ -31,8 +31,8 @@ class PlanController extends BaseController
      */
     function index()
     {
-        $plans = Plan::all();
-        return Responder::result(['list' => $plans]);
+        $plans = Plan::paginate();
+        return Responder::result(['pagination' => $plans]);
     }
 
     /**

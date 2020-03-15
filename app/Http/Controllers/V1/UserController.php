@@ -6,7 +6,6 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\User\ActivateUserRequest;
 use App\Http\Requests\User\AddUserRequest;
 use App\Http\Requests\User\DeactivateUserRequest;
-use App\Http\Requests\User\EditUserRequest;
 use App\Http\Requests\User\RemoveUserRequest;
 use App\Http\Requests\User\ShowUserRequest;
 use App\Services\Responder;
@@ -33,8 +32,8 @@ class UserController extends BaseController
      */
     function index()
     {
-        $users = User::paginate(10);
-        return Responder::result(['list' => $users]);
+        $users = User::with(['profile', 'userGroup'])->paginate(10);
+        return Responder::result(['pagination' => $users]);
     }
 
     /**
@@ -81,16 +80,6 @@ class UserController extends BaseController
      *     ),
      *
      *     @OA\Parameter(
-     *         name="is_active",
-     *         in="query",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
      *         name="password",
      *         in="query",
      *         description="",
@@ -100,106 +89,15 @@ class UserController extends BaseController
      *         )
      *     ),
      *
-     *     @OA\Parameter(
-     *         name="referrer_id",
-     *         in="query",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="number"
-     *         )
-     *     ),
      *
      *     )
      *
      */
     function add(AddUserRequest $request)
     {
-        User::create([
-            'email' => $request->input('email'),
-            'is_active' => $request->input('is_active'),
-            'password' => $request->input('password'),
-            'referrer_id' => $request->input('referrer_id'),
-        ]);
+        User::newUser($request->input('email'), $request->input('password'))->activate();
         Log::info('new user created. user #' . Auth::id());
         return Responder::success("کاربر با موفقیت اضافه شد");
-    }
-
-    /**
-     * @OA\Post(
-     *      tags={"User"},
-     *      path="/users/{id}/edit",
-     *      summary="Edit a user using its id",
-     *      description="",
-     *
-     * @OA\Response(
-     *         response="default",
-     *         description="successful operation"
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="id",
-     *         in="path",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="email",
-     *         in="query",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="is_active",
-     *         in="query",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="password",
-     *         in="query",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *
-     *     @OA\Parameter(
-     *         name="referrer_id",
-     *         in="query",
-     *         description="",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="number"
-     *         )
-     *     ),
-     *
-     *     )
-     *
-     */
-    function edit(EditUserRequest $request)
-    {
-        User::find(\request('id'))->update([
-            'email' => $request->input('email'),
-            'is_active' => $request->input('is_active'),
-            'password' => $request->input('password'),
-            'referrer_id' => $request->input('referrer_id'),
-        ]);
-        Log::info('user edited. key #' . request('id') . ',user #' . Auth::id());
-        return Responder::success("کاربر با موفقیت ویرایش شد");
     }
 
     /**
@@ -259,7 +157,8 @@ class UserController extends BaseController
      *     )
      *
      */
-    function activate(ActivateUserRequest $request){
+    function activate(ActivateUserRequest $request)
+    {
         User::find(request('id'))->activate();
         return Responder::success("کاربر با موفقیت فعال شد");
     }
@@ -289,8 +188,9 @@ class UserController extends BaseController
      *     )
      *
      */
-    function deactivate(DeactivateUserRequest $request){
-        User::find(request('id'))->activate();
+    function deactivate(DeactivateUserRequest $request)
+    {
+        User::find(request('id'))->deactivate();
         return Responder::success("کاربر با موفقیت غیرفعال شد");
     }
 }

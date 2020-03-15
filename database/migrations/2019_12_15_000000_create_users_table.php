@@ -18,7 +18,6 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->boolean('is_active')->default(false);
             $table->string('password');
-            $table->integer('parent_id')->nullable();
             $table->integer('referrer_id')->nullable();
             $table->integer('user_group_id')->nullable();
             $table->integer('profile_id');
@@ -29,7 +28,6 @@ class CreateUsersTable extends Migration
 
             $table->foreign('profile_id')->references('id')->on('profiles');
             $table->foreign('user_group_id')->references('id')->on('user_groups');
-            $table->foreign('parent_id')->references('id')->on('users');
         });
     }
 

@@ -136,5 +136,11 @@ return [
         'plan_id' => 'پلن',
         'image_id' => 'سیستم عامل',
         'postal_code' => 'کد پستی',
+        'min_ram' => 'حداقل رم',
+        'min_disk' => 'حداقل دیسک',
+        'version' => 'نسخه',
+        'disk' => 'دیسک',
+        'ram' => 'رم',
+        'hourly_price' => 'هزینه ساعتی',
     ],
 ];

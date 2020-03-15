@@ -32,7 +32,7 @@ class ImageController extends BaseController
     function index()
     {
         $images = Image::paginate(10);
-        return Responder::result(['list' => $images]);
+        return Responder::result(['pagination' => $images]);
     }
 
     /**

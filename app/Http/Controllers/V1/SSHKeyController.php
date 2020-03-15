@@ -31,7 +31,7 @@ class SSHKeyController extends BaseController
      */
     function index()
     {
-        return Responder::result(['list' => SshKey::all()]);
+        return Responder::result(['pagination' => SshKey::paginate()]);
     }
 
     /**

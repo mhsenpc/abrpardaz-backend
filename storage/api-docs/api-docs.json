@@ -2076,6 +2076,149 @@
                 }
             }
         },
+        "/users/list": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "List all users",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\UserController::index",
+                "responses": {
+                    "default": {
+                        "description": "List of users"
+                    }
+                }
+            }
+        },
+        "/users/{id}/show": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Return a specific user",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\UserController::show",
+                "responses": {
+                    "default": {
+                        "description": "Return a specific user"
+                    }
+                }
+            }
+        },
+        "/users/add": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Add a user",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\UserController::add",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/users/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Remove a user using its id",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\UserController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/users/{id}/activate": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Activates a user",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\UserController::activate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/users/{id}/deactivate": {
+            "put": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Deactivate a user",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\UserController::deactivate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
         "/volumes/list": {
             "get": {
                 "tags": [
