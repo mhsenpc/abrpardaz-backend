@@ -802,6 +802,198 @@
                 }
             }
         },
+        "/plans/{id}/show": {
+            "get": {
+                "tags": [
+                    "Plan"
+                ],
+                "summary": "Return a specific plan",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\PlanController::show",
+                "responses": {
+                    "default": {
+                        "description": "Return a specific plan"
+                    }
+                }
+            }
+        },
+        "/plans/add": {
+            "post": {
+                "tags": [
+                    "Plan"
+                ],
+                "summary": "Add a plan",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\PlanController::add",
+                "parameters": [
+                    {
+                        "name": "remote_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "disk",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "ram",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "vcpu",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "hourly_price",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/plans/{id}/edit": {
+            "post": {
+                "tags": [
+                    "Plan"
+                ],
+                "summary": "Edit a plan using its id",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\PlanController::edit",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "remote_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "disk",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "ram",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "vcpu",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "hourly_price",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/plans/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "Plan"
+                ],
+                "summary": "Remove a plan using its id",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\PlanController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
         "/profile/getUserInfo": {
             "get": {
                 "tags": [

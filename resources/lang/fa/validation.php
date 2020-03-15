@@ -135,5 +135,6 @@ return [
         "national_code" => "کد ملی",
         'plan_id' => 'پلن',
         'image_id' => 'سیستم عامل',
+        'postal_code' => 'کد پستی',
     ],
 ];

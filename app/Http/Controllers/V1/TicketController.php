@@ -42,8 +42,8 @@ class TicketController extends BaseController
      */
     public function index()
     {
-        $tickets = Ticket::all();
-        return Responder::result(['list' => $tickets->toArray()]);
+        $tickets = Ticket::paginate(5);
+        return Responder::result(['pagination' => $tickets->toArray()]);
     }
 
     /**

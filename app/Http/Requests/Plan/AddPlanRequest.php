@@ -1,14 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\Plan;
 
 use App\Http\Requests\ApiRequest;
-use App\Traits\AddIDParameterTrait;
 
-class SetUserInfoRequest extends ApiRequest
+class AddPlanRequest extends ApiRequest
 {
-    use AddIDParameterTrait;
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -27,11 +24,12 @@ class SetUserInfoRequest extends ApiRequest
     public function rules()
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'national_code' => 'required|numeric|digits:10',
-            'postal_code' => 'required|numeric|digits:10',
-            'address' => 'required',
+            'remote_id' => 'required',
+            'name' => 'required',
+            'disk' => 'required|numeric',
+            'ram' => 'required|numeric',
+            'vcpu' => 'required|numeric',
+            'hourly_price' => 'required|numeric',
         ];
     }
 }
