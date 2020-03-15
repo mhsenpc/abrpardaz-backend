@@ -259,17 +259,173 @@
                 }
             }
         },
-        "/images/os": {
+        "/images/list": {
             "get": {
                 "tags": [
                     "Image"
                 ],
-                "summary": "List all operating systems",
+                "summary": "List all images",
                 "description": "",
-                "operationId": "App\\Http\\Controllers\\V1\\ImageController::os",
+                "operationId": "App\\Http\\Controllers\\V1\\ImageController::index",
                 "responses": {
                     "default": {
-                        "description": "List of operating system"
+                        "description": "List of images"
+                    }
+                }
+            }
+        },
+        "/images/{id}/show": {
+            "get": {
+                "tags": [
+                    "Image"
+                ],
+                "summary": "Return a specific image",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ImageController::show",
+                "responses": {
+                    "default": {
+                        "description": "Return a specific image"
+                    }
+                }
+            }
+        },
+        "/images/add": {
+            "post": {
+                "tags": [
+                    "Image"
+                ],
+                "summary": "Add an image",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ImageController::add",
+                "parameters": [
+                    {
+                        "name": "remote_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "min_disk",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "min_ram",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/images/{id}/edit": {
+            "post": {
+                "tags": [
+                    "Image"
+                ],
+                "summary": "Edit an image using its id",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ImageController::edit",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "remote_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "min_disk",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "min_ram",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/images/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "Image"
+                ],
+                "summary": "Remove an image using its id",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ImageController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
                     }
                 }
             }
