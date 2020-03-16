@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Profile\EditProfileRequest;
 use App\Http\Requests\Profile\RequestSetMobileRequest;
 use App\Http\Requests\Profile\RequestSetPhoneRequest;
 use App\Http\Requests\Profile\SetMobileRequest;
