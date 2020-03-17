@@ -23,7 +23,15 @@ class UserController extends BaseController
 
     function show(ShowUserRequest $request)
     {
-        $item = User::find(request('id'));
+        $item = User::with(['profile'])->find(request('id'));
+        if(!empty($item->profile->national_card_front))
+            $item->profile->national_card_front = $path = asset('storage/'. $item->profile->national_card_front);
+
+        if(!empty($item->profile->national_card_back))
+            $item->profile->national_card_back = $path = asset('storage/'. $item->profile->national_card_back);
+
+        if(!empty($item->profile->birth_certificate))
+            $item->profile->birth_certificate = $path = asset('storage/'. $item->profile->birth_certificate);
         return Responder::result(['item' => $item]);
     }
 
