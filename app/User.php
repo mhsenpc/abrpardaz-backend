@@ -142,4 +142,10 @@ class User extends Authenticatable
         $this->save();
         return $this;
     }
+
+    function changeUserGroup(int $user_group_id){
+        $this->user_group_id = $user_group_id;
+        $this->save();
+        return $this;
+    }
 }

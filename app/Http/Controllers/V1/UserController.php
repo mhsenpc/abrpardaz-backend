@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\User\ActivateUserRequest;
 use App\Http\Requests\User\AddUserRequest;
+use App\Http\Requests\User\ChangeUserGroupRequest;
 use App\Http\Requests\User\DeactivateUserRequest;
 use App\Http\Requests\User\RemoveUserRequest;
 use App\Http\Requests\User\ShowUserRequest;
@@ -40,6 +41,11 @@ class UserController extends BaseController
         User::newUser($request->input('email'), $request->input('password'))->activate();
         Log::info('new user created. user #' . Auth::id());
         return Responder::success("کاربر با موفقیت اضافه شد");
+    }
+
+    function changeUserGroup(ChangeUserGroupRequest $request){
+        User::find(request('id'))->changeUserGroup(request('user_group_id'));
+        return Responder::success("گروه کاربری با موفقیت تغییر یافت");
     }
 
     function remove(RemoveUserRequest $request)

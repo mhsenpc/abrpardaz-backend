@@ -19,6 +19,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
             Permission::create(['name' => 'List Users'])->assignRole($super_admin);
             Permission::create(['name' => 'Add Users'])->assignRole($super_admin);
+            Permission::create(['name' => 'Change User Group'])->assignRole($super_admin);
             Permission::create(['name' => 'Remove Users'])->assignRole($super_admin);
             Permission::create(['name' => 'Verify Users'])->assignRole($super_admin);
 

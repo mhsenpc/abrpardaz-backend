@@ -142,6 +142,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::prefix('{id}')->group(function () {
                 Route::get('show', 'UserController@show');
                 Route::post('edit', 'UserController@edit');
+                Route::post('changeUserGroup', 'UserController@changeUserGroup');
                 Route::put('activate', 'UserController@activate');
                 Route::put('deactivate', 'UserController@deactivate');
                 Route::delete('remove', 'UserController@remove');
