@@ -170,5 +170,16 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
+        Route::prefix('user_groups')->group(function () {
+            Route::get('list', 'UserGroupController@index');
+            Route::post('add', 'UserGroupController@add');
+
+            Route::prefix('{id}')->group(function () {
+                Route::get('show', 'UserGroupController@show');
+                Route::post('edit', 'UserGroupController@edit');
+                Route::put('setAsDefault', 'UserGroupController@setAsDefault');
+                Route::delete('remove', 'UserGroupController@remove');
+            });
+        });
     });
 });

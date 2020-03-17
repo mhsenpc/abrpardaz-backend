@@ -14,4 +14,9 @@ class UserGroup extends Model
     static function findDefaultGroup(){
         return UserGroup::where('default',true)->first();
     }
+
+    function setAsDefault(){
+        UserGroup::where('default',true)->update(['default' => false]);
+        UserGroup::where('id',$this->id)->update(['default' => true]);
+    }
 }

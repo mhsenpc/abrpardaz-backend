@@ -55,7 +55,7 @@ return [
         "array"   => ":attribute نباید کمتر از :min آیتم باشد.",
     ],
     "not_in"           => ":attribute انتخاب شده، معتبر نیست.",
-    "numeric"          => ":attribute باید شامل عدد باشد.",
+    "numeric"          => ":attribute باید عدد باشد.",
     "regex"            => ":attribute یک فرمت معتبر نیست",
     "required"         => "فیلد :attribute الزامی است",
     "required_if"      => "فیلد :attribute هنگامی که :other برابر با :value است، الزامیست.",
@@ -142,5 +142,8 @@ return [
         'disk' => 'دیسک',
         'ram' => 'رم',
         'hourly_price' => 'هزینه ساعتی',
+        'max_machines' => 'حداکثر تعداد ماشین',
+        'max_snapshots' => 'حداکثر تعداد تصاویر آنی',
+        'max_volumes_usage' => 'حداکثر حجم volume'
     ],
 ];
