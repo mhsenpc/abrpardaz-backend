@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\User\ActivateUserRequest;
+use App\Http\Requests\User\ManualVerifyEmailRequest;
+use App\Http\Requests\User\UnsuspendUserRequest;
 use App\Http\Requests\User\AddUserRequest;
 use App\Http\Requests\User\ChangeUserGroupRequest;
-use App\Http\Requests\User\DeactivateUserRequest;
+use App\Http\Requests\User\SuspendUserRequest;
 use App\Http\Requests\User\RemoveUserRequest;
 use App\Http\Requests\User\ShowUserRequest;
 use App\Services\Responder;
@@ -38,7 +39,7 @@ class UserController extends BaseController
 
     function add(AddUserRequest $request)
     {
-        User::newUser($request->input('email'), $request->input('password'))->activate();
+        User::newUser($request->input('email'), $request->input('password'))->verifyEmail();
         Log::info('new user created. user #' . Auth::id());
         return Responder::success("کاربر با موفقیت اضافه شد");
     }
@@ -55,15 +56,21 @@ class UserController extends BaseController
         return Responder::success("کاربر با موفقیت حذف شد");
     }
 
-    function activate(ActivateUserRequest $request)
+    function unsuspend(UnsuspendUserRequest $request)
     {
-        User::find(request('id'))->activate();
-        return Responder::success("کاربر با موفقیت فعال شد");
+        User::find(request('id'))->unsuspend();
+        return Responder::success("کاربر با موفقیت از مسدودیت خارج شد");
     }
 
-    function deactivate(DeactivateUserRequest $request)
+    function suspend(SuspendUserRequest $request)
     {
-        User::find(request('id'))->deactivate();
-        return Responder::success("کاربر با موفقیت غیرفعال شد");
+        User::find(request('id'))->suspend();
+        return Responder::success("کاربر با موفقیت مسدود شد");
+    }
+
+    function verifyEmail(ManualVerifyEmailRequest $request)
+    {
+        User::find(request('id'))->verifyEmail();
+        return Responder::success("ایمیل کاربر با موفقیت تایید شد");
     }
 }

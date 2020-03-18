@@ -113,7 +113,10 @@ class AuthController extends BaseController
      */
     function login(LoginRequest $request)
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password'), 'is_active' => true])) {
+        if (User::where('email', request('email'))
+                ->whereNotNull('email_verified_at')
+                ->exists()
+            && Auth::attempt(['email' => request('email'), 'password' => request('password'), 'suspend' => false])) {
             $user = Auth::user();
             $result = [];
             $token = $user->createToken('Abrpardaz');

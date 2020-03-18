@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\Profile\EditProfileRequest;
+use App\Http\Requests\profile\InvalidateBCRequest;
+use App\Http\Requests\profile\InvalidateNCBackRequest;
+use App\Http\Requests\profile\InvalidateNCFrontRequest;
+use App\Http\Requests\profile\InvalidateProfileRequest;
 use App\Http\Requests\Profile\RequestSetMobileRequest;
 use App\Http\Requests\Profile\RequestSetPhoneRequest;
 use App\Http\Requests\Profile\SetMobileRequest;
@@ -12,10 +15,15 @@ use App\Http\Requests\Profile\SetUserInfoRequest;
 use App\Http\Requests\profile\UploadBirthCertificateRequest;
 use App\Http\Requests\profile\UploadNationalCardBackRequest;
 use App\Http\Requests\profile\UploadNationalCardFrontRequest;
+use App\Http\Requests\profile\ValidateBCRequest;
+use App\Http\Requests\profile\ValidateNCBackRequest;
+use App\Http\Requests\profile\ValidateNCFrontRequest;
+use App\Http\Requests\profile\ValidateProfileRequest;
 use App\Models\Profile;
 use App\Services\MobileService;
 use App\Services\PhoneService;
 use App\Services\Responder;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -444,5 +452,66 @@ class ProfileController extends BaseController
             Log::warning('failed to upload birth certificate .user #' . Auth::id());
             return Responder::error('در بارگذاری تصویر مشکلی وجود دارد');
         }
+    }
+
+    function validateProfile(ValidateProfileRequest $request)
+    {
+        User::find(request('id'))->profile->validateProfile();
+        //TODO: notify to user
+        Log::info('profile validated.user #' . request('id'));
+        return Responder::success('پروفایل با موفقیت تایید شد');
+    }
+
+    function invalidateProfile(InvalidateProfileRequest $request)
+    {
+        User::find(request('id'))->profile->invalidateProfile();
+        //TODO: notify to user
+        Log::info('profile validated.user #' . request('id'));
+        return Responder::success('پروفایل با موفقیت به حالت تایید نشده تبدیل شد');
+    }
+
+    function validateNCFront(ValidateNCFrontRequest $request)
+    {
+        User::find(request('id'))->profile->validateNCFront();
+        Log::info('profile NCFront validated.user #' . request('id'));
+        return Responder::success('تصویر جلوی کارت ملی تایید شد');
+    }
+
+    function invalidateNCFront(InvalidateNCFrontRequest $request)
+    {
+        User::find(request('id'))->profile->invalidateNCFront();
+        //TODO: notify to user
+        Log::info('profile NCFront invalidated.user #' . request('id'));
+        return Responder::success('تصویر جلوی کارت ملی رد شد');
+    }
+
+    function validateNCBack(ValidateNCBackRequest $request)
+    {
+        User::find(request('id'))->profile->validateNCBack();
+        Log::info('profile NCBack validated.user #' . request('id'));
+        return Responder::success('تصویر پشت کارت ملی تایید شد');
+    }
+
+    function invalidateNCBack(InvalidateNCBackRequest $request)
+    {
+        User::find(request('id'))->profile->invalidateNCBack();
+        //TODO: notify to user
+        Log::info('profile NCBack invalidated.user #' . request('id'));
+        return Responder::success('تصویر پشت کارت ملی رد شد');
+    }
+
+    function validateBC(ValidateBCRequest $request)
+    {
+        User::find(request('id'))->profile->validateBC();
+        Log::info('profile BC validated.user #' . request('id'));
+        return Responder::success('تصویر شناسنامه تایید شد');
+    }
+
+    function invalidateBC(InvalidateBCRequest $request)
+    {
+        User::find(request('id'))->profile->invalidateBC();
+        //TODO: notify to user
+        Log::info('profile BC invalidated.user #' . request('id'));
+        return Responder::success('تصویر شناسنامه رد شد');
     }
 }

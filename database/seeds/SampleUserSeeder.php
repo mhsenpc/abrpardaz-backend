@@ -18,8 +18,7 @@ class SampleUserSeeder extends Seeder
             Hash::make('admin')
         );
 
-        $admin->is_active = true;
-        $admin->save();
+        $admin->verifyEmail();
 
         $admin->assignRole('Super Admin');
     }

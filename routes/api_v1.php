@@ -53,6 +53,16 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::post('uploadNationalCardFront', 'ProfileController@uploadNationalCardFront');
             Route::post('uploadNationalCardBack', 'ProfileController@uploadNationalCardBack');
             Route::post('uploadBirthCertificate', 'ProfileController@uploadBirthCertificate');
+            Route::prefix('{id}')->group(function () {
+                Route::put('validate', 'ProfileController@validateProfile');
+                Route::put('invalidate', 'ProfileController@invalidateProfile');
+                Route::put('validateNCFront', 'ProfileController@validateNCFront');
+                Route::put('invalidateNCFront', 'ProfileController@invalidateNCFront');
+                Route::put('validateNCBack', 'ProfileController@validateNCBack');
+                Route::put('invalidateNCBack', 'ProfileController@invalidateNCBack');
+                Route::put('validateBC', 'ProfileController@validateBC');
+                Route::put('invalidateBC', 'ProfileController@invalidateBC');
+            });
         });
 
         Route::prefix('snapshots')->group(function () {
@@ -143,8 +153,9 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::get('show', 'UserController@show');
                 Route::post('edit', 'UserController@edit');
                 Route::post('changeUserGroup', 'UserController@changeUserGroup');
-                Route::put('activate', 'UserController@activate');
-                Route::put('deactivate', 'UserController@deactivate');
+                Route::put('suspend', 'UserController@suspend');
+                Route::put('unsuspend', 'UserController@unsuspend');
+                Route::put('verifyEmail', 'UserController@verifyEmail');
                 Route::delete('remove', 'UserController@remove');
             });
         });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -26,5 +27,53 @@ class Profile extends Model
             return 'جناب ' . $this->last_name;
         else
             return "کاربر";
+    }
+
+    function validateProfile(){
+        $this->validated_at = Carbon::now();
+        $this->save();
+        return $this;
+    }
+
+    function invalidateProfile(){
+        $this->validated_at = null;
+        $this->save();
+        return $this;
+    }
+
+    function validateNCFront(){
+        $this->national_card_front_verified_at = Carbon::now();
+        $this->save();
+        return $this;
+    }
+
+    function invalidateNCFront(){
+        $this->national_card_front_verified_at = null;
+        $this->save();
+        return $this;
+    }
+
+    function validateNCBack(){
+        $this->national_card_back_verified_at = Carbon::now();
+        $this->save();
+        return $this;
+    }
+
+    function invalidateNCBack(){
+        $this->national_card_back_verified_at = null;
+        $this->save();
+        return $this;
+    }
+
+    function validateBC(){
+        $this->birth_certificate_verified_at = Carbon::now();
+        $this->save();
+        return $this;
+    }
+
+    function invalidateBC(){
+        $this->birth_certificate_verified_at = null;
+        $this->save();
+        return $this;
     }
 }

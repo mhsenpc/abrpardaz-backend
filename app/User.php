@@ -96,7 +96,6 @@ class User extends Authenticatable
 
         $user = new User();
         $user->password = $password;
-        $user->is_active = false;
         $user->email = $email;
         $user->profile_id = $profile->id;
         $user->last_billing_date = Carbon::now();
@@ -108,7 +107,7 @@ class User extends Authenticatable
 
     static function activateUserByEmail(string $email)
     {
-        User::where('email', $email)->update(['is_active' => true, 'email_verified_at' => Carbon::now()]);
+        User::where('email', $email)->update(['email_verified_at' => Carbon::now()]);
     }
 
     static function updatePassword(string $email, string $password)
@@ -131,20 +130,26 @@ class User extends Authenticatable
         return Volume::where('user_id', $this->id)->where('is_root', false)->sum('size');
     }
 
-    function activate(){
-        $this->is_active = true;
-        $this->save();
-        return $this;
-    }
-
-    function deactivate(){
-        $this->is_active = false;
+    function verifyEmail(){
+        $this->email_verified_at = Carbon::now();
         $this->save();
         return $this;
     }
 
     function changeUserGroup(int $user_group_id){
         $this->user_group_id = $user_group_id;
+        $this->save();
+        return $this;
+    }
+
+    function suspend(){
+        $this->suspend = true;
+        $this->save();
+        return $this;
+    }
+
+    function unsuspend(){
+        $this->suspend = false;
         $this->save();
         return $this;
     }

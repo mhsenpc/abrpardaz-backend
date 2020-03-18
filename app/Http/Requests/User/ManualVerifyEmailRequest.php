@@ -5,7 +5,7 @@ namespace App\Http\Requests\User;
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class DeactivateUserRequest extends ApiRequest
+class ManualVerifyEmailRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**

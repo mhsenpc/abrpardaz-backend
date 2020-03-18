@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\profile;
 
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class ActivateUserRequest extends ApiRequest
+class InvalidateBCRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**
@@ -26,7 +26,7 @@ class ActivateUserRequest extends ApiRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric|exists:users,id'
+            'id' => 'required|numeric|exists:users,id',
         ];
     }
 }
