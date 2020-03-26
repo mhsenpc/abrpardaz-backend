@@ -8,6 +8,7 @@ use App\Http\Requests\Plan\EditPlanRequest;
 use App\Http\Requests\Plan\RemovePlanRequest;
 use App\Http\Requests\Plan\ShowPlanRequest;
 use App\Models\Plan;
+use App\Services\FlavorSyncerService;
 use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -74,5 +75,11 @@ class PlanController extends BaseController
         Plan::destroy(\request('id'));
         Log::info('Plan removed. key #' . request('id') . ',user #' . Auth::id());
         return Responder::success("پلن با موفقیت حذف شد");
+    }
+
+    function sync(){
+        $service = new FlavorSyncerService();
+        $service->setRenderHtml(true);
+        $service->sync();
     }
 }

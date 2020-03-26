@@ -14,9 +14,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
     });
 
     Route::middleware(['auth:api'])->group(function () {
-        Route::prefix('images')->group(function () {
-            Route::get('os', 'ImageController@os');
-        });
 
         Route::prefix('machines')->group(function () {
             Route::get('list', 'MachineController@index');
@@ -37,10 +34,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::post('rebuild', 'MachineController@rebuild');
             Route::post('rename', 'MachineController@rename');
             Route::delete('remove', 'MachineController@remove');
-        });
-
-        Route::prefix('plans')->group(function () {
-            Route::get('list', 'PlanController@index');
         });
 
         Route::prefix('profile')->group(function () {
@@ -163,6 +156,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('images')->group(function () {
             Route::get('list', 'ImageController@index');
             Route::post('add', 'ImageController@add');
+            Route::put('sync', 'ImageController@sync');
 
             Route::prefix('{id}')->group(function () {
                 Route::get('show', 'ImageController@show');
@@ -174,6 +168,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('plans')->group(function () {
             Route::get('list', 'PlanController@index');
             Route::post('add', 'PlanController@add');
+            Route::put('sync', 'PlanController@sync');
 
             Route::prefix('{id}')->group(function () {
                 Route::get('show', 'PlanController@show');
@@ -193,5 +188,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::delete('remove', 'UserGroupController@remove');
             });
         });
+
+
     });
 });

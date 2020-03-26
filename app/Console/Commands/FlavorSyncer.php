@@ -38,6 +38,6 @@ class FlavorSyncer extends Command
      */
     public function handle()
     {
-        FlavorSyncerService::sync();
+        (new FlavorSyncerService())->sync();
     }
 }

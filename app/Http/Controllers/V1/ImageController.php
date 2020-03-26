@@ -8,6 +8,7 @@ use App\Http\Requests\Image\EditImageRequest;
 use App\Http\Requests\Image\RemoveImageRequest;
 use App\Http\Requests\Image\ShowImageRequest;
 use App\Models\Image;
+use App\Services\ImageSyncerService;
 use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -72,5 +73,11 @@ class ImageController extends BaseController
         Image::destroy(\request('id'));
         Log::info('image removed. key #' . request('id') . ',user #' . Auth::id());
         return Responder::success("تصویر با موفقیت حذف شد");
+    }
+
+    function sync(){
+        $service = new ImageSyncerService();
+        $service->setRenderHtml(true);
+        $service->sync();
     }
 }

@@ -8,27 +8,38 @@ use App\Models\Plan;
 
 class FlavorSyncerService
 {
-    static function sync(){
-        static::importFlavors();
-        static::healthCheckFlavors();
+    private $separator = "\n";
+
+    public function setRenderHtml(bool $render_html)
+    {
+        if ($render_html) {
+            $this->separator = '<br/>';
+        } else {
+            $this->separator = "\n";
+        }
     }
 
-    static function healthCheckFlavors(){
+    function sync(){
+        $this->importFlavors();
+        $this->healthCheckFlavors();
+    }
+
+    function healthCheckFlavors(){
         $flavor_service = new FlavorService();
         $local_plans = Plan::all();
         foreach ($local_plans as $local_plan){
             try{
                 $remote_flavor = $flavor_service->getFlavor($local_plan->remote_id);
-                echo 'Flavor ' . $local_plan->name." is ok!\n";
+                echo 'Flavor ' . $local_plan->name." is ok!".$this->separator;
             }
             catch(\Exception $exception){
-                echo 'Flavor ' . $local_plan->name." is broken. deleting!\n";
+                echo 'Flavor ' . $local_plan->name." is broken. deleting!".$this->separator;
                 $local_plan->delete();
             }
         }
     }
 
-    static function importFlavors(){
+    function importFlavors(){
         $flavor_service = new FlavorService();
         $remote_flavors = $flavor_service->getFlavors();
         foreach ($remote_flavors as $remote_flavor){
@@ -46,7 +57,7 @@ class FlavorSyncerService
                 $new_plan->vcpu = $vcpu;
                 $new_plan->name = $name;
                 $new_plan->save();
-                echo "$name metadata updated \n";
+                echo "$name metadata updated!".$this->separator;
             }
             else{
                 //insert new one in db
@@ -58,7 +69,7 @@ class FlavorSyncerService
                 $new_plan->name = $name;
                 $new_plan->hourly_price = 100;
                 $new_plan->save();
-                echo "$name inserted \n";
+                echo "$name inserted!".$this->separator;
             }
         }
     }

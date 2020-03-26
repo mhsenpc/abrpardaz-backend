@@ -38,6 +38,6 @@ class ImageSyncer extends Command
      */
     public function handle()
     {
-        ImageSyncerService::sync();
+        (new ImageSyncerService())->sync();
     }
 }
