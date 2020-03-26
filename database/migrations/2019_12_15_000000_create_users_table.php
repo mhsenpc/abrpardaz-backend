@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->integer('referrer_id')->nullable();
             $table->integer('user_group_id')->nullable();
             $table->integer('profile_id');
+            $table->string('provider_user_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamp('last_billing_date');
             $table->timestamps();

@@ -378,4 +378,45 @@ class AuthController extends BaseController
         Auth::logout();
         return Responder::success('شما با موفقیت خارج شدید');
     }
+
+    /**
+     * Redirect the user to the Google authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function redirectToProvider()
+    {
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Obtain the user information from Google.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleProviderCallback()
+    {
+        try {
+            $user = Socialite::driver('google')->user();
+        } catch (\Exception $e) {
+            return redirect('/login');
+        }
+
+        // check if they're an existing user
+        $existingUser = User::where('email', $user->email)->first();
+        if($existingUser){
+            // log them in
+            auth()->login($existingUser, true);
+        } else {
+            // create a new user
+            $newUser = User::newUser($user->email,'test');
+
+            $newUser->profile->name            = $user->name;
+            $newUser->email           = $user->email;
+            $newUser->provider_user_id       = $user->id;
+            $newUser->save();
+            auth()->login($newUser, true);
+        }
+        return redirect()->to('/home');
+    }
 }
