@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\User\ChangeRoleRequest;
 use App\Http\Requests\User\ManualVerifyEmailRequest;
 use App\Http\Requests\User\UnsuspendUserRequest;
 use App\Http\Requests\User\AddUserRequest;
@@ -19,13 +20,13 @@ class UserController extends BaseController
 {
     function index()
     {
-        $users = User::with(['profile', 'userGroup'])->paginate(10);
+        $users = User::with(['profile', 'userGroup','roles'])->paginate(10);
         return Responder::result(['pagination' => $users]);
     }
 
     function show(ShowUserRequest $request)
     {
-        $item = User::with(['profile'])->find(request('id'));
+        $item = User::with(['profile','roles'])->find(request('id'));
         if(!empty($item->profile->national_card_front))
             $item->profile->national_card_front = $path = asset('storage/'. $item->profile->national_card_front);
 
@@ -74,9 +75,9 @@ class UserController extends BaseController
         return Responder::success("ایمیل کاربر با موفقیت تایید شد");
     }
 
-    function changeRole(){
+    function changeRole(ChangeRoleRequest $request){
         $user = User::find(request('id'));
-        $user->syncRoles([request('role')]);
+        $user->syncRoles([request('role_id')]);
         return Responder::success("نقش کاربر با موفقیت تغییر یافت");
     }
 }

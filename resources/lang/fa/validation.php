@@ -146,5 +146,6 @@ return [
         'max_snapshots' => 'حداکثر تعداد تصاویر آنی',
         'max_volumes_usage' => 'حداکثر حجم volume',
         'permissions' => 'دسترسی ها',
+        'role_id' => 'نقش',
     ],
 ];
