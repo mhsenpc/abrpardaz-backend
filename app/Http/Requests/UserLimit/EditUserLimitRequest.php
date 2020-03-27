@@ -26,7 +26,7 @@ class EditUserLimitRequest extends ApiRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric|exists:user_groups,id',
+            'id' => 'required|numeric|exists:user_limits,id',
             'name' => 'required',
             'max_machines' => 'required|numeric',
             'max_snapshots' => 'required|numeric',

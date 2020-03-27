@@ -26,7 +26,7 @@ class RemoveUserLimitRequest extends ApiRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric|exists:user_groups,id'
+            'id' => 'required|numeric|exists:user_limits,id'
         ];
     }
 }

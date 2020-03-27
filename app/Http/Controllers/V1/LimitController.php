@@ -26,7 +26,7 @@ class LimitController extends BaseController
      *
      */
     function index(){
-        $user_group = Auth::user()->userGroup;
+        $user_group = Auth::user()->userLimit;
         return Responder::result([
             'name'=>$user_group->name,
             'current_machines' => Auth::user()->MachineCount,

@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->boolean('suspend')->default(false);
             $table->string('password');
             $table->integer('referrer_id')->nullable();
-            $table->integer('user_group_id')->nullable();
+            $table->integer('user_limit_id')->nullable();
             $table->integer('profile_id');
             $table->string('provider_user_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
@@ -28,7 +28,7 @@ class CreateUsersTable extends Migration
             $table->softDeletes();
 
             $table->foreign('profile_id')->references('id')->on('profiles');
-            $table->foreign('user_group_id')->references('id')->on('user_groups');
+            $table->foreign('user_limit_id')->references('id')->on('user_limits');
         });
     }
 

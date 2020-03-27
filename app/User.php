@@ -99,7 +99,7 @@ class User extends Authenticatable
         $user->email = $email;
         $user->profile_id = $profile->id;
         $user->last_billing_date = Carbon::now();
-        $user->user_group_id = UserLimit::findDefaultGroup()->id;
+        $user->user_limit_id = UserLimit::findDefaultGroup()->id;
         $user->save();
 
         return $user;
@@ -137,7 +137,7 @@ class User extends Authenticatable
     }
 
     function changeUserLimit(int $user_limit_id){
-        $this->user_group_id = $user_limit_id;
+        $this->user_limit_id = $user_limit_id;
         $this->save();
         return $this;
     }

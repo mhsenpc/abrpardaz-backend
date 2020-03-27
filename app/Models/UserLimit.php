@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserLimit extends Model
 {
     protected $guarded = ['id'];
-    protected $table = 'user_groups';
+    protected $table = 'user_limits';
 
     static function findDefaultGroup(){
         return UserLimit::where('default',true)->first();

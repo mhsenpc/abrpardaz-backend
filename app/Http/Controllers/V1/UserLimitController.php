@@ -37,7 +37,7 @@ class UserLimitController extends BaseController
             'default' => false
         ]);
         Log::info('new UserLimit created. user #' . Auth::id());
-        return Responder::success("گروه کاربری با موفقیت اضافه شد");
+        return Responder::success("محدودیت کاربری با موفقیت اضافه شد");
     }
 
     function edit(EditUserLimitRequest $request)
@@ -49,7 +49,7 @@ class UserLimitController extends BaseController
             'max_volumes_usage' => $request->input('max_volumes_usage'),
         ]);
         Log::info('UserLimit edited. key #' . request('id') . ',user #' . Auth::id());
-        return Responder::success("گروه کاربری با موفقیت ویرایش شد");
+        return Responder::success("محدودیت کاربری با موفقیت ویرایش شد");
     }
 
     function setAsDefault(SetUserLimitAsDefaultRequest $request)
@@ -64,6 +64,6 @@ class UserLimitController extends BaseController
     {
         UserLimit::destroy(\request('id'));
         Log::info('UserLimit removed. key #' . request('id') . ',user #' . Auth::id());
-        return Responder::success("گروه کاربری با موفقیت حذف شد");
+        return Responder::success("محدودیت کاربری با موفقیت حذف شد");
     }
 }

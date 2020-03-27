@@ -27,7 +27,7 @@ class ChangeUserLimitRequest extends ApiRequest
     {
         return [
             'id' => 'required|numeric|exists:users,id',
-            'user_group_id' => 'required|numeric|exists:user_groups,id',
+            'user_limit_id' => 'required|numeric|exists:user_limits,id',
         ];
     }
 }
