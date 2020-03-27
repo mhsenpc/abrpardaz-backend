@@ -144,6 +144,7 @@ return [
         'hourly_price' => 'هزینه ساعتی',
         'max_machines' => 'حداکثر تعداد ماشین',
         'max_snapshots' => 'حداکثر تعداد تصاویر آنی',
-        'max_volumes_usage' => 'حداکثر حجم volume'
+        'max_volumes_usage' => 'حداکثر حجم volume',
+        'permissions' => 'دسترسی ها',
     ],
 ];

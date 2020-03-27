@@ -73,4 +73,10 @@ class UserController extends BaseController
         User::find(request('id'))->verifyEmail();
         return Responder::success("ایمیل کاربر با موفقیت تایید شد");
     }
+
+    function changeRole(){
+        $user = User::find(request('id'));
+        $user->syncRoles([request('role')]);
+        return Responder::success("نقش کاربر با موفقیت تغییر یافت");
+    }
 }

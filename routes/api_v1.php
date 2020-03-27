@@ -146,6 +146,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::get('show', 'UserController@show');
                 Route::post('edit', 'UserController@edit');
                 Route::post('changeUserGroup', 'UserController@changeUserGroup');
+                Route::post('changeRole', 'UserController@changeRole');
                 Route::put('suspend', 'UserController@suspend');
                 Route::put('unsuspend', 'UserController@unsuspend');
                 Route::put('verifyEmail', 'UserController@verifyEmail');
@@ -189,6 +190,20 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
+        Route::prefix('roles')->group(function () {
+            Route::get('list', 'RoleController@index');
+            Route::post('add', 'RoleController@add');
+
+            Route::prefix('{id}')->group(function () {
+                Route::get('show', 'RoleController@show');
+                Route::post('edit', 'RoleController@edit');
+                Route::delete('remove', 'RoleController@remove');
+            });
+        });
+
+        Route::prefix('permissions')->group(function () {
+            Route::get('list', 'PermissionsController@index');
+        });
 
     });
 });
