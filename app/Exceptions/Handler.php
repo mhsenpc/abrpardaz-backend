@@ -60,7 +60,7 @@ class Handler extends ExceptionHandler
             return Responder::error('Model not found');
         }
         else if ($exception instanceof \Spatie\Permission\Exceptions\UnauthorizedException) {
-            return Responder::error('Your permissions is insufficient to call this route');
+            return Responder::error('شما مجاز به استفاده از این قابلیت نیستید');
         }
         else{
             return parent::render($request, $exception);

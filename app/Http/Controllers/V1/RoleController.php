@@ -17,6 +17,14 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:List Roles|Add Roles|Edit Roles|Remove Roles', ['only' => ['index','show']]);
+        $this->middleware('permission:Add Roles', ['only' => ['add']]);
+        $this->middleware('permission:Edit Roles', ['only' => ['edit']]);
+        $this->middleware('permission:Remove Roles', ['only' => ['remove']]);
+    }
+
     function index()
     {
         $roles = Role::paginate();

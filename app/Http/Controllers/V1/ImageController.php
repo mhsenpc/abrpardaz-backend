@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Log;
 
 class ImageController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:Add Images', ['only' => ['add']]);
+        $this->middleware('permission:Edit Images', ['only' => ['edit']]);
+        $this->middleware('permission:Sync Images', ['only' => ['sync']]);
+        $this->middleware('permission:Remove Images', ['only' => ['remove']]);
+    }
+
     /**
      * @OA\Get(
      *      tags={"Image"},

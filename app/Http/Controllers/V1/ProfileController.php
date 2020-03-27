@@ -31,6 +31,13 @@ use Illuminate\Support\Facades\Log;
 
 class ProfileController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:Validate Profile', ['only' => ['validateProfile']]);
+        $this->middleware('permission:Invalidate Profile', ['only' => ['invalidateProfile']]);
+        $this->middleware('permission:Validate Documents', ['only' => ['validateNCFront','invalidateNCFront','validateNCBack','invalidateNCBack','validateBC','invalidateBC']]);
+    }
+
     /**
      * @OA\Get(
      *      tags={"Profile"},

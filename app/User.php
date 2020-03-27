@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -95,12 +96,14 @@ class User extends Authenticatable
         $profile->save();
 
         $user = new User();
-        $user->password = $password;
+        $user->password = Hash::make($password);
         $user->email = $email;
         $user->profile_id = $profile->id;
         $user->last_billing_date = Carbon::now();
         $user->user_limit_id = UserLimit::findDefaultGroup()->id;
         $user->save();
+
+        $user->assignRole('Normal User');
 
         return $user;
     }

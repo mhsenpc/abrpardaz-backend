@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Log;
 
 class UserLimitController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:List User Limits|Add User Limits|Edit User Limits|Remove User Limits', ['only' => ['index','show']]);
+        $this->middleware('permission:Add User Limits', ['only' => ['add']]);
+        $this->middleware('permission:Edit User Limits', ['only' => ['edit','setAsDefault']]);
+        $this->middleware('permission:Remove User Limits', ['only' => ['remove']]);
+    }
+
     function index()
     {
         $UserLimits = UserLimit::paginate();

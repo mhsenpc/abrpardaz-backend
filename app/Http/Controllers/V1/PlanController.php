@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Log;
 
 class PlanController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:Add Plans', ['only' => ['add']]);
+        $this->middleware('permission:Edit Plans', ['only' => ['edit']]);
+        $this->middleware('permission:Sync Plans', ['only' => ['sync']]);
+        $this->middleware('permission:Remove Plans', ['only' => ['remove']]);
+    }
+
     /**
      * @OA\Get(
      *      tags={"Plan"},

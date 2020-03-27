@@ -17,6 +17,11 @@ use Spatie\Permission\Models\Role;
 
 class PermissionsController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:Add Roles|Edit Roles', ['only' => ['index']]);
+    }
+
     function index()
     {
         $permissions = Permission::all();

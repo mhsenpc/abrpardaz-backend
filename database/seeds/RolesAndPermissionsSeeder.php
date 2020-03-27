@@ -19,18 +19,24 @@ class RolesAndPermissionsSeeder extends Seeder
 
             Permission::create(['name' => 'List Users'])->assignRole($super_admin);
             Permission::create(['name' => 'Add Users'])->assignRole($super_admin);
-            Permission::create(['name' => 'Change User Group'])->assignRole($super_admin);
+            Permission::create(['name' => 'Change User Limit'])->assignRole($super_admin);
             Permission::create(['name' => 'Change User Role'])->assignRole($super_admin);
             Permission::create(['name' => 'Remove Users'])->assignRole($super_admin);
             Permission::create(['name' => 'Verify Users'])->assignRole($super_admin);
+            Permission::create(['name' => 'Suspend Users'])->assignRole($super_admin);
+            Permission::create(['name' => 'Unsuspend Users'])->assignRole($super_admin);
 
-            Permission::create(['name' => 'List Images'])->assignRole($super_admin);
+            Permission::create(['name' => 'Validate Profile'])->assignRole($super_admin);
+            Permission::create(['name' => 'Invalidate Profile'])->assignRole($super_admin);
+            Permission::create(['name' => 'Validate Documents'])->assignRole($super_admin);
+
+            Permission::create(['name' => 'Manage Images'])->assignRole($super_admin);
             Permission::create(['name' => 'Add Images'])->assignRole($super_admin);
             Permission::create(['name' => 'Edit Images'])->assignRole($super_admin);
             Permission::create(['name' => 'Sync Images'])->assignRole($super_admin);
             Permission::create(['name' => 'Remove Images'])->assignRole($super_admin);
 
-            Permission::create(['name' => 'List Plans'])->assignRole($super_admin);
+            Permission::create(['name' => 'Manage Plans'])->assignRole($super_admin);
             Permission::create(['name' => 'Add Plans'])->assignRole($super_admin);
             Permission::create(['name' => 'Edit Plans'])->assignRole($super_admin);
             Permission::create(['name' => 'Sync Plans'])->assignRole($super_admin);

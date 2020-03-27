@@ -18,6 +18,18 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends BaseController
 {
+    function __construct()
+    {
+        $this->middleware('permission:List Users|Add Users|Change User Limit|Change User Role|Remove Users|Verify Users|Suspend Users|Unsuspend Users', ['only' => ['index','show']]);
+        $this->middleware('permission:Add Users', ['only' => ['add']]);
+        $this->middleware('permission:Change User Limit', ['only' => ['changeUserLimit']]);
+        $this->middleware('permission:Change User Role', ['only' => ['changeRole']]);
+        $this->middleware('permission:Remove Users', ['only' => ['remove']]);
+        $this->middleware('permission:Verify Users', ['only' => ['verifyEmail']]);
+        $this->middleware('permission:Suspend Users', ['only' => ['suspend']]);
+        $this->middleware('permission:Unsuspend Users', ['only' => ['unsuspend']]);
+    }
+
     function index()
     {
         $users = User::with(['profile', 'userLimit','roles'])->paginate(10);
