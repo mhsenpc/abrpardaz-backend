@@ -7,7 +7,7 @@ use App\Http\Requests\User\ChangeRoleRequest;
 use App\Http\Requests\User\ManualVerifyEmailRequest;
 use App\Http\Requests\User\UnsuspendUserRequest;
 use App\Http\Requests\User\AddUserRequest;
-use App\Http\Requests\User\ChangeUserGroupRequest;
+use App\Http\Requests\User\ChangeUserLimitRequest;
 use App\Http\Requests\User\SuspendUserRequest;
 use App\Http\Requests\User\RemoveUserRequest;
 use App\Http\Requests\User\ShowUserRequest;
@@ -20,7 +20,7 @@ class UserController extends BaseController
 {
     function index()
     {
-        $users = User::with(['profile', 'userGroup','roles'])->paginate(10);
+        $users = User::with(['profile', 'userLimit','roles'])->paginate(10);
         return Responder::result(['pagination' => $users]);
     }
 
@@ -45,8 +45,8 @@ class UserController extends BaseController
         return Responder::success("کاربر با موفقیت اضافه شد");
     }
 
-    function changeUserGroup(ChangeUserGroupRequest $request){
-        User::find(request('id'))->changeUserGroup(request('user_group_id'));
+    function changeUserLimit(ChangeUserLimitRequest $request){
+        User::find(request('id'))->changeUserLimit(request('user_group_id'));
         return Responder::success("گروه کاربری با موفقیت تغییر یافت");
     }
 
@@ -78,6 +78,9 @@ class UserController extends BaseController
     function changeRole(ChangeRoleRequest $request){
         $user = User::find(request('id'));
         $user->syncRoles([request('role_id')]);
+        foreach($user->tokens as $token) {
+            $token->revoke();
+        }
         return Responder::success("نقش کاربر با موفقیت تغییر یافت");
     }
 }

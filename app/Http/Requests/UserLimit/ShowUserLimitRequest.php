@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\UserGroup;
+namespace App\Http\Requests\UserLimit;
 
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class ShowUserGroupRequest extends ApiRequest
+class ShowUserLimitRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**

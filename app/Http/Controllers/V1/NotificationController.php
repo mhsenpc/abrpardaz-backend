@@ -27,10 +27,8 @@ class NotificationController extends BaseController
      *
      */
     function index(){
-        $unread = Auth::user()->unreadNotifications;
         return Responder::result([
             'list'=> Auth::user()->notifications,
-            'unread_count' =>$unread->count()
         ]);
     }
 

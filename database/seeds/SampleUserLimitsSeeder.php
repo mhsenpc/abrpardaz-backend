@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\UserGroup;
+use App\Models\UserLimit;
 use Illuminate\Database\Seeder;
 
-class SampleUserGroupsSeeder extends Seeder
+class SampleUserLimitsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,9 +12,9 @@ class SampleUserGroupsSeeder extends Seeder
      */
     public function run()
     {
-        UserGroup::create([
+        UserLimit::create([
             'default' => true,
-            'name' => 'کاربر استاندارد',
+            'name' => 'محدودیت استاندارد',
             'max_machines' => 11,
             'max_snapshots' => 30,
             'max_volumes_usage' => 1024,

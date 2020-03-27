@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\UserGroup;
+namespace App\Http\Requests\UserLimit;
 
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class EditUserGroupRequest extends ApiRequest
+class SetUserLimitAsDefaultRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**
@@ -27,10 +27,6 @@ class EditUserGroupRequest extends ApiRequest
     {
         return [
             'id' => 'required|numeric|exists:user_groups,id',
-            'name' => 'required',
-            'max_machines' => 'required|numeric',
-            'max_snapshots' => 'required|numeric',
-            'max_volumes_usage' => 'required|numeric',
         ];
     }
 }

@@ -6,17 +6,17 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class UserGroup extends Model
+class UserLimit extends Model
 {
     protected $guarded = ['id'];
     protected $table = 'user_groups';
 
     static function findDefaultGroup(){
-        return UserGroup::where('default',true)->first();
+        return UserLimit::where('default',true)->first();
     }
 
     function setAsDefault(){
-        UserGroup::where('default',true)->update(['default' => false]);
-        UserGroup::where('id',$this->id)->update(['default' => true]);
+        UserLimit::where('default',true)->update(['default' => false]);
+        UserLimit::where('id',$this->id)->update(['default' => true]);
     }
 }

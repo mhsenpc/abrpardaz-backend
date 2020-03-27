@@ -6,7 +6,7 @@ use App\Models\Machine;
 use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Snapshot;
-use App\Models\UserGroup;
+use App\Models\UserLimit;
 use App\Models\Volume;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -57,9 +57,9 @@ class User extends Authenticatable
         return $this->belongsTo(Profile::class);
     }
 
-    public function userGroup()
+    public function userLimit()
     {
-        return $this->belongsTo(UserGroup::class);
+        return $this->belongsTo(UserLimit::class);
     }
 
     public function machines()
@@ -99,7 +99,7 @@ class User extends Authenticatable
         $user->email = $email;
         $user->profile_id = $profile->id;
         $user->last_billing_date = Carbon::now();
-        $user->user_group_id = UserGroup::findDefaultGroup()->id;
+        $user->user_group_id = UserLimit::findDefaultGroup()->id;
         $user->save();
 
         return $user;
@@ -136,8 +136,8 @@ class User extends Authenticatable
         return $this;
     }
 
-    function changeUserGroup(int $user_group_id){
-        $this->user_group_id = $user_group_id;
+    function changeUserLimit(int $user_limit_id){
+        $this->user_group_id = $user_limit_id;
         $this->save();
         return $this;
     }

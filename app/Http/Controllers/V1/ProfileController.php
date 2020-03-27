@@ -50,9 +50,11 @@ class ProfileController extends BaseController
     function getUserInfo()
     {
         $user = Auth::user();
+        $notifications = Auth::user()->unreadNotifications->count();
         $profile = Auth::user()->profile;
         return Responder::result([
-            'user' => $user
+            'user' => $user,
+            'notifications' => $notifications
         ]);
     }
 

@@ -111,10 +111,10 @@ class SnapshotController extends BaseController
     {
         $machine = Machine::findorFail(\request('machine_id'));
 
-        $user_group = User::find(Auth::id())->userGroup;
-        if ($user_group) {
-            if (Auth::user()->SnapshotCount >= $user_group->max_snapshots) {
-                return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_snapshots . ' تصویر آنی را ندارید');
+        $user_limit = User::find(Auth::id())->userLimit;
+        if ($user_limit) {
+            if (Auth::user()->SnapshotCount >= $user_limit->max_snapshots) {
+                return Responder::error('شما اجازه ساخت بیش از ' . $user_limit->max_snapshots . ' تصویر آنی را ندارید');
             }
         }
 

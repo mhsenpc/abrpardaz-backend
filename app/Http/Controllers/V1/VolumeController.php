@@ -79,10 +79,10 @@ class VolumeController extends BaseController
     {
         $service = new VolumeService();
 
-        $user_group = User::find(Auth::id())->userGroup;
-        if ($user_group) {
-            if (Auth::user()->VolumesUsage + \request('size') > $user_group->max_volumes_usage) {
-                return Responder::error('شما اجازه ایجاد فضا بیش از ' . $user_group->max_volumes_usage . ' گیگابایت را ندارید');
+        $user_limit = User::find(Auth::id())->userLimit;
+        if ($user_limit) {
+            if (Auth::user()->VolumesUsage + \request('size') > $user_limit->max_volumes_usage) {
+                return Responder::error('شما اجازه ایجاد فضا بیش از ' . $user_limit->max_volumes_usage . ' گیگابایت را ندارید');
             }
         }
 

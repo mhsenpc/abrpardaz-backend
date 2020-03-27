@@ -5,7 +5,7 @@ namespace App\Http\Requests\User;
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class ChangeUserGroupRequest extends ApiRequest
+class ChangeUserLimitRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**

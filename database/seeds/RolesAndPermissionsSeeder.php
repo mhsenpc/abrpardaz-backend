@@ -36,16 +36,14 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'Sync Plans'])->assignRole($super_admin);
             Permission::create(['name' => 'Remove Plans'])->assignRole($super_admin);
 
-            Permission::create(['name' => 'List User Groups'])->assignRole($super_admin);
-            Permission::create(['name' => 'Add User Groups'])->assignRole($super_admin);
-            Permission::create(['name' => 'Edit User Groups'])->assignRole($super_admin);
-            Permission::create(['name' => 'Remove User Groups'])->assignRole($super_admin);
+            Permission::create(['name' => 'List User Limits'])->assignRole($super_admin);
+            Permission::create(['name' => 'Add User Limits'])->assignRole($super_admin);
+            Permission::create(['name' => 'Edit User Limits'])->assignRole($super_admin);
+            Permission::create(['name' => 'Remove User Limits'])->assignRole($super_admin);
 
             Permission::create(['name' => 'List Roles'])->assignRole($super_admin);
             Permission::create(['name' => 'Add Roles'])->assignRole($super_admin);
-            Permission::create(['name' => 'Edit Roles'])->assignRole(
-
-            );
+            Permission::create(['name' => 'Edit Roles'])->assignRole($super_admin);
             Permission::create(['name' => 'Remove Roles'])->assignRole($super_admin);
         }
     }

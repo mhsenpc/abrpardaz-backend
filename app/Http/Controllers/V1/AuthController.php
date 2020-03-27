@@ -375,7 +375,7 @@ class AuthController extends BaseController
      */
     function logout(LogoutRequest $request)
     {
-        Auth::user()->token()->revoke();
+        Auth::logout();
         return Responder::success('شما با موفقیت خارج شدید');
     }
 

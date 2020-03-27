@@ -267,10 +267,10 @@ class MachineController extends BaseController
             return Responder::error('شما به این پروژه دسترسی ندارید');
         }
 
-        $user_group = User::find($user_id)->userGroup;
-        if ($user_group) {
-            if (Auth::user()->MachineCount >= $user_group->max_machines) {
-                return Responder::error('شما اجازه ساخت بیش از ' . $user_group->max_machines . ' سرور را ندارید');
+        $user_limit = User::find($user_id)->userLimit;
+        if ($user_limit) {
+            if (Auth::user()->MachineCount >= $user_limit->max_machines) {
+                return Responder::error('شما اجازه ساخت بیش از ' . $user_limit->max_machines . ' سرور را ندارید');
             }
         }
 

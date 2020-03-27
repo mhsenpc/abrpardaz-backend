@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\UserGroup;
+namespace App\Http\Requests\UserLimit;
 
 use App\Http\Requests\ApiRequest;
 
-class AddUserGroupRequest extends ApiRequest
+class AddUserLimitRequest extends ApiRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -3,67 +3,67 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\UserGroup\AddUserGroupRequest;
-use App\Http\Requests\UserGroup\EditUserGroupRequest;
-use App\Http\Requests\UserGroup\RemoveUserGroupRequest;
-use App\Http\Requests\UserGroup\SetUserGroupAsDefaultRequest;
-use App\Http\Requests\UserGroup\ShowUserGroupRequest;
-use App\Models\UserGroup;
+use App\Http\Requests\UserLimit\AddUserLimitRequest;
+use App\Http\Requests\UserLimit\EditUserLimitRequest;
+use App\Http\Requests\UserLimit\RemoveUserLimitRequest;
+use App\Http\Requests\UserLimit\SetUserLimitAsDefaultRequest;
+use App\Http\Requests\UserLimit\ShowUserLimitRequest;
+use App\Models\UserLimit;
 use App\Services\Responder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class UserGroupController extends BaseController
+class UserLimitController extends BaseController
 {
     function index()
     {
-        $UserGroups = UserGroup::paginate();
-        return Responder::result(['pagination' => $UserGroups]);
+        $UserLimits = UserLimit::paginate();
+        return Responder::result(['pagination' => $UserLimits]);
     }
 
-    function show(ShowUserGroupRequest $request)
+    function show(ShowUserLimitRequest $request)
     {
-        $item = UserGroup::find(request('id'));
+        $item = UserLimit::find(request('id'));
         return Responder::result(['item' => $item]);
     }
 
-    function add(AddUserGroupRequest $request)
+    function add(AddUserLimitRequest $request)
     {
-        UserGroup::create([
+        UserLimit::create([
             'name' => $request->input('name'),
             'max_machines' => $request->input('max_machines'),
             'max_snapshots' => $request->input('max_snapshots'),
             'max_volumes_usage' => $request->input('max_volumes_usage'),
             'default' => false
         ]);
-        Log::info('new UserGroup created. user #' . Auth::id());
+        Log::info('new UserLimit created. user #' . Auth::id());
         return Responder::success("گروه کاربری با موفقیت اضافه شد");
     }
 
-    function edit(EditUserGroupRequest $request)
+    function edit(EditUserLimitRequest $request)
     {
-        UserGroup::find(\request('id'))->update([
+        UserLimit::find(\request('id'))->update([
             'name' => $request->input('name'),
             'max_machines' => $request->input('max_machines'),
             'max_snapshots' => $request->input('max_snapshots'),
             'max_volumes_usage' => $request->input('max_volumes_usage'),
         ]);
-        Log::info('UserGroup edited. key #' . request('id') . ',user #' . Auth::id());
+        Log::info('UserLimit edited. key #' . request('id') . ',user #' . Auth::id());
         return Responder::success("گروه کاربری با موفقیت ویرایش شد");
     }
 
-    function setAsDefault(SetUserGroupAsDefaultRequest $request)
+    function setAsDefault(SetUserLimitAsDefaultRequest $request)
     {
-        $item = UserGroup::find(request('id'));
+        $item = UserLimit::find(request('id'));
         $item->setAsDefault();
-        Log::info('UserGroup set as default. key #' . request('id') . ',user #' . Auth::id());
+        Log::info('UserLimit set as default. key #' . request('id') . ',user #' . Auth::id());
         return Responder::success("تغییر گروه پیش فرض موفقیت آمیز بود");
     }
 
-    function remove(RemoveUserGroupRequest $request)
+    function remove(RemoveUserLimitRequest $request)
     {
-        UserGroup::destroy(\request('id'));
-        Log::info('UserGroup removed. key #' . request('id') . ',user #' . Auth::id());
+        UserLimit::destroy(\request('id'));
+        Log::info('UserLimit removed. key #' . request('id') . ',user #' . Auth::id());
         return Responder::success("گروه کاربری با موفقیت حذف شد");
     }
 }
