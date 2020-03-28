@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\User\ChangeRoleRequest;
+use App\Http\Requests\User\LoginAsUserRequest;
 use App\Http\Requests\User\ManualVerifyEmailRequest;
 use App\Http\Requests\User\UnsuspendUserRequest;
 use App\Http\Requests\User\AddUserRequest;
@@ -94,5 +95,19 @@ class UserController extends BaseController
             $token->revoke();
         }
         return Responder::success("نقش کاربر با موفقیت تغییر یافت");
+    }
+
+    function loginAs(LoginAsUserRequest $request){
+        $user = User::find(\request('id'));
+        Auth::check(['id' => request('id')]);
+        $result = [];
+        $token = $user->createToken('Abrpardaz');
+        $result['access_token'] = $token->accessToken;
+        $result['token_type'] = 'Bearer';
+        $result['expires_at'] = $token->token->expires_at;
+        $result['message'] = 'شما با موفقیت وارد شدید';
+        $result['user_id'] = Auth::id();
+        $result['permissions'] = $user->getAllPermissions()->pluck('name');
+        return Responder::result($result);
     }
 }

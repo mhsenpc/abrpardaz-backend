@@ -150,6 +150,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::put('suspend', 'UserController@suspend');
                 Route::put('unsuspend', 'UserController@unsuspend');
                 Route::put('verifyEmail', 'UserController@verifyEmail');
+                Route::post('loginAs', 'UserController@loginAs');
                 Route::delete('remove', 'UserController@remove');
             });
         });
@@ -204,6 +205,5 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('permissions')->group(function () {
             Route::get('list', 'PermissionsController@index');
         });
-
     });
 });

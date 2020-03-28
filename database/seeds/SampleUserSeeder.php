@@ -15,7 +15,7 @@ class SampleUserSeeder extends Seeder
     {
         $admin = User::newUser(
             'admin@admin.com',
-            Hash::make('admin')
+            'admin'
         );
 
         $admin->verifyEmail();

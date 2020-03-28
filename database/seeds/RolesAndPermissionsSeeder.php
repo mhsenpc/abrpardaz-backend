@@ -25,6 +25,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'Verify Users'])->assignRole($super_admin);
             Permission::create(['name' => 'Suspend Users'])->assignRole($super_admin);
             Permission::create(['name' => 'Unsuspend Users'])->assignRole($super_admin);
+            Permission::create(['name' => 'Login As User'])->assignRole($super_admin);
 
             Permission::create(['name' => 'Validate Profile'])->assignRole($super_admin);
             Permission::create(['name' => 'Invalidate Profile'])->assignRole($super_admin);
