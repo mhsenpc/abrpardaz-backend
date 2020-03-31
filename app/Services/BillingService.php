@@ -128,6 +128,7 @@ class BillingService
                     'vat' => $vat,
                     'total' => $amount + $vat,
                     'machine' => $machine,
+                    'plan' => $machine->plan,
                 ];
                 $data[] = $billing_item;
             }

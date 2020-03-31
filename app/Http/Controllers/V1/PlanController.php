@@ -85,9 +85,10 @@ class PlanController extends BaseController
         return Responder::success("پلن با موفقیت حذف شد");
     }
 
-    function sync(){
+    function sync()
+    {
         $service = new FlavorSyncerService();
         $service->setRenderHtml(true);
-        $service->sync();
+        return Responder::success($service->sync());
     }
 }

@@ -30,37 +30,53 @@ class Profile extends Model
     }
 
     function validateProfile(){
-        $this->validated_at = Carbon::now();
+        $this->validation_status = 1;
         $this->save();
         return $this;
     }
 
-    function invalidateProfile(){
-        $this->validated_at = null;
+    function invalidateProfile(string $reason){
+        $this->validation_status = 2;
+        $this->validation_reason = $reason;
+        $this->save();
+        return $this;
+    }
+
+    function validateNC(){
+        $this->national_code_status = 1;
+        $this->save();
+        return $this;
+    }
+
+    function invalidateNC(string $reason){
+        $this->national_code_status = 2;
+        $this->national_code_reason = $reason;
         $this->save();
         return $this;
     }
 
     function validateNCFront(){
-        $this->national_card_front_verified_at = Carbon::now();
+        $this->national_card_front_status = 1;
         $this->save();
         return $this;
     }
 
-    function invalidateNCFront(){
-        $this->national_card_front_verified_at = null;
+    function invalidateNCFront(string $reason){
+        $this->national_card_front_status = 2;
+        $this->national_card_front_reason = $reason;
         $this->save();
         return $this;
     }
 
     function validateNCBack(){
-        $this->national_card_back_verified_at = Carbon::now();
+        $this->national_card_back_status = 1;
         $this->save();
         return $this;
     }
 
-    function invalidateNCBack(){
-        $this->national_card_back_verified_at = null;
+    function invalidateNCBack(string $reason){
+        $this->national_card_back_status = 2;
+        $this->national_card_back_reason = $reason;
         $this->save();
         return $this;
     }
@@ -71,8 +87,9 @@ class Profile extends Model
         return $this;
     }
 
-    function invalidateBC(){
-        $this->birth_certificate_verified_at = null;
+    function invalidateBC(string $reason){
+        $this->birth_certificate_status = 2;
+        $this->birth_certificate_reason = $reason;
         $this->save();
         return $this;
     }

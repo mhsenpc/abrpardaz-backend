@@ -48,13 +48,15 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::post('uploadBirthCertificate', 'ProfileController@uploadBirthCertificate');
             Route::prefix('{id}')->group(function () {
                 Route::put('validate', 'ProfileController@validateProfile');
-                Route::put('invalidate', 'ProfileController@invalidateProfile');
+                Route::post('invalidate', 'ProfileController@invalidateProfile');
+                Route::put('validateNationalCode', 'ProfileController@validateNationalCode');
+                Route::post('invalidateNationalCode', 'ProfileController@invalidateNationalCode');
                 Route::put('validateNCFront', 'ProfileController@validateNCFront');
-                Route::put('invalidateNCFront', 'ProfileController@invalidateNCFront');
+                Route::post('invalidateNCFront', 'ProfileController@invalidateNCFront');
                 Route::put('validateNCBack', 'ProfileController@validateNCBack');
-                Route::put('invalidateNCBack', 'ProfileController@invalidateNCBack');
+                Route::post('invalidateNCBack', 'ProfileController@invalidateNCBack');
                 Route::put('validateBC', 'ProfileController@validateBC');
-                Route::put('invalidateBC', 'ProfileController@invalidateBC');
+                Route::post('invalidateBC', 'ProfileController@invalidateBC');
             });
         });
 

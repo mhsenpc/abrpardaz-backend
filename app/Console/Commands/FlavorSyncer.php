@@ -38,6 +38,6 @@ class FlavorSyncer extends Command
      */
     public function handle()
     {
-        (new FlavorSyncerService())->sync();
+        echo (new FlavorSyncerService())->sync();
     }
 }

@@ -27,6 +27,7 @@ class InvalidateBCRequest extends ApiRequest
     {
         return [
             'id' => 'required|numeric|exists:users,id',
+            'reason' => 'required'
         ];
     }
 }

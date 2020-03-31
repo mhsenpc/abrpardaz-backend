@@ -86,6 +86,6 @@ class ImageController extends BaseController
     function sync(){
         $service = new ImageSyncerService();
         $service->setRenderHtml(true);
-        $service->sync();
+        return Responder::success($service->sync());
     }
 }

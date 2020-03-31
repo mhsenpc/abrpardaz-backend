@@ -6,6 +6,7 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\profile\InvalidateBCRequest;
 use App\Http\Requests\profile\InvalidateNCBackRequest;
 use App\Http\Requests\profile\InvalidateNCFrontRequest;
+use App\Http\Requests\profile\InvalidateNCNumberRequest;
 use App\Http\Requests\profile\InvalidateProfileRequest;
 use App\Http\Requests\Profile\RequestSetMobileRequest;
 use App\Http\Requests\Profile\RequestSetPhoneRequest;
@@ -18,8 +19,19 @@ use App\Http\Requests\profile\UploadNationalCardFrontRequest;
 use App\Http\Requests\profile\ValidateBCRequest;
 use App\Http\Requests\profile\ValidateNCBackRequest;
 use App\Http\Requests\profile\ValidateNCFrontRequest;
+use App\Http\Requests\profile\ValidateNCNumberRequest;
 use App\Http\Requests\profile\ValidateProfileRequest;
 use App\Models\Profile;
+use App\Notifications\BCInvalidatedNotification;
+use App\Notifications\BCValidatedNotification;
+use App\Notifications\NCBackInvalidatedNotification;
+use App\Notifications\NCBackValidatedNotification;
+use App\Notifications\NCFrontInvalidatedNotification;
+use App\Notifications\NCFrontValidatedNotification;
+use App\Notifications\NCInvalidatedNotification;
+use App\Notifications\NCValidatedNotification;
+use App\Notifications\ProfileInvalidatedNotification;
+use App\Notifications\ProfileValidatedNotification;
 use App\Services\MobileService;
 use App\Services\PhoneService;
 use App\Services\Responder;
@@ -35,7 +47,7 @@ class ProfileController extends BaseController
     {
         $this->middleware('permission:Validate Profile', ['only' => ['validateProfile']]);
         $this->middleware('permission:Invalidate Profile', ['only' => ['invalidateProfile']]);
-        $this->middleware('permission:Validate Documents', ['only' => ['validateNCFront','invalidateNCFront','validateNCBack','invalidateNCBack','validateBC','invalidateBC']]);
+        $this->middleware('permission:Validate Documents', ['only' => ['validateNCFront', 'invalidateNCFront', 'validateNCBack', 'invalidateNCBack', 'validateBC', 'invalidateBC']]);
     }
 
     /**
@@ -59,6 +71,15 @@ class ProfileController extends BaseController
         $user = Auth::user();
         $notifications = Auth::user()->unreadNotifications->count();
         $profile = Auth::user()->profile;
+
+        if(!empty($user->profile->national_card_front))
+            $user->profile->national_card_front = $path = asset('storage/'. $user->profile->national_card_front);
+
+        if(!empty($user->profile->national_card_back))
+            $user->profile->national_card_back = $path = asset('storage/'. $user->profile->national_card_back);
+
+        if(!empty($user->profile->birth_certificate))
+            $user->profile->birth_certificate = $path = asset('storage/'. $user->profile->birth_certificate);
         return Responder::result([
             'user' => $user,
             'notifications' => $notifications
@@ -465,61 +486,90 @@ class ProfileController extends BaseController
 
     function validateProfile(ValidateProfileRequest $request)
     {
-        User::find(request('id'))->profile->validateProfile();
-        //TODO: notify to user
+        $user = User::find(request('id'));
+        $user->profile->validateProfile();
+        $user->notify(new ProfileValidatedNotification($user, $user->profile));
         Log::info('profile validated.user #' . request('id'));
         return Responder::success('پروفایل با موفقیت تایید شد');
     }
 
     function invalidateProfile(InvalidateProfileRequest $request)
     {
-        User::find(request('id'))->profile->invalidateProfile();
-        //TODO: notify to user
+        $user = User::find(request('id'));
+        $user->profile->invalidateProfile(request('reason'));
+        $user->notify(new ProfileInvalidatedNotification($user, $user->profile, request('reason')));
         Log::info('profile validated.user #' . request('id'));
         return Responder::success('پروفایل با موفقیت به حالت تایید نشده تبدیل شد');
     }
 
+    function validateNationalCode(ValidateNCNumberRequest $request)
+    {
+        $user = User::find(request('id'));
+        $user->profile->validateNC();
+        $user->notify(new NCValidatedNotification());
+        Log::info('profile national code validated.user #' . request('id'));
+        return Responder::success('کد ملی تایید شد');
+    }
+
+    function invalidateNationalCode(InvalidateNCNumberRequest $request)
+    {
+        $user = User::find(request('id'));
+        $user->profile->invalidateNC(request('reason'));
+        $user->notify(new NCInvalidatedNotification($user, $user->profile, request('reason')));
+        Log::info('profile national code invalidated.user #' . request('id'));
+        return Responder::success('کد ملی رد شد');
+    }
+
     function validateNCFront(ValidateNCFrontRequest $request)
     {
-        User::find(request('id'))->profile->validateNCFront();
+        $user = User::find(request('id'));
+        $user->profile->validateNCFront();
+        $user->notify(new NCFrontValidatedNotification());
         Log::info('profile NCFront validated.user #' . request('id'));
         return Responder::success('تصویر جلوی کارت ملی تایید شد');
     }
 
     function invalidateNCFront(InvalidateNCFrontRequest $request)
     {
-        User::find(request('id'))->profile->invalidateNCFront();
-        //TODO: notify to user
+        $user = User::find(request('id'));
+        $user->profile->invalidateNCFront(request('reason'));
+        $user->notify(new NCFrontInvalidatedNotification($user, $user->profile, request('reason')));
         Log::info('profile NCFront invalidated.user #' . request('id'));
         return Responder::success('تصویر جلوی کارت ملی رد شد');
     }
 
     function validateNCBack(ValidateNCBackRequest $request)
     {
-        User::find(request('id'))->profile->validateNCBack();
+        $user = User::find(request('id'));
+        $user->profile->validateNCBack();
+        $user->notify(new NCBackValidatedNotification());
         Log::info('profile NCBack validated.user #' . request('id'));
         return Responder::success('تصویر پشت کارت ملی تایید شد');
     }
 
     function invalidateNCBack(InvalidateNCBackRequest $request)
     {
-        User::find(request('id'))->profile->invalidateNCBack();
-        //TODO: notify to user
+        $user = User::find(request('id'));
+        $user->profile->invalidateNCBack(request('reason'));
+        $user->notify(new NCBackInvalidatedNotification($user, $user->profile, request('reason')));
         Log::info('profile NCBack invalidated.user #' . request('id'));
         return Responder::success('تصویر پشت کارت ملی رد شد');
     }
 
     function validateBC(ValidateBCRequest $request)
     {
-        User::find(request('id'))->profile->validateBC();
+        $user = User::find(request('id'));
+        $user->profile->validateBC();
+        $user->notify(new BCValidatedNotification());
         Log::info('profile BC validated.user #' . request('id'));
         return Responder::success('تصویر شناسنامه تایید شد');
     }
 
     function invalidateBC(InvalidateBCRequest $request)
     {
-        User::find(request('id'))->profile->invalidateBC();
-        //TODO: notify to user
+        $user = User::find(request('id'));
+        $user->profile->invalidateBC(request('reason'));
+        $user->notify(new BCInvalidatedNotification($user, $user->profile, request('reason')));
         Log::info('profile BC invalidated.user #' . request('id'));
         return Responder::success('تصویر شناسنامه رد شد');
     }

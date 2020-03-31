@@ -22,7 +22,7 @@ class CreateSnapshotsTable extends Migration
             $table->integer('user_id');
             $table->integer('image_id');
             $table->timestamp('last_billing_date');
-            $table->timestamp('end_date');
+            $table->timestamp('end_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

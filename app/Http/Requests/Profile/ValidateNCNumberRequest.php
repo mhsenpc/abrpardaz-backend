@@ -3,9 +3,11 @@
 namespace App\Http\Requests\profile;
 
 use App\Http\Requests\ApiRequest;
+use App\Traits\AddIDParameterTrait;
 
-class UploadNationalCardFrontRequest extends ApiRequest
+class ValidateNCNumberRequest extends ApiRequest
 {
+    use AddIDParameterTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,19 +26,7 @@ class UploadNationalCardFrontRequest extends ApiRequest
     public function rules()
     {
         return [
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'image.image' => 'فرمت تصویر بارگذاری شده معتبر نمی باشد',
+            'id' => 'required|numeric|exists:users,id',
         ];
     }
 }

@@ -147,5 +147,6 @@ return [
         'max_volumes_usage' => 'حداکثر حجم volume',
         'permissions' => 'دسترسی ها',
         'role_id' => 'نقش',
+        'image' => 'تصویر'
     ],
 ];

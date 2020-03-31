@@ -15,6 +15,7 @@ class MachineCreated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $machine_id;
+    public $machine_name;
     private $project_id;
 
     /**
@@ -25,6 +26,7 @@ class MachineCreated implements ShouldBroadcast
     public function __construct($machine)
     {
         $this->machine_id = $machine->id;
+        $this->machine_name = $machine->name;
         $this->project_id = $machine->project->id;
     }
 

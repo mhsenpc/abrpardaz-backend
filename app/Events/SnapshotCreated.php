@@ -15,6 +15,7 @@ class SnapshotCreated implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $snapshot_id;
+    public $snapshot_name;
     private $user_id;
 
     /**
@@ -22,11 +23,13 @@ class SnapshotCreated implements ShouldBroadcast
      *
      * @param $user_id
      * @param $snapshot_id
+     * @param $snapshot_name
      */
-    public function __construct($user_id, $snapshot_id)
+    public function __construct($user_id, $snapshot_id,$snapshot_name)
     {
         $this->user_id = $user_id;
         $this->snapshot_id = $snapshot_id;
+        $this->snapshot_name = $snapshot_name;
     }
 
     /**

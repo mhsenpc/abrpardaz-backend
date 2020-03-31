@@ -27,4 +27,16 @@ class UploadNationalCardBackRequest extends ApiRequest
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'image.image' => 'فرمت تصویر بارگذاری شده معتبر نمی باشد',
+        ];
+    }
 }
