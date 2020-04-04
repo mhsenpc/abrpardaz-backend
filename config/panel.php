@@ -1,6 +1,6 @@
 <?php
 return [
     'url' => env('PANEL_URL'),
-    'verify_page' => 'auth/verify',
-    'reset_password' => 'auth/reset_password',
+    'verify_page' => 'verify',
+    'reset_password' => 'ResetPassword',
 ];

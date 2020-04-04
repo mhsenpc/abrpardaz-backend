@@ -165,7 +165,8 @@ class AuthController extends BaseController
         $token = uniqid();
         Cache::put('forget_token_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
-        Auth::user()->notify(new ResetPasswordNotification(request('email'), $token));
+        $user = User::where('email',request('email'))->first();
+        $user->notify(new ResetPasswordNotification(request('email'), $token));
 
         Log::info('user forgot his password '.request('email'));
         return Responder::success('لینک بازنشانی رمز به ایمیل شما ارسال گردید');
@@ -291,7 +292,7 @@ class AuthController extends BaseController
      *
      */
     function changePassword(ChangePasswordRequest $request){
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         if (Hash::check(request('current_password'), $user->password)) {
             User::updatePassword(
                 $user->email,
@@ -354,7 +355,7 @@ class AuthController extends BaseController
             return Responder::success('حساب کاربری شما با موفقیت تایید شد');
         } else {
             Log::warning('user verification failed for '.request('email').' with token '.request('token'));
-            return Responder::error('تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا محددا اقدام کنید');
+            return Responder::error('تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا مجددا اقدام کنید');
         }
     }
 

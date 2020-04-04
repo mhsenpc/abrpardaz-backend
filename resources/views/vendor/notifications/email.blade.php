@@ -6,7 +6,7 @@
 @if ($level === 'error')
 # @lang('Whoops!')
 @else
-# @lang('Hello!')
+با سلام
 @endif
 @endif
 
@@ -43,8 +43,8 @@
 @if (! empty($salutation))
 {{ $salutation }}
 @else
-@lang('Regards'),<br>
-{{ config('app.name') }}
+با احترام<br>
+تیم پشتیبانی ابرپرداز
 @endif
 
 {{-- Subcopy --}}

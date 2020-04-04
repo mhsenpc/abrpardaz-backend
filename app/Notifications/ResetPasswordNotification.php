@@ -50,7 +50,7 @@ class ResetPasswordNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $link = config('panel.url') . config('panel.reset_password') . '?token=' . $this->token . '&email' . $this->email;
+        $link = config('panel.url') . config('panel.reset_password') . '?token=' . $this->token . '&email=' . $this->email;
         return (new MailMessage)
             ->subject("بازنشانی رمز عبور - ابرپرداز")
             ->line('کاربر گرامی ابرپرداز')

@@ -8,7 +8,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::post('login', 'AuthController@login');
         Route::post('forgetPassword', 'AuthController@forgetPassword');
         Route::post('resetPassword', 'AuthController@resetPassword');
-        Route::post('changePassword', 'AuthController@changePassword');
+        Route::post('changePassword', 'AuthController@changePassword')->middleware(['auth:api']);
         Route::any('verify', 'AuthController@verify');
         Route::put('logout', 'AuthController@logout');
     });

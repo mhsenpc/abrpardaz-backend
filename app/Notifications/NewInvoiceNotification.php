@@ -47,7 +47,7 @@ class NewInvoiceNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[invoice ID: {$this->invoice->invoice_id}]  صورتجساب جدید")
+            ->subject("[invoice ID: {$this->invoice->invoice_id}]  صورتحساب جدید")
             ->line($this->profile->name)
             ->line('صورت حساب جدیدی برای شما ایجاد گردید')
             ->line('لطفا هر چه سریع تر جهت پرداخت آن از طریق پنل اقدام نمایید');

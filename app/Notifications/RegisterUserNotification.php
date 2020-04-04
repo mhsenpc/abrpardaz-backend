@@ -50,7 +50,7 @@ class RegisterUserNotification extends Notification implements ShouldQueue
      */
     public function toMail($notifiable)
     {
-        $link = config('panel.url').config('panel.verify_page'). '?token=' . $this->token . '&email' . $this->email;
+        $link = config('panel.url').config('panel.verify_page'). '?token=' . $this->token . '&email=' . $this->email;
         return (new MailMessage)
                     ->subject("فعال سازی حساب کاربری - ابرپرداز")
                     ->line('به ابرپرداز خوش آمدید.')

@@ -147,6 +147,8 @@ return [
         'max_volumes_usage' => 'حداکثر حجم volume',
         'permissions' => 'دسترسی ها',
         'role_id' => 'نقش',
-        'image' => 'تصویر'
+        'image' => 'تصویر',
+        'new_password' => 'رمز عبور جدید',
+        'new_password_confirmation' => 'تایید رمز عبور جدید',
     ],
 ];
