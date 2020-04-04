@@ -2,6 +2,7 @@
 
 # Special thanks to: Wael Salah
 # https://webmobtuts.com/backend-development/lets-implement-a-simple-ticketing-system-with-laravel/
+
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
@@ -42,8 +43,41 @@ class TicketController extends BaseController
      */
     public function index()
     {
-        $tickets = Ticket::paginate(5);
-        return Responder::result(['pagination' => $tickets->toArray()]);
+        /*
+         "all"همه
+         'awaiting_reply'انتظار پاسخ
+         'flagged'علامت دار
+         'active'فعال
+         'open'باز
+         'answered'پاسخ داده شده
+         'customer_reply'پاسخ مشتری
+         'on_hold'معلق
+         'in_progress'در جریان
+         'closed'بسته شده
+        */
+        $ticket_operators = User::permission('Ticket Operator')->get()->pluck('id');
+        switch (request('filter')) {
+            case 'awaiting_reply':
+                $tickets = Ticket::has('replies', '=', 0)->paginate(5)->toArray();
+                break;
+            case 'open':
+                $tickets = Ticket::where('status', 'Open')->paginate(5)->toArray();
+                break;
+            case 'answered':
+                $tickets = Ticket::whereHas('latestReply')->whereIn('user_id', $ticket_operators)->paginate(5)->toArray();
+                break;
+            case 'customer_reply':
+                $tickets = Ticket::whereHas('latestReply')->whereNotIn('user_id', $ticket_operators)->paginate(5)->toArray();
+                break;
+            case 'closed':
+                $tickets = Ticket::where('status', 'Closed')->paginate(5)->toArray();
+                break;
+            case 'all':
+                $tickets = Ticket::paginate(5)->toArray();
+                break;
+        }
+
+        return Responder::result(['pagination' => $tickets]);
     }
 
     /**
@@ -152,13 +186,13 @@ class TicketController extends BaseController
         $ticket->save();
 
         //notif to user himself
-        Auth::user()->notify(new NewTicketNotification($ticket,Auth::user() , Auth::user()->profile));
+        Auth::user()->notify(new NewTicketNotification($ticket, Auth::user(), Auth::user()->profile));
         //notif to admins
-        $admins = User::role('Super Admin')->get();
-        foreach ($admins as $admin){
-            $admin->notify(new NewTicketAdminNotification($ticket,Auth::user() , Auth::user()->profile));
+        $admins = User::permission('Ticket Operator')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewTicketAdminNotification($ticket, Auth::user(), Auth::user()->profile));
         }
-        Log::info('new ticket created. user #'.Auth::id());
+        Log::info('new ticket created. user #' . Auth::id());
         return Responder::success('تیکت جدید با موفقیت ایجاد شد');
     }
 
@@ -207,18 +241,17 @@ class TicketController extends BaseController
 
         if ($reply->ticket->user_id === Auth::id()) {
             //notif to admins if ticket owner has more questions
-            $admins = User::role('Super Admin')->get();
-            foreach ($admins as $admin){
+            $admins = User::permission('Ticket Operator')->get();
+            foreach ($admins as $admin) {
                 $admin->notify(new TicketReplyAdminNotification($reply->ticket, $reply, Auth::user()->profile));
             }
-        }
-        else{
+        } else {
             // send mail if the user commenting is not the ticket owner
             $user = Ticket::find(\request('id'))->user;
             $user->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
         }
 
-        Log::info('new reply for ticket #'.request('ticket_id').',user #'.Auth::id());
+        Log::info('new reply for ticket #' . request('ticket_id') . ',user #' . Auth::id());
         return Responder::success('پاسخ شما به تیکت با موفقیت ارسال شد');
     }
 
@@ -256,7 +289,7 @@ class TicketController extends BaseController
 
         Auth::user()->notify(new TicketStatusNotification($ticketOwner->profile, $ticket));
 
-        Log::info('close ticket #'.request('id').',user #'.Auth::id());
+        Log::info('close ticket #' . request('id') . ',user #' . Auth::id());
         return Responder::success('تیکت شما با موفقیت بسته شد');
     }
 
@@ -287,7 +320,7 @@ class TicketController extends BaseController
      */
     public function show(ShowTicketRequest $request)
     {
-        $ticket = Ticket::with(['replies','replies.user.profile'])->find(\request('id'));
+        $ticket = Ticket::with(['replies', 'replies.user.profile'])->find(\request('id'));
         return Responder::result(['ticket' => $ticket]);
     }
 }

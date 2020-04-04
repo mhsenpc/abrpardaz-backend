@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Scopes\ProjectAccessScope;
+use App\Scopes\UserIDScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -10,6 +12,13 @@ class Ticket extends Model
     use SoftDeletes;
 
     protected $guarded = ['id'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new UserIDScope());
+    }
 
     public function category()
     {
@@ -34,5 +43,10 @@ class Ticket extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function latestReply()
+    {
+        return $this->hasOne(Reply::class)->latest();
     }
 }

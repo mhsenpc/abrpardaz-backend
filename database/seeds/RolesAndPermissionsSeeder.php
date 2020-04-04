@@ -28,7 +28,6 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'Login As User'])->assignRole($super_admin);
 
             Permission::create(['name' => 'Validate Profile'])->assignRole($super_admin);
-            Permission::create(['name' => 'Invalidate Profile'])->assignRole($super_admin);
             Permission::create(['name' => 'Validate Documents'])->assignRole($super_admin);
 
             Permission::create(['name' => 'Manage Images'])->assignRole($super_admin);
@@ -52,6 +51,8 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'Add Roles'])->assignRole($super_admin);
             Permission::create(['name' => 'Edit Roles'])->assignRole($super_admin);
             Permission::create(['name' => 'Remove Roles'])->assignRole($super_admin);
+
+            Permission::create(['name' => 'Ticket Operator'])->assignRole($super_admin);
         }
     }
 }

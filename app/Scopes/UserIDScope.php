@@ -21,6 +21,10 @@ class UserIDScope implements Scope
     {
         if (strpos(php_sapi_name(), 'cli') !== false)
             return;
-        $builder->where('user_id',  Auth::id());
+
+        $user = Auth::user();
+        if($user->hasPermissionTo('Ticket Operator'))
+            return;
+        $builder->where('user_id',  $user->id);
     }
 }
