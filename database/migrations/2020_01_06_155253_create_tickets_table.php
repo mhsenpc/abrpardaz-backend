@@ -23,6 +23,7 @@ class CreateTicketsTable extends Migration
             $table->string('priority');
             $table->text('message');
             $table->string('status');
+            $table->string('attachment')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

@@ -170,6 +170,11 @@ class TicketController extends BaseController
      */
     public function newTicket(NewTicketRequest $request)
     {
+        $path = null;
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('uploads');
+        }
+
         $ticket = new Ticket([
             'title' => \request('title'),
             'user_id' => Auth::id(),
@@ -177,7 +182,8 @@ class TicketController extends BaseController
             'category_id' => \request('category'),
             'priority' => \request('priority'),
             'message' => \request('message'),
-            'status' => "Open"
+            'status' => "Open",
+            'attachment' => $path,
         ]);
 
         if (!empty(\request('machine'))) {
@@ -232,10 +238,16 @@ class TicketController extends BaseController
      */
     public function newReply(NewReplyRequest $request)
     {
+        $path = null;
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('uploads');
+        }
+
         $reply = Reply::create([
             'ticket_id' => \request('id'),
             'user_id' => Auth::id(),
-            'comment' => \request('comment')
+            'comment' => \request('comment'),
+            'attachment' => $path
         ]);
 
 
@@ -320,7 +332,15 @@ class TicketController extends BaseController
      */
     public function show(ShowTicketRequest $request)
     {
-        $ticket = Ticket::with(['replies', 'replies.user.profile'])->find(\request('id'));
+        $ticket = Ticket::with(['user.profile', 'replies', 'replies.user.profile'])->find(\request('id'));
+        if (!empty($ticket->attachment)) {
+            $ticket->attachment = asset('storage/' . $ticket->attachment);
+        }
+        foreach ($ticket->replies as &$reply){
+            if (!empty($reply->attachment)) {
+                $reply->attachment = asset('storage/' . $reply->attachment);
+            }
+        }
         return Responder::result(['ticket' => $ticket]);
     }
 }

@@ -21,7 +21,7 @@ class CreateInvoicesTable extends Migration
             $table->float('total');
             $table->boolean('is_paid');
             $table->string('data',20000);
-            $table->string('invoice_id');
+            $table->string('invoice_id')->unique();
             $table->timestamps();
             $table->softDeletes();
         });

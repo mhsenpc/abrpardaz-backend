@@ -28,7 +28,8 @@ class NewReplyRequest extends ApiRequest
     {
         return [
             'comment' => 'required',
-            'id' => 'required|numeric|exists:tickets,id'
+            'id' => 'required|numeric|exists:tickets,id',
+            'file' => 'nullable|sometimes|mimes:zip,rar,jpeg,png,jpg,gif|max:10240',
         ];
     }
 }

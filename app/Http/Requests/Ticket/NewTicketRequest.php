@@ -27,7 +27,8 @@ class NewTicketRequest extends ApiRequest
             'title' => 'required',
             'priority' => 'required',
             'message' => 'required',
-            'machine' => 'sometimes|numeric|exists:machines,id',
+            'machine' => 'nullable|sometimes|numeric|exists:machines,id',
+            'file' => 'nullable|sometimes|mimes:zip,rar,jpeg,png,jpg,gif|max:10240',
             'category' => 'required|numeric|exists:categories,id'
         ];
     }
