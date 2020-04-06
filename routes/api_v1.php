@@ -3,14 +3,17 @@
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->namespace('V1')->group(function () {
+
     Route::prefix('auth')->group(function () {
         Route::post('register', 'AuthController@register');
         Route::post('login', 'AuthController@login');
+        Route::put('logout', 'AuthController@logout');
         Route::post('forgetPassword', 'AuthController@forgetPassword');
         Route::post('resetPassword', 'AuthController@resetPassword');
         Route::post('changePassword', 'AuthController@changePassword')->middleware(['auth:api']);
         Route::any('verify', 'AuthController@verify');
-        Route::put('logout', 'AuthController@logout');
+        Route::get('redirectToGoogle', 'AuthController@redirectToGoogle');
+        Route::get('handleGoogleCallback', 'AuthController@handleGoogleCallback');
     });
 
     Route::middleware(['auth:api'])->group(function () {

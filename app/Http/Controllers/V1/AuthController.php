@@ -10,7 +10,6 @@ use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\VerifyRequest;
-use App\Models\Profile;
 use App\Notifications\RegisterUserNotification;
 use App\Notifications\ResetPasswordNotification;
 use App\Services\Responder;
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends BaseController
 {
@@ -71,7 +70,7 @@ class AuthController extends BaseController
         Cache::put('verification_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
         $user->notify(new RegisterUserNotification(request('email'), $token));
-        Log::info('register user . sent token to email '.request('email'));
+        Log::info('register user . sent token to email ' . request('email'));
 
         return Responder::success('لینک فعال سازی به ایمیل شما ارسال گردید');
     }
@@ -127,7 +126,7 @@ class AuthController extends BaseController
             $result['user_id'] = Auth::id();
             $result['permissions'] = $user->getAllPermissions()->pluck('name');
 
-            Log::info('user logged in '.request('email'));
+            Log::info('user logged in ' . request('email'));
 
             return Responder::result($result);
         } else {
@@ -165,10 +164,10 @@ class AuthController extends BaseController
         $token = uniqid();
         Cache::put('forget_token_for_' . request('email'), $token, 7 * 24 * 60 * 60);
 
-        $user = User::where('email',request('email'))->first();
+        $user = User::where('email', request('email'))->first();
         $user->notify(new ResetPasswordNotification(request('email'), $token));
 
-        Log::info('user forgot his password '.request('email'));
+        Log::info('user forgot his password ' . request('email'));
         return Responder::success('لینک بازنشانی رمز به ایمیل شما ارسال گردید');
     }
 
@@ -237,10 +236,10 @@ class AuthController extends BaseController
             );
 
             Cache::forget('forget_token_for_' . request('email'));
-            Log::info('reset password successful for '.request('email'));
+            Log::info('reset password successful for ' . request('email'));
             return Responder::success('بازنشانی رمز عبور با موفقیت انجام شد');
         } else {
-            Log::warning('invalid reset password token for '.request('email').' token: '.request('token'));
+            Log::warning('invalid reset password token for ' . request('email') . ' token: ' . request('token'));
             return Responder::error('بازنشانی رمز با توکن وارد شده امکان پذیر نمی باشد');
         }
     }
@@ -291,7 +290,8 @@ class AuthController extends BaseController
      *     )
      *
      */
-    function changePassword(ChangePasswordRequest $request){
+    function changePassword(ChangePasswordRequest $request)
+    {
         $user = User::find(Auth::id());
         if (Hash::check(request('current_password'), $user->password)) {
             User::updatePassword(
@@ -299,10 +299,10 @@ class AuthController extends BaseController
                 Hash::make(request('new_password'))
             );
 
-            Log::info('change password successful for '.$user->email);
+            Log::info('change password successful for ' . $user->email);
             return Responder::success('رمز عبور شما با موفقیت تغییر یافت');
         } else {
-            Log::warning('change password failed for '.$user->email);
+            Log::warning('change password failed for ' . $user->email);
             return Responder::error('رمز عبور قبلی شما صحیح نمی باشد');
         }
     }
@@ -351,10 +351,10 @@ class AuthController extends BaseController
             User::activateUserByEmail(request('email'));
             Cache::forget('verification_for_' . request('email'));
 
-            Log::info('user verification successful for '.request('email'));
+            Log::info('user verification successful for ' . request('email'));
             return Responder::success('حساب کاربری شما با موفقیت تایید شد');
         } else {
-            Log::warning('user verification failed for '.request('email').' with token '.request('token'));
+            Log::warning('user verification failed for ' . request('email') . ' with token ' . request('token'));
             return Responder::error('تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا مجددا اقدام کنید');
         }
     }
@@ -385,9 +385,11 @@ class AuthController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function redirectToProvider()
+    public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Responder::result([
+            'url' => Socialite::driver('google')->stateless()->redirect()->getTargetUrl()
+        ]);
     }
 
     /**
@@ -395,29 +397,43 @@ class AuthController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function handleProviderCallback()
+    public function handleGoogleCallback()
     {
         try {
-            $user = Socialite::driver('google')->user();
+            $user = Socialite::driver('google')->stateless()->user();
         } catch (\Exception $e) {
-            return redirect('/login');
+           return Responder::error('ورود شما با گوگل موفقیت آمیز نبود');
         }
 
         // check if they're an existing user
         $existingUser = User::where('email', $user->email)->first();
-        if($existingUser){
+        if ($existingUser) {
+            if($existingUser->suspend){
+                return Responder::error('متاسفانه حساب کاربری شما از طرف پشتیبانی مسدود شده است');
+            }
+
             // log them in
-            auth()->login($existingUser, true);
+            auth()->login($existingUser);
         } else {
             // create a new user
-            $newUser = User::newUser($user->email,'test');
+            $newUser = User::newUser($user->email, 'cbRFs+4s3vGnKxm5');
 
-            $newUser->profile->name            = $user->name;
-            $newUser->email           = $user->email;
-            $newUser->provider_user_id       = $user->id;
+            $newUser->profile->name = $user->name;
+            $newUser->email = $user->email;
+            $newUser->provider_user_id = $user->id;
             $newUser->save();
-            auth()->login($newUser, true);
+            auth()->login($newUser);
         }
-        return redirect()->to('/home');
+
+        $user = Auth::user();
+        $result = [];
+        $token = $user->createToken('Abrpardaz');
+        $result['access_token'] = $token->accessToken;
+        $result['token_type'] = 'Bearer';
+        $result['expires_at'] = $token->token->expires_at;
+        $result['message'] = 'شما با موفقیت وارد شدید';
+        $result['user_id'] = Auth::id();
+        $result['permissions'] = $user->getAllPermissions()->pluck('name');
+        return Responder::result($result);
     }
 }
