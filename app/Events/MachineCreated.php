@@ -16,7 +16,7 @@ class MachineCreated implements ShouldBroadcast
 
     public $machine_id;
     public $machine_name;
-    private $project_id;
+    private $user_id;
 
     /**
      * Create a new event instance.
@@ -27,7 +27,7 @@ class MachineCreated implements ShouldBroadcast
     {
         $this->machine_id = $machine->id;
         $this->machine_name = $machine->name;
-        $this->project_id = $machine->project->id;
+        $this->user_id = $machine->user_id;
     }
 
     /**
@@ -37,7 +37,7 @@ class MachineCreated implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('project-'.$this->project_id);
+        return new PrivateChannel('user-'.$this->user_id);
     }
 
     public function broadcastAs()
