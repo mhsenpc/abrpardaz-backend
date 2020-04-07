@@ -133,6 +133,10 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
         Route::prefix('invoices')->group(function () {
             Route::get('list', 'InvoiceController@index');
+            Route::prefix('{id}')->group(function () {
+                Route::get('show', 'InvoiceController@show');
+                Route::post('uploadReceipt', 'InvoiceController@uploadReceipt');
+            });
         });
 
         Route::prefix('transactions')->group(function () {

@@ -22,6 +22,8 @@ class CreateInvoicesTable extends Migration
             $table->boolean('is_paid');
             $table->string('data',20000);
             $table->string('invoice_id')->unique();
+            $table->string('receipt')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
