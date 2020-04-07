@@ -53,6 +53,7 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'Remove Roles'])->assignRole($super_admin);
 
             Permission::create(['name' => 'Ticket Operator'])->assignRole($super_admin);
+            Permission::create(['name' => 'Invoice Operator'])->assignRole($super_admin);
         }
     }
 }

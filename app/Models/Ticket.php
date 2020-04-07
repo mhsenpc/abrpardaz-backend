@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-use App\Scopes\ProjectAccessScope;
-use App\Scopes\UserIDScope;
+use App\Scopes\TicketUserIDScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -17,7 +16,7 @@ class Ticket extends Model
     {
         parent::boot();
 
-        static::addGlobalScope(new UserIDScope());
+        static::addGlobalScope(new TicketUserIDScope());
     }
 
     public function category()

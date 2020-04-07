@@ -5,7 +5,7 @@ namespace App\Http\Requests\Invoices;
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class UploadReceiptRequest extends ApiRequest
+class ConfirmReceiptRequest extends ApiRequest
 {
     use AddIDParameterTrait;
 
@@ -27,20 +27,7 @@ class UploadReceiptRequest extends ApiRequest
     public function rules()
     {
         return [
-            'id' => 'required|numeric|exists:invoices,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
-        ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [
-            'image.image' => 'فرمت تصویر بارگذاری شده معتبر نمی باشد',
+            'id' => 'required|numeric|exists:invoices,id'
         ];
     }
 }

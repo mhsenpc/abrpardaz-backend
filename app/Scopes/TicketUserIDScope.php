@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
-class UserIDScope implements Scope
+class TicketUserIDScope implements Scope
 {
     /**
      * Apply the scope to a given Eloquent query builder.
@@ -23,6 +23,8 @@ class UserIDScope implements Scope
             return;
 
         $user = Auth::user();
+        if($user->hasPermissionTo('Ticket Operator'))
+            return;
         $builder->where('user_id',  $user->id);
     }
 }

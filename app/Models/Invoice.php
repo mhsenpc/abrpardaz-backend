@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Scopes\UserIDScope;
+use App\Scopes\InvoiceUserIDScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -15,6 +15,6 @@ class Invoice extends Model
     {
         parent::boot();
 
-        static::addGlobalScope(new UserIDScope());
+        static::addGlobalScope(new InvoiceUserIDScope());
     }
 }
