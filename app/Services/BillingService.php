@@ -59,7 +59,7 @@ class BillingService
      * @return array
      * @throws \Exception
      */
-    public static function CalculateBillingForMachines(\Illuminate\Database\Eloquent\Model $user, $total_amount, float $total_vat, array $data): array
+    public static function CalculateBillingForMachines(\Illuminate\Database\Eloquent\Model $user,float $total_amount, float $total_vat, array $data): array
     {
         //calculate billing for machines
         $machines = Machine::where('user_id', $user->id)

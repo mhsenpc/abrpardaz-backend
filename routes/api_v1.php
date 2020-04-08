@@ -75,6 +75,16 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
+        Route::prefix('backups')->group(function () {
+            Route::get('list', 'BackupController@index');
+            Route::post('trigger', 'BackupController@trigger');
+
+            Route::prefix('{id}')->group(function () {
+                Route::post('rename', 'BackupController@rename');
+                Route::delete('remove', 'BackupController@remove');
+            });
+        });
+
         Route::prefix('sshKeys')->group(function () {
             Route::get('list', 'SSHKeyController@index');
             Route::post('add', 'SSHKeyController@add');

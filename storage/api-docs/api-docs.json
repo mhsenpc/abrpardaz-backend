@@ -259,6 +259,108 @@
                 }
             }
         },
+        "/backups/list": {
+            "get": {
+                "tags": [
+                    "Backup"
+                ],
+                "summary": "List all backups",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\BackupController::index",
+                "responses": {
+                    "default": {
+                        "description": "List backups"
+                    }
+                }
+            }
+        },
+        "/backups/{id}/trigger": {
+            "post": {
+                "tags": [
+                    "Backup"
+                ],
+                "summary": "triggers a manual backup",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\BackupController::trigger",
+                "parameters": [
+                    {
+                        "name": "machine_id",
+                        "in": "query",
+                        "description": "id of the machine",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "result"
+                    }
+                }
+            }
+        },
+        "/backups/{id}/rename": {
+            "post": {
+                "tags": [
+                    "Backup"
+                ],
+                "summary": "Rename a backup",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\BackupController::rename",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of the backup",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "new name of the backup",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "result"
+                    }
+                }
+            }
+        },
+        "/backups/{id}/remove": {
+            "delete": {
+                "tags": [
+                    "Backup"
+                ],
+                "summary": "Removes the backup",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\BackupController::remove",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id of the backup",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "result"
+                    }
+                }
+            }
+        },
         "/images/list": {
             "get": {
                 "tags": [
