@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Psy\Util\Json;
 
 class AuthController extends BaseController
 {
@@ -48,6 +49,26 @@ class AuthController extends BaseController
      *         name="password",
      *         in="query",
      *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="captcha",
+     *         in="query",
+     *         description="Captcha code",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="ckey",
+     *         in="query",
+     *         description="captcha key",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -107,6 +128,26 @@ class AuthController extends BaseController
      *         )
      *     ),
      *
+     *     @OA\Parameter(
+     *         name="captcha",
+     *         in="query",
+     *         description="Captcha code",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="ckey",
+     *         in="query",
+     *         description="captcha key",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
      *     )
      *
      */
@@ -150,6 +191,26 @@ class AuthController extends BaseController
      *         name="email",
      *         in="query",
      *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="captcha",
+     *         in="query",
+     *         description="Captcha code",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     @OA\Parameter(
+     *         name="ckey",
+     *         in="query",
+     *         description="captcha key",
      *         required=true,
      *         @OA\Schema(
      *             type="string"

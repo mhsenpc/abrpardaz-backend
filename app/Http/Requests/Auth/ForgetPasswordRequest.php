@@ -24,7 +24,20 @@ class ForgetPasswordRequest extends ApiRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|exists:users,email'
+            'email' => 'required|email|exists:users,email',
+            'captcha' => 'required|captcha_api:' . $this->input('ckey')
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'captcha.captcha_api' => 'کد وارد شده صحیح نمی باشد',
         ];
     }
 }

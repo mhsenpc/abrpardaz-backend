@@ -25,7 +25,20 @@ class LoginRequest extends ApiRequest
     {
         return [
             'email' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'captcha' => 'required|captcha_api:' . $this->input('ckey')
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'captcha.captcha_api' => 'کد وارد شده صحیح نمی باشد',
         ];
     }
 }

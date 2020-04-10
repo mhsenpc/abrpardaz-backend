@@ -42,6 +42,24 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "captcha",
+                        "in": "query",
+                        "description": "Captcha code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ckey",
+                        "in": "query",
+                        "description": "captcha key",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -77,6 +95,24 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "captcha",
+                        "in": "query",
+                        "description": "Captcha code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ckey",
+                        "in": "query",
+                        "description": "captcha key",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -99,6 +135,24 @@
                         "name": "email",
                         "in": "query",
                         "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "captcha",
+                        "in": "query",
+                        "description": "Captcha code",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "ckey",
+                        "in": "query",
+                        "description": "captcha key",
                         "required": true,
                         "schema": {
                             "type": "string"
