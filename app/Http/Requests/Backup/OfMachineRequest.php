@@ -3,11 +3,9 @@
 namespace App\Http\Requests\Backup;
 
 use App\Http\Requests\ApiRequest;
-use App\Traits\AddIDParameterTrait;
 
-class TriggerBackupRequest extends ApiRequest
+class OfMachineRequest extends ApiRequest
 {
-    use AddIDParameterTrait;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -26,7 +24,7 @@ class TriggerBackupRequest extends ApiRequest
     public function rules()
     {
         return [
-            'machine_id' => 'required|numeric|exists:machines,id',
+            'machine_id' => 'required|numeric|exists:machines,id'
         ];
     }
 }

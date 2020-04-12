@@ -139,10 +139,13 @@ class MachineController extends BaseController
      */
     function details(DetailsRequest $request)
     {
-        $service = new MachineService();
         $machine = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
         try{
+            $service = new MachineService();
             $server = $service->getServer($machine->remote_id);
+//            $server = new \stdClass();
+//            $server->powerState =1;
+//            $server->status ='ACTIVE';
             $machine->powerState = $server->powerState;
             $machine->status = $server->status;
         }

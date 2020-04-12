@@ -9,6 +9,7 @@ use App\Http\Requests\Snapshot\RenameSnapshotRequest;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Http\Requests\Snapshot\TakeSnapshotRequest;
 use App\Jobs\TakeSnapshotJob;
+use App\Models\Backup;
 use App\Models\Machine;
 use App\Models\ServerActivity;
 use App\Models\Snapshot;
@@ -43,15 +44,15 @@ class SnapshotController extends BaseController
 
     /**
      * @OA\Get(
-     *      tags={"Snapshot"},
-     *      path="/snapshots/ofMachine",
-     *      summary="List snapshots of a specific machine",
+     *      tags={"Backup"},
+     *      path="/backups/ofMachine",
+     *      summary="List backups of a specific machine",
      *      description="",
      *
      * @OA\Parameter(
      *         name="machine_id",
      *         in="query",
-     *         description="id of the machine your want its snapshots",
+     *         description="id of the machine your want its backups",
      *         required=true,
      *         @OA\Schema(
      *             type="integer"
@@ -60,7 +61,7 @@ class SnapshotController extends BaseController
      *
      * @OA\Response(
      *         response="default",
-     *         description="List snapshots of a specific machine"
+     *         description="List backups of a specific machine"
      *     ),
      *
      *     )
@@ -69,7 +70,7 @@ class SnapshotController extends BaseController
     function ofMachine(OfMachineRequest $request)
     {
         return Responder::result([
-            'list' => Snapshot::where('machine_id',\request('machine_id'))->get()
+            'list' => Backup::where('machine_id',\request('machine_id'))->get()
         ]);
     }
 

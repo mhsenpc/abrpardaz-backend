@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Backup\OfMachineRequest;
 use App\Http\Requests\Backup\RemoveBackupRequest;
 use App\Http\Requests\Backup\RenameBackupRequest;
 use App\Http\Requests\Backup\TriggerBackupRequest;
@@ -38,9 +39,41 @@ class BackupController extends BaseController
     }
 
     /**
-     * @OA\Post(
+     * @OA\Get(
+     *      tags={"Snapshot"},
+     *      path="/snapshots/ofMachine",
+     *      summary="List snapshots of a specific machine",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="machine_id",
+     *         in="query",
+     *         description="id of the machine your want its snapshots",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="List snapshots of a specific machine"
+     *     ),
+     *
+     *     )
+     *
+     */
+    function ofMachine(OfMachineRequest $request)
+    {
+        return Responder::result([
+            'list' => Backup::where('machine_id',\request('machine_id'))->oldest()->get()
+        ]);
+    }
+
+    /**
+     * @OA\Put(
      *      tags={"Backup"},
-     *      path="/backups/{id}/trigger",
+     *      path="/backups/trigger",
      *      summary="triggers a manual backup",
      *      description="",
      *

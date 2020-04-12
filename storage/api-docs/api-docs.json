@@ -328,8 +328,34 @@
                 }
             }
         },
-        "/backups/{id}/trigger": {
-            "post": {
+        "/snapshots/ofMachine": {
+            "get": {
+                "tags": [
+                    "Snapshot"
+                ],
+                "summary": "List snapshots of a specific machine",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\BackupController::ofMachine",
+                "parameters": [
+                    {
+                        "name": "machine_id",
+                        "in": "query",
+                        "description": "id of the machine your want its snapshots",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "List snapshots of a specific machine"
+                    }
+                }
+            }
+        },
+        "/backups/trigger": {
+            "put": {
                 "tags": [
                     "Backup"
                 ],
@@ -1583,19 +1609,19 @@
                 }
             }
         },
-        "/snapshots/ofMachine": {
+        "/backups/ofMachine": {
             "get": {
                 "tags": [
-                    "Snapshot"
+                    "Backup"
                 ],
-                "summary": "List snapshots of a specific machine",
+                "summary": "List backups of a specific machine",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::ofMachine",
                 "parameters": [
                     {
                         "name": "machine_id",
                         "in": "query",
-                        "description": "id of the machine your want its snapshots",
+                        "description": "id of the machine your want its backups",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -1604,7 +1630,7 @@
                 ],
                 "responses": {
                     "default": {
-                        "description": "List snapshots of a specific machine"
+                        "description": "List backups of a specific machine"
                     }
                 }
             }
