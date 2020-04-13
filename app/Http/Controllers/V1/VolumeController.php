@@ -91,7 +91,6 @@ class VolumeController extends BaseController
             'remote_id' => $volume->id,
             'name' => \request('name'),
             'size' => \request('size'),
-            'is_root' => false,
             'user_id' => Auth::id(),
             'last_billing_date' => Carbon::now()
         ]);

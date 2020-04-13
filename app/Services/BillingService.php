@@ -208,9 +208,6 @@ class BillingService
         $volumes = Volume::where('user_id', $user->id)
             ->get();
         foreach ($volumes as $volume) {
-            if($volume->is_root)
-                continue;
-
             if (!empty($volume->end_date))
                 if ($volume->last_billing_date->gte($volume->end_date))
                     continue;

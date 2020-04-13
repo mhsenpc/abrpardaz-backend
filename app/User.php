@@ -25,7 +25,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'email', 'password', 'is_root', 'profile_id'
+        'email', 'password', 'profile_id'
     ];
 
     /**
@@ -130,7 +130,7 @@ class User extends Authenticatable
 
     function getVolumesUsageAttribute()
     {
-        return Volume::where('user_id', $this->id)->where('is_root', false)->sum('size');
+        return Volume::where('user_id', $this->id)->sum('size');
     }
 
     function verifyEmail(){
