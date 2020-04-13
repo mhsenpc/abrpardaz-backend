@@ -52,8 +52,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::prefix('{id}')->group(function () {
                 Route::put('validate', 'ProfileController@validateProfile');
                 Route::post('invalidate', 'ProfileController@invalidateProfile');
-                Route::put('validateNationalCode', 'ProfileController@validateNationalCode');
-                Route::post('invalidateNationalCode', 'ProfileController@invalidateNationalCode');
                 Route::put('validateNCFront', 'ProfileController@validateNCFront');
                 Route::post('invalidateNCFront', 'ProfileController@invalidateNCFront');
                 Route::put('validateNCBack', 'ProfileController@validateNCBack');

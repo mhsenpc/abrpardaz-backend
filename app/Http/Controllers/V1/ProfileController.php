@@ -72,14 +72,14 @@ class ProfileController extends BaseController
         $notifications = Auth::user()->unreadNotifications->count();
         $profile = Auth::user()->profile;
 
-        if(!empty($user->profile->national_card_front))
-            $user->profile->national_card_front = $path = asset('storage/'. $user->profile->national_card_front);
+        if (!empty($user->profile->national_card_front))
+            $user->profile->national_card_front = $path = asset('storage/' . $user->profile->national_card_front);
 
-        if(!empty($user->profile->national_card_back))
-            $user->profile->national_card_back = $path = asset('storage/'. $user->profile->national_card_back);
+        if (!empty($user->profile->national_card_back))
+            $user->profile->national_card_back = $path = asset('storage/' . $user->profile->national_card_back);
 
-        if(!empty($user->profile->birth_certificate))
-            $user->profile->birth_certificate = $path = asset('storage/'. $user->profile->birth_certificate);
+        if (!empty($user->profile->birth_certificate))
+            $user->profile->birth_certificate = $path = asset('storage/' . $user->profile->birth_certificate);
         return Responder::result([
             'user' => $user,
             'notifications' => $notifications
@@ -380,14 +380,8 @@ class ProfileController extends BaseController
     {
         if ($request->has('image')) {
             $path = $request->file('image')->store('images');
-
-            $user = Auth::user();
-            Profile::where('id', $user->profile_id)->update([
-                'national_card_front' => $path,
-            ]);
-
+            Auth::user()->profile->setNcFront($path);
             Log::info('national card front uploaded.user #' . Auth::id());
-
             return Responder::success('تصویر با موفقیت بارگذاری شد');
         } else {
             Log::warning('failed to upload national card front.user #' . Auth::id());
@@ -426,12 +420,7 @@ class ProfileController extends BaseController
     {
         if ($request->has('image')) {
             $path = $request->file('image')->store('images');
-
-            $user = Auth::user();
-            Profile::where('id', $user->profile_id)->update([
-                'national_card_back' => $path,
-            ]);
-
+            Auth::user()->profile->setNCBack($path);
             Log::info('national card back uploaded.user #' . Auth::id());
             return Responder::success('تصویر با موفقیت بارگذاری شد');
         } else {
@@ -470,12 +459,7 @@ class ProfileController extends BaseController
     {
         if ($request->has('image')) {
             $path = $request->file('image')->store('images');
-
-            $user = Auth::user();
-            Profile::where('id', $user->profile_id)->update([
-                'birth_certificate' => $path,
-            ]);
-
+            Auth::user()->profile->setBC($path);
             Log::info('birth certificate uploaded.user #' . Auth::id());
             return Responder::success('تصویر با موفقیت بارگذاری شد');
         } else {
@@ -500,24 +484,6 @@ class ProfileController extends BaseController
         $user->notify(new ProfileInvalidatedNotification($user, $user->profile, request('reason')));
         Log::info('profile validated.user #' . request('id'));
         return Responder::success('پروفایل با موفقیت به حالت تایید نشده تبدیل شد');
-    }
-
-    function validateNationalCode(ValidateNCNumberRequest $request)
-    {
-        $user = User::find(request('id'));
-        $user->profile->validateNC();
-        $user->notify(new NCValidatedNotification());
-        Log::info('profile national code validated.user #' . request('id'));
-        return Responder::success('کد ملی تایید شد');
-    }
-
-    function invalidateNationalCode(InvalidateNCNumberRequest $request)
-    {
-        $user = User::find(request('id'));
-        $user->profile->invalidateNC(request('reason'));
-        $user->notify(new NCInvalidatedNotification($user, $user->profile, request('reason')));
-        Log::info('profile national code invalidated.user #' . request('id'));
-        return Responder::success('کد ملی رد شد');
     }
 
     function validateNCFront(ValidateNCFrontRequest $request)

@@ -25,8 +25,6 @@ class CreateProfilesTable extends Migration
             $table->boolean('organization')->default(false);
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('national_code')->nullable()->unique();
-            $table->integer('national_code_status')->default(0);
-            $table->string('national_code_reason')->nullable();
             $table->string('national_card_front')->nullable();
             $table->integer('national_card_front_status')->default(0);
             $table->string('national_card_front_reason')->nullable();
