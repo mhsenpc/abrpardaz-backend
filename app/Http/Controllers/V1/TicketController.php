@@ -10,6 +10,7 @@ use App\Http\Requests\Ticket\CloseTicketRequest;
 use App\Http\Requests\Ticket\NewReplyRequest;
 use App\Http\Requests\Ticket\NewTicketRequest;
 use App\Http\Requests\Ticket\ShowTicketRequest;
+use App\Jobs\sendSmsTicketReplied;
 use App\Models\Category;
 use App\Models\Reply;
 use App\Models\Ticket;
@@ -18,6 +19,7 @@ use App\Notifications\NewTicketNotification;
 use App\Notifications\TicketReplyAdminNotification;
 use App\Notifications\TicketReplyNotification;
 use App\Notifications\TicketStatusNotification;
+use App\Services\MobileService;
 use App\Services\Responder;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -243,6 +245,7 @@ class TicketController extends BaseController
             $path = $request->file('file')->store('uploads');
         }
 
+        $ticket = Ticket::find(\request('id'));
         $reply = Reply::create([
             'ticket_id' => \request('id'),
             'user_id' => Auth::id(),
@@ -261,6 +264,7 @@ class TicketController extends BaseController
             // send mail if the user commenting is not the ticket owner
             $user = Ticket::find(\request('id'))->user;
             $user->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
+            sendSmsTicketReplied::dispatch($user->profile->mobile,$ticket->ticket_id);
         }
 
         Log::info('new reply for ticket #' . request('ticket_id') . ',user #' . Auth::id());

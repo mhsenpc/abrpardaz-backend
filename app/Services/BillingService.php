@@ -36,6 +36,7 @@ class BillingService
             $user->updateLastBillingDate();
 
             if ($total_amount > 0) {
+                $invoice_code = strtoupper(Str::random(10));
                 $invoice = Invoice::create([
                     'user_id' => $user->id,
                     'amount' => $total_amount,
@@ -43,10 +44,12 @@ class BillingService
                     'total' => $total_amount + $total_vat,
                     'is_paid' => false,
                     'data' => json_encode($data),
-                    'invoice_id' => strtoupper(Str::random(10))
+                    'invoice_id' => $invoice_code
                 ]);
 
                 $user->notify(new NewInvoiceNotification(Auth::user(), $user->profile, $invoice));
+                if(!empty( $user->profile->mobile))
+                    MobileService::sendInvoiceCreated( $user->profile->mobile,$invoice_code,number_format($total_amount + $total_vat));
             }
         }
     }
