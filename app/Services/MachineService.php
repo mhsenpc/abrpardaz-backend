@@ -40,18 +40,6 @@ class MachineService
     {
         $image = Image::find($image_id);
         $plan = Plan::find($plan_id);
-        if (!empty($ssh_key_id)) {
-            $ssh_key = SshKey::find($ssh_key_id);
-
-
-            $data = [
-                'name' => $ssh_key->name . $user_id,
-                'publicKey' => $ssh_key->content
-            ];
-
-            /** @var \OpenStack\Compute\v2\Models\Keypair $keypair */
-            $keypair = $this->compute->getKeypair()->createKeypair($data);
-        }
 
         $options = [
             // Required
@@ -69,8 +57,21 @@ chpasswd:
     root:$password
   expire: False",
             'metadata' => $meta_data,
-            'keypair' => $ssh_key->name . $user_id
         ];
+
+        if (!empty($ssh_key_id)) {
+            $ssh_key = SshKey::find($ssh_key_id);
+
+            $data = [
+                'name' => $ssh_key->name . $user_id,
+                'publicKey' => $ssh_key->content
+            ];
+
+            /** @var \OpenStack\Compute\v2\Models\Keypair $keypair */
+            $keypair = $this->compute->getKeypair()->createKeypair($data);
+
+            $options['keypair'] = $ssh_key->name . $user_id;
+        }
 
         // Create the server
         /**@var OpenStack\Compute\v2\Models\Server $server */
@@ -91,6 +92,18 @@ chpasswd:
     {
         $server = $this->compute->getServer(['id' => $id]);
         $server->stop();
+    }
+
+    function softReboot(string $id)
+    {
+        $server = $this->compute->getServer(['id' => $id]);
+        $server->reboot('SOFT');
+    }
+
+    function hardReboot(string $id)
+    {
+        $server = $this->compute->getServer(['id' => $id]);
+        $server->reboot('HARD');
     }
 
     function console(string $id)

@@ -9,6 +9,7 @@ use App\Http\Requests\Server\DetailsRequest;
 use App\Http\Requests\Server\DisableBackupRequest;
 use App\Http\Requests\Server\EnableBackupRequest;
 use App\Http\Requests\Server\GetConsoleRequest;
+use App\Http\Requests\Server\HardRebootRequest;
 use App\Http\Requests\Server\ListRequest;
 use App\Http\Requests\Server\PowerOffRequest;
 use App\Http\Requests\Server\PowerOnRequest;
@@ -17,6 +18,7 @@ use App\Http\Requests\Server\RemoveServerRequest;
 use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
+use App\Http\Requests\Server\SoftRebootRequest;
 use App\Jobs\CreateMachineFromImageJob;
 use App\Jobs\RemoveMachineBackupsJob;
 use App\Models\Image;
@@ -308,7 +310,6 @@ class MachineController extends BaseController
             CreateMachineFromImageJob::dispatch(
                 $user_id,
                 $name,
-                $password,
                 $plan_id,
                 $image_id,
                 $machine->id,
@@ -374,7 +375,7 @@ class MachineController extends BaseController
     }
 
     /**
-     * @OA\Post(
+     * @OA\Put(
      *      tags={"Machine"},
      *      path="/machines/{id}/powerOn",
      *      summary="powers on the machine ",
@@ -412,7 +413,7 @@ class MachineController extends BaseController
     }
 
     /**
-     * @OA\Post(
+     * @OA\Put(
      *      tags={"Machine"},
      *      path="/machines/{id}/powerOff",
      *      summary="powers off the machine ",
@@ -447,6 +448,82 @@ class MachineController extends BaseController
             'message' => 'سرور خاموش شد'
         ]);
         return Responder::success('سرور با موفقیت خاموش شد');
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/softReboot",
+     *      summary="soft reboot machine ",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function softReboot(SoftRebootRequest $request)
+    {
+        $machine = Machine::findorFail(\request('id'));
+        $service = new MachineService();
+        $service->softReboot($machine->remote_id);
+        Log::info('soft reboot machine #' . $machine->id . ',user #' . Auth::id());
+        ServerActivity::create([
+            'machine_id' => request('id'),
+            'user_id' => Auth::id(),
+            'message' => 'سرور راه اندازی مجدد شد'
+        ]);
+        return Responder::success('سرور با موفقیت راه اندازی شد');
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/hardReboot",
+     *      summary="hard reboot machine ",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function hardReboot(HardRebootRequest $request)
+    {
+        $machine = Machine::findorFail(\request('id'));
+        $service = new MachineService();
+        $service->hardReboot($machine->remote_id);
+        Log::info('hard reboot machine #' . $machine->id . ',user #' . Auth::id());
+        ServerActivity::create([
+            'machine_id' => request('id'),
+            'user_id' => Auth::id(),
+            'message' => 'سرور راه اندازی مجدد شد'
+        ]);
+        return Responder::success('سرور با موفقیت راه اندازی شد');
     }
 
     /**

@@ -30,6 +30,8 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             Route::get('activities', 'MachineController@activities');
             Route::put('powerOn', 'MachineController@powerOn');
             Route::put('powerOff', 'MachineController@powerOff');
+            Route::put('softReboot', 'MachineController@softReboot');
+            Route::put('hardReboot', 'MachineController@hardReboot');
             Route::put('enableBackup', 'MachineController@enableBackup');
             Route::put('disableBackup', 'MachineController@disableBackup');
             Route::put('resendInfo', 'MachineController@resendInfo');

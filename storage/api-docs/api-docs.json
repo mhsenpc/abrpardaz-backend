@@ -653,7 +653,7 @@
             }
         },
         "/machines/{id}/powerOn": {
-            "post": {
+            "put": {
                 "tags": [
                     "Machine"
                 ],
@@ -679,13 +679,65 @@
             }
         },
         "/machines/{id}/powerOff": {
-            "post": {
+            "put": {
                 "tags": [
                     "Machine"
                 ],
                 "summary": "powers off the machine ",
                 "description": "",
                 "operationId": "App\\Http\\Controllers\\V1\\MachineController::powerOff",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/softReboot": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "soft reboot machine ",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::softReboot",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/hardReboot": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "hard reboot machine ",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::hardReboot",
                 "parameters": [
                     {
                         "name": "id",
