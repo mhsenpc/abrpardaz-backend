@@ -14,6 +14,7 @@ use App\Notifications\RegisterUserNotification;
 use App\Notifications\ResetPasswordNotification;
 use App\Services\Responder;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
@@ -481,6 +482,7 @@ class AuthController extends BaseController
 
             $newUser->profile->name = $user->name;
             $newUser->email = $user->email;
+            $newUser->email_verified_at = Carbon::now();
             $newUser->provider_user_id = $user->id;
             $newUser->save();
             auth()->login($newUser);

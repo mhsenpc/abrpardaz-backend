@@ -18,6 +18,7 @@ use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Jobs\CreateMachineFromImageJob;
+use App\Jobs\RemoveMachineBackupsJob;
 use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
@@ -27,6 +28,7 @@ use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\RebuildMachineNotification;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
+use App\Services\PasswordGeneratorService;
 use App\Services\Responder;
 use App\User;
 use Illuminate\Support\Facades\Auth;
@@ -140,7 +142,7 @@ class MachineController extends BaseController
     function details(DetailsRequest $request)
     {
         $machine = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
-        try{
+        try {
             $service = new MachineService();
             $server = $service->getServer($machine->remote_id);
 //            $server = new \stdClass();
@@ -148,8 +150,7 @@ class MachineController extends BaseController
 //            $server->status ='ACTIVE';
             $machine->powerState = $server->powerState;
             $machine->status = $server->status;
-        }
-        catch(\Exception $exception){
+        } catch (\Exception $exception) {
             $machine->powerState = 0;
             $machine->status = 'ERROR';
         }
@@ -277,12 +278,25 @@ class MachineController extends BaseController
             }
         }
 
-        if(empty($snapshot_id) && empty($image_id)){
+        if (empty($snapshot_id) && empty($image_id)) {
             return Responder::error('منبع سرور جدید مشخص نشده است');
         }
 
+        $image = Image::findOrFail($image_id);
+        $plan = Plan::findOrFail($plan_id);
+        if ($plan->disk < $image->min_disk) {
+            return Responder::error('فضای دیسک پلن انتخابی برای سیستم عامل انتخاب شده ناکافی است');
+        }
+
+        if ($plan->ram < $image->min_ram) {
+            return Responder::error('فضای Ram پلن انتخابی برای سیستم عامل انتخاب شده ناکافی است');
+        }
+
+        $password = PasswordGeneratorService::generate();
+
         $machine = Machine::createMachine(
             $name,
+            $password,
             $user_id,
             $plan_id,
             $image_id,
@@ -294,6 +308,7 @@ class MachineController extends BaseController
             CreateMachineFromImageJob::dispatch(
                 $user_id,
                 $name,
+                $password,
                 $plan_id,
                 $image_id,
                 $machine->id,
@@ -694,7 +709,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(request('id'));
         $image = Image::find(request('image_id'));
-        $new_pass = 'root';
+        $new_pass = PasswordGeneratorService::generate();
         $service = new MachineService();
         $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
         $machine->password = $new_pass;
@@ -740,12 +755,11 @@ class MachineController extends BaseController
             $machine->delete();
             $service = new MachineService();
             $service->remove($machine->remote_id);
-
+            RemoveMachineBackupsJob::dispatch(\request('id'), Auth::id());
+            Log::info('remove machine #' . $machine->id . ',user #' . Auth::id());
         } catch (\Exception $exception) {
             Log::critical('failed to delete machine #' . \request('id'));
             Log::critical($exception);
-        } finally {
-            Log::info('remove machine #' . $machine->id . ',user #' . Auth::id());
         }
 
         return Responder::success('سرور با موفقیت حذف گردید');

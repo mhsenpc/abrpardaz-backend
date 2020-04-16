@@ -10,7 +10,7 @@ use App\Http\Requests\Ticket\CloseTicketRequest;
 use App\Http\Requests\Ticket\NewReplyRequest;
 use App\Http\Requests\Ticket\NewTicketRequest;
 use App\Http\Requests\Ticket\ShowTicketRequest;
-use App\Jobs\sendSmsTicketReplied;
+use App\Jobs\sendSmsTicketRepliedJob;
 use App\Models\Category;
 use App\Models\Reply;
 use App\Models\Ticket;
@@ -264,7 +264,7 @@ class TicketController extends BaseController
             // send mail if the user commenting is not the ticket owner
             $user = Ticket::find(\request('id'))->user;
             $user->notify(new TicketReplyNotification($reply->ticket, $reply, Auth::user()->profile));
-            sendSmsTicketReplied::dispatch($user->profile->mobile,$ticket->ticket_id);
+            sendSmsTicketRepliedJob::dispatch($user->profile->mobile,$ticket->ticket_id);
         }
 
         Log::info('new reply for ticket #' . request('ticket_id') . ',user #' . Auth::id());

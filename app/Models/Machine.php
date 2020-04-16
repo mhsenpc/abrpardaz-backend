@@ -57,11 +57,12 @@ class Machine extends Model
         return $this->belongsTo(User::class);
     }
 
-    static function createMachine(string $name, int $user_id, int $plan_id, int $image_id, int $project_id, $ssh_key_id = null): Machine
+    static function createMachine(string $name,string $password, int $user_id, int $plan_id, int $image_id, int $project_id, $ssh_key_id = null): Machine
     {
         /** @var Machine $machine */
         $machine = new Machine();
         $machine->name = $name;
+        $machine->password = $password;
         $machine->user_id = $user_id;
         $machine->plan_id = $plan_id;
         $machine->image_id = $image_id;

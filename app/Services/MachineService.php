@@ -36,12 +36,21 @@ class MachineService
         return $server;
     }
 
-    function createMachineFromImage(int $machine_id, string $name, int $user_id, int $plan_id, int $image_id, $ssh_key_id = null)
+    function createMachineFromImage(int $machine_id, string $name, string $password, int $user_id, int $plan_id, int $image_id, array $meta_data, $ssh_key_id = null)
     {
         $image = Image::find($image_id);
         $plan = Plan::find($plan_id);
         if (!empty($ssh_key_id)) {
             $ssh_key = SshKey::find($ssh_key_id);
+
+
+            $data = [
+                'name' => $ssh_key->name . $user_id,
+                'publicKey' => $ssh_key->content
+            ];
+
+            /** @var \OpenStack\Compute\v2\Models\Keypair $keypair */
+            $keypair = $this->compute->getKeypair()->createKeypair($data);
         }
 
         $options = [
@@ -54,6 +63,13 @@ class MachineService
             'networks' => [
                 ['uuid' => config('openstack.networkId')]
             ],
+            'userData' => "#cloud-config
+chpasswd:
+  list: |
+    root:$password
+  expire: False",
+            'metadata' => $meta_data,
+            'keypair' => $ssh_key->name . $user_id
         ];
 
         // Create the server
@@ -101,7 +117,7 @@ class MachineService
         $server->waitUntil('Active');
     }
 
-    function rebuild(string $remote_id, string $image_remote_id,string $admin_pass)
+    function rebuild(string $remote_id, string $image_remote_id, string $admin_pass)
     {
         $server = $this->compute->getServer([
             'id' => $remote_id,

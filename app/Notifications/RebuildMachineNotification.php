@@ -33,7 +33,7 @@ class RebuildMachineNotification extends Notification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ['mail','database'];
     }
 
     /**
@@ -63,6 +63,7 @@ class RebuildMachineNotification extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
+            'message' => 'سیستم عامل ' . $this->machine->image->name. ' مجددا بر روی سرور '. $this->machine->name . ' بارگذاری شد'
         ];
     }
 }

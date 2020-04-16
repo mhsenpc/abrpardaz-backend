@@ -186,13 +186,13 @@ class BackupController extends BaseController
         $backup = Backup::findOrFail(request('id'));
         //$service = new SnapshotService();
         //$result = $service->remove($backup->remote_id);
+        $backup->delete();
         $result = true;
         if ($result) {
-            $backup->delete();
             Log::info('Backup removed. id #' . request('id') . ',user #' . Auth::id());
-            return Responder::success("نسخه پشتیبان با موفقیت حذف شد");
         } else {
-            return Responder::error('متاسفانه نسخه پشتیبان حذف نگردید');
+            Log::info('Failed to remove backup. id #' . request('id') . ',user #' . Auth::id());
         }
+        return Responder::success("نسخه پشتیبان با موفقیت حذف شد");
     }
 }

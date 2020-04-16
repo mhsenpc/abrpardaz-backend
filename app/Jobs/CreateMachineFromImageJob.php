@@ -5,18 +5,16 @@ namespace App\Jobs;
 use App\Events\MachineCreated;
 use App\Models\Machine;
 use App\Models\MachineBilling;
-use App\User;
-use App\Models\Volume;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
-use App\Services\VolumeService;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CreateMachineFromImageJob implements ShouldQueue
 {
@@ -50,10 +48,10 @@ class CreateMachineFromImageJob implements ShouldQueue
      * @param string $name
      * @param int $plan_id
      * @param int $image_id
-     * @param $ssh_key_id
      * @param int $machine_id
+     * @param $ssh_key_id
      */
-    public function __construct(int $user_id, string $name, int $plan_id, int $image_id, int $machine_id,$ssh_key_id)
+    public function __construct(int $user_id, string $name, int $plan_id, int $image_id, int $machine_id, $ssh_key_id)
     {
         $this->user_id = $user_id;
         $this->name = $name;
@@ -70,43 +68,32 @@ class CreateMachineFromImageJob implements ShouldQueue
      */
     public function handle()
     {
+        $machine = Machine::find($this->machine_id);
+        $user = User::with('profile')->find($this->user_id);
+        $meta_data =[
+            'user' => json_encode($user)
+        ];
+
         $service = new MachineService();
         $result = $service->createMachineFromImage(
-            $this->machine_id,
-            $this->name,
-            $this->user_id,
-            $this->plan_id,
-            $this->image_id,
-            $this->ssh_key_id
+            $this->machine_id, $this->name, $machine->password , $this->user_id, $this->plan_id, $this->image_id,$meta_data, $this->ssh_key_id
         );
 
         //update machine record
-        $machine = Machine::find($this->machine_id);
         $machine->updateRemoteID($result->id);
 
-        foreach ($result->addresses['external'] as $address){
-            if($address['version'] == 4){
+        Log::debug(print_r($result, true));
+
+        foreach ($result->addresses['external'] as $address) {
+            if ($address['version'] == 4) {
                 $machine->updateIpv4($address['addr']);
             }
         }
 
         $user = User::find($this->user_id);
 
-        //find its root volume
-/*        $volumeService = new VolumeService();
-        $volume_id = $volumeService->findMachineRootVolume($machine->remote_id);
-        Volume::create([
-            'remote_id' => $volume_id,
-            'name' => $volume_id,
-            'size' => $machine->plan->disk,
-            'is_root' => true,
-            'machine_id' => $machine->id,
-            'user_id' => $user->id,
-            'last_billing_date' => Carbon::now()
-        ]);*/
-
         MachineBilling::create([
-            'machine_id' =>$this->machine_id,
+            'machine_id' => $this->machine_id,
             'plan_id' => $this->plan_id,
             'last_billing_date' => Carbon::now()
         ]);
