@@ -20,11 +20,11 @@ class CreateProfilesTable extends Migration
             $table->string('mobile')->nullable()->unique();
             $table->timestamp('mobile_verified_at')->nullable();
             $table->string('phone')->nullable()->unique();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->string('postal_code')->nullable();
             $table->string('address')->nullable();
             $table->boolean('organization')->default(false);
             $table->string('organization_name')->nullable();
-            $table->timestamp('phone_verified_at')->nullable();
             $table->string('national_code')->nullable()->unique();
             $table->string('national_card_front')->nullable();
             $table->integer('national_card_front_status')->default(0);

@@ -20,6 +20,6 @@ class SampleUserSeeder extends Seeder
 
         $admin->verifyEmail();
 
-        $admin->assignRole('Super Admin');
+        $admin->syncRoles(['Super Admin']);
     }
 }

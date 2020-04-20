@@ -103,7 +103,7 @@ class User extends Authenticatable
         $user->user_limit_id = UserLimit::findDefaultGroup()->id;
         $user->save();
 
-        $user->assignRole('Normal User');
+        $user->syncRoles(['Normal User']);
 
         return $user;
     }

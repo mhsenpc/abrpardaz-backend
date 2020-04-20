@@ -91,8 +91,6 @@ class AuthController extends BaseController
                 request('email'),
                 Hash::make(request('password'))
             );
-
-            $user->assignRole('Normal User');
         }
         else{
             User::updatePassword(
