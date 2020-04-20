@@ -45,7 +45,7 @@ class CreateServerFailedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[Machine #: {$this->machine->name}] ساخت سرور با شکست مواجه شد")
+            ->subject("[Machine : {$this->machine->name}] ساخت سرور با شکست مواجه شد")
             ->line("تلاش برای ساخت سرور ".$this->machine->name." با شکست مواجه گردید")
             ->line("از این رویداد متاسفیم و مراتب به اطلاع تیم پشتیبانی ابرپرداز ارسال گردید");
     }

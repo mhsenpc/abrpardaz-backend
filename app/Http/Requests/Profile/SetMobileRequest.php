@@ -24,8 +24,20 @@ class SetMobileRequest extends ApiRequest
     public function rules()
     {
         return [
-            'mobile' => array('required','regex:/^09[0-9]{9}$/'),
+            'mobile' => array('required','regex:/^09[0-9]{9}$/','unique:profiles,mobile,' . $this->user()->id),
             'code' => 'required'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'code.required' => 'لطفا کد تایید را وارد نمایید',
         ];
     }
 }

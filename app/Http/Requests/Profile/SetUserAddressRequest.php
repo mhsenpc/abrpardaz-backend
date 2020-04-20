@@ -5,7 +5,7 @@ namespace App\Http\Requests\Profile;
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class SetUserInfoRequest extends ApiRequest
+class SetUserAddressRequest extends ApiRequest
 {
     use AddIDParameterTrait;
 
@@ -27,10 +27,8 @@ class SetUserInfoRequest extends ApiRequest
     public function rules()
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'organization_name' => 'sometimes|nullable',
-            'national_code' => 'required|numeric|digits:10|unique:profiles,national_code,'. $this->user()->id,
+            'postal_code' => 'required|numeric|digits:10',
+            'address' => 'required',
         ];
     }
 }

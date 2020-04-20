@@ -45,7 +45,7 @@ class CreateServerFailedAdminNotification extends Notification implements Should
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[Machine #: {$this->machine->id}] ساخت سرور با شکست مواجه شد")
+            ->subject("[Machine : {$this->machine->id}] ساخت سرور با شکست مواجه شد")
             ->line("تلاش ".$this->profile->name ." برای ساخت سرور ".$this->machine->name." با شکست مواجه گردید");
     }
 

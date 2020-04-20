@@ -45,7 +45,7 @@ class CreateSnapshotFailedNotification extends Notification implements ShouldQue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[Snapshot #: {$this->snapshot->name}] ساخت تصویر آنی با شکست مواجه شد")
+            ->subject("[Snapshot : {$this->snapshot->name}] ساخت تصویر آنی با شکست مواجه شد")
             ->line("تلاش برای ساخت تصویر آنی ".$this->snapshot->name." با شکست مواجه گردید")
             ->line("از این رویداد متاسفیم و مراتب به اطلاع تیم پشتیبانی ابرپرداز ارسال گردید");
     }

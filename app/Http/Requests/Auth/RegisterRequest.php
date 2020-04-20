@@ -24,8 +24,9 @@ class RegisterRequest extends ApiRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'email' => 'required|email',
+            'password' => 'required|min:6|confirmed',
+            'password_confirmation' => 'required|min:6',
             'captcha' => 'required|captcha_api:' . $this->input('ckey')
         ];
     }

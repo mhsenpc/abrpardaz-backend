@@ -24,7 +24,7 @@ class RequestSetMobileRequest extends ApiRequest
     public function rules()
     {
         return [
-            'mobile' => array('required','regex:/^09[0-9]{9}$/')
+            'mobile' => array('required','regex:/^09[0-9]{9}$/','unique:profiles,mobile,'.$this->user()->id)
         ];
     }
 }

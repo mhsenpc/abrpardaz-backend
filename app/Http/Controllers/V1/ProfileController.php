@@ -12,6 +12,7 @@ use App\Http\Requests\Profile\RequestSetMobileRequest;
 use App\Http\Requests\Profile\RequestSetPhoneRequest;
 use App\Http\Requests\Profile\SetMobileRequest;
 use App\Http\Requests\Profile\SetPhoneRequest;
+use App\Http\Requests\Profile\SetUserAddressRequest;
 use App\Http\Requests\Profile\SetUserInfoRequest;
 use App\Http\Requests\profile\UploadBirthCertificateRequest;
 use App\Http\Requests\profile\UploadNationalCardBackRequest;
@@ -129,6 +130,55 @@ class ProfileController extends BaseController
      *     ),
      *
      *     @OA\Parameter(
+     *         name="organization_name",
+     *         in="query",
+     *         description="",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     *     )
+     *
+     */
+    function setUserBasicInfo(SetUserInfoRequest $request)
+    {
+        $values = [
+            'national_code' => \request('national_code'),
+            'first_name' => \request('first_name'),
+            'last_name' => \request('last_name'),
+        ];
+
+        if(!empty(request('organization_name'))){
+            $values ['organization'] = true;
+            $values ['organization_name'] = request('organization_name');
+        }
+        else{
+            $values ['organization'] = false;
+            $values ['organization_name'] = null;
+        }
+
+        Profile::where('id', Auth::user()->profile_id)->update($values);
+
+        Log::info('set user basic info user #' . Auth::id());
+        return Responder::success('اطلاعات شما با موفقیت ذخیره شد');
+    }
+
+    /**
+     * @OA\Post(
+     *      tags={"Profile"},
+     *      path="/profile/setUserAddress",
+     *      summary="Set user Address",
+     *      description="",
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description="successful operation"
+     *     ),
+     *
+     *
+     *     @OA\Parameter(
      *         name="postal_code",
      *         in="query",
      *         description="",
@@ -151,14 +201,11 @@ class ProfileController extends BaseController
      *     )
      *
      */
-    function setUserBasicInfo(SetUserInfoRequest $request)
+    function setUserAddress(SetUserAddressRequest $request)
     {
         Profile::where('id', Auth::user()->profile_id)->update([
-            'national_code' => \request('national_code'),
-            'first_name' => \request('first_name'),
-            'last_name' => \request('last_name'),
-            'postal_code' => \request('postal_code'),
             'address' => \request('address'),
+            'postal_code' => \request('postal_code'),
         ]);
 
         Log::info('set user basic info user #' . Auth::id());

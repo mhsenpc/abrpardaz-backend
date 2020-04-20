@@ -23,6 +23,7 @@ class CreateProfilesTable extends Migration
             $table->string('postal_code')->nullable();
             $table->string('address')->nullable();
             $table->boolean('organization')->default(false);
+            $table->string('organization_name')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('national_code')->nullable()->unique();
             $table->string('national_card_front')->nullable();

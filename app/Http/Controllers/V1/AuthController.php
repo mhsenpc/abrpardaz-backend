@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
-use Psy\Util\Json;
 
 class AuthController extends BaseController
 {
@@ -81,15 +80,29 @@ class AuthController extends BaseController
      */
     function register(RegisterRequest $request)
     {
-        $user = User::newUser(
-            request('email'),
-            Hash::make(request('password'))
-        );
+        //prevent existing activated users from being reregistering
+        $user = User::where('email', request('email'))->first();
+        if ($user && !empty($user->email_verified_at)) {
+            return Responder::error('پست الکترونیک وارد شده قبلا استفاده شده است.');
+        }
 
-        $user->assignRole('Normal User');
+        if (empty($user)){
+            $user = User::newUser(
+                request('email'),
+                Hash::make(request('password'))
+            );
+
+            $user->assignRole('Normal User');
+        }
+        else{
+            User::updatePassword(
+                request('email'),
+                Hash::make(request('password'))
+            );
+        }
 
         $token = uniqid();
-        Cache::put('verification_for_' . request('email'), $token, 7 * 24 * 60 * 60);
+        Cache::put('verification_for_' . request('email'), $token, 12 * 60 * 60);
 
         $user->notify(new RegisterUserNotification(request('email'), $token));
         Log::info('register user . sent token to email ' . request('email'));
@@ -410,11 +423,17 @@ class AuthController extends BaseController
     {
         $token = Cache::get('verification_for_' . request('email'));
         if (request('token') == $token) {
+            $user = User::where('email', request('email'))->first();
             User::activateUserByEmail(request('email'));
-            Cache::forget('verification_for_' . request('email'));
-
             Log::info('user verification successful for ' . request('email'));
-            return Responder::success('حساب کاربری شما با موفقیت تایید شد');
+
+            $token = $user->createToken('Abrpardaz');
+            return Responder::result([
+                'message' => 'ایمیل شما با موفقیت تایید شد',
+                'token' => $token->accessToken,
+                'user_id' => $user->id,
+                'permissions' => $user->getAllPermissions()->pluck('name')
+            ]);
         } else {
             Log::warning('user verification failed for ' . request('email') . ' with token ' . request('token'));
             return Responder::error('تایید ایمیل وارد شده امکانپذیر نمی باشد. لطفا مجددا اقدام کنید');
@@ -464,14 +483,18 @@ class AuthController extends BaseController
         try {
             $user = Socialite::driver('google')->stateless()->user();
         } catch (\Exception $e) {
-           return Responder::error('ورود شما با گوگل موفقیت آمیز نبود');
+            return Responder::error('ورود شما با گوگل موفقیت آمیز نبود');
         }
 
         // check if they're an existing user
         $existingUser = User::where('email', $user->email)->first();
         if ($existingUser) {
-            if($existingUser->suspend){
+            if ($existingUser->suspend) {
                 return Responder::error('متاسفانه حساب کاربری شما از طرف پشتیبانی مسدود شده است');
+            }
+
+            if(empty( $existingUser->email_verified_at )){
+                User::activateUserByEmail($existingUser->email);
             }
 
             // log them in

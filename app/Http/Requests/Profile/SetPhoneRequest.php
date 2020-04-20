@@ -28,4 +28,16 @@ class SetPhoneRequest extends ApiRequest
             'code' => 'required'
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'code.required' => 'لطفا کد تایید را وارد نمایید',
+        ];
+    }
 }

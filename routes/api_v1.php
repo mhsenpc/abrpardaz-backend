@@ -17,33 +17,97 @@ Route::prefix('v1')->namespace('V1')->group(function () {
     });
 
     Route::middleware(['auth:api'])->group(function () {
+        Route::middleware(\App\Http\Middleware\CheckValidationStatus::class)->group(function () {
 
-        Route::prefix('machines')->group(function () {
-            Route::get('list', 'MachineController@index');
-            Route::get('ofProject/{id}', 'MachineController@ofProject');
-            Route::post('create', 'MachineController@create');
-        });
+            Route::prefix('machines')->group(function () {
+                Route::get('list', 'MachineController@index');
+                Route::get('ofProject/{id}', 'MachineController@ofProject');
+                Route::post('create', 'MachineController@create');
+            });
 
-        Route::prefix('machines/{id}')->group(function () {
-            Route::post('console', 'MachineController@console');
-            Route::get('details', 'MachineController@details');
-            Route::get('activities', 'MachineController@activities');
-            Route::put('powerOn', 'MachineController@powerOn');
-            Route::put('powerOff', 'MachineController@powerOff');
-            Route::put('softReboot', 'MachineController@softReboot');
-            Route::put('hardReboot', 'MachineController@hardReboot');
-            Route::put('enableBackup', 'MachineController@enableBackup');
-            Route::put('disableBackup', 'MachineController@disableBackup');
-            Route::put('resendInfo', 'MachineController@resendInfo');
-            Route::post('rescale', 'MachineController@rescale');
-            Route::post('rebuild', 'MachineController@rebuild');
-            Route::post('rename', 'MachineController@rename');
-            Route::delete('remove', 'MachineController@remove');
+            Route::prefix('machines/{id}')->group(function () {
+                Route::post('console', 'MachineController@console');
+                Route::get('details', 'MachineController@details');
+                Route::get('activities', 'MachineController@activities');
+                Route::put('powerOn', 'MachineController@powerOn');
+                Route::put('powerOff', 'MachineController@powerOff');
+                Route::put('softReboot', 'MachineController@softReboot');
+                Route::put('hardReboot', 'MachineController@hardReboot');
+                Route::put('enableBackup', 'MachineController@enableBackup');
+                Route::put('disableBackup', 'MachineController@disableBackup');
+                Route::put('resendInfo', 'MachineController@resendInfo');
+                Route::post('rescale', 'MachineController@rescale');
+                Route::post('rebuild', 'MachineController@rebuild');
+                Route::post('rename', 'MachineController@rename');
+                Route::delete('remove', 'MachineController@remove');
+            });
+
+
+            Route::prefix('snapshots')->group(function () {
+                Route::get('list', 'SnapshotController@index');
+                Route::get('ofMachine', 'SnapshotController@ofMachine');
+                Route::post('takeSnapshot', 'SnapshotController@takeSnapshot');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('getProgress', 'SnapshotController@getProgress');
+                    Route::post('rename', 'SnapshotController@rename');
+                    Route::delete('remove', 'SnapshotController@remove');
+                });
+            });
+
+            Route::prefix('backups')->group(function () {
+                Route::get('list', 'BackupController@index');
+                Route::get('ofMachine', 'BackupController@ofMachine');
+                Route::put('trigger', 'BackupController@trigger');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::post('rename', 'BackupController@rename');
+                    Route::delete('remove', 'BackupController@remove');
+                });
+            });
+
+            Route::prefix('sshKeys')->group(function () {
+                Route::get('list', 'SSHKeyController@index');
+                Route::post('add', 'SSHKeyController@add');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::get('show', 'SSHKeyController@show');
+                    Route::post('edit', 'SSHKeyController@edit');
+                    Route::delete('remove', 'SSHKeyController@remove');
+                });
+            });
+
+            Route::prefix('projects')->group(function () {
+                Route::get('list', 'ProjectController@index');
+                Route::post('add', 'ProjectController@add');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::post('rename', 'ProjectController@rename');
+                    Route::post('addMember', 'ProjectController@addMember');
+                    Route::post('removeMember', 'ProjectController@removeMember');
+                    Route::put('leave', 'ProjectController@leave');
+                    Route::delete('remove', 'ProjectController@remove');
+                });
+            });
+
+            Route::prefix('volumes')->group(function () {
+                Route::get('list', 'VolumeController@index');
+                Route::post('createVolume', 'VolumeController@createVolume');
+
+                Route::prefix('{id}')->group(function () {
+                    Route::post('attachToMachine', 'VolumeController@attachToMachine');
+                    Route::post('detachFromMachine', 'VolumeController@detachFromMachine');
+                    Route::post('rename', 'VolumeController@rename');
+                    Route::delete('remove', 'VolumeController@remove');
+                });
+            });
+
         });
 
         Route::prefix('profile')->group(function () {
             Route::get('getUserInfo', 'ProfileController@getUserInfo');
             Route::post('setUserBasicInfo', 'ProfileController@setUserBasicInfo');
+            Route::post('setUserAddress', 'ProfileController@setUserAddress');
             Route::post('requestSetMobile', 'ProfileController@requestSetMobile');
             Route::post('setMobile', 'ProfileController@setMobile');
             Route::post('requestSetPhone', 'ProfileController@requestSetPhone');
@@ -63,52 +127,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
-        Route::prefix('snapshots')->group(function () {
-            Route::get('list', 'SnapshotController@index');
-            Route::get('ofMachine', 'SnapshotController@ofMachine');
-            Route::post('takeSnapshot', 'SnapshotController@takeSnapshot');
-
-            Route::prefix('{id}')->group(function () {
-                Route::get('getProgress', 'SnapshotController@getProgress');
-                Route::post('rename', 'SnapshotController@rename');
-                Route::delete('remove', 'SnapshotController@remove');
-            });
-        });
-
-        Route::prefix('backups')->group(function () {
-            Route::get('list', 'BackupController@index');
-            Route::get('ofMachine', 'BackupController@ofMachine');
-            Route::put('trigger', 'BackupController@trigger');
-
-            Route::prefix('{id}')->group(function () {
-                Route::post('rename', 'BackupController@rename');
-                Route::delete('remove', 'BackupController@remove');
-            });
-        });
-
-        Route::prefix('sshKeys')->group(function () {
-            Route::get('list', 'SSHKeyController@index');
-            Route::post('add', 'SSHKeyController@add');
-
-            Route::prefix('{id}')->group(function () {
-                Route::get('show', 'SSHKeyController@show');
-                Route::post('edit', 'SSHKeyController@edit');
-                Route::delete('remove', 'SSHKeyController@remove');
-            });
-        });
-
-        Route::prefix('projects')->group(function () {
-            Route::get('list', 'ProjectController@index');
-            Route::post('add', 'ProjectController@add');
-
-            Route::prefix('{id}')->group(function () {
-                Route::post('rename', 'ProjectController@rename');
-                Route::post('addMember', 'ProjectController@addMember');
-                Route::post('removeMember', 'ProjectController@removeMember');
-                Route::put('leave', 'ProjectController@leave');
-                Route::delete('remove', 'ProjectController@remove');
-            });
-        });
 
         Route::prefix('tickets')->group(function () {
             Route::get('list', 'TicketController@index');
@@ -122,17 +140,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
         });
 
-        Route::prefix('volumes')->group(function () {
-            Route::get('list', 'VolumeController@index');
-            Route::post('createVolume', 'VolumeController@createVolume');
-
-            Route::prefix('{id}')->group(function () {
-                Route::post('attachToMachine', 'VolumeController@attachToMachine');
-                Route::post('detachFromMachine', 'VolumeController@detachFromMachine');
-                Route::post('rename', 'VolumeController@rename');
-                Route::delete('remove', 'VolumeController@remove');
-            });
-        });
 
         Route::prefix('notifications')->group(function () {
             Route::get('list', 'NotificationController@index');
@@ -226,5 +233,6 @@ Route::prefix('v1')->namespace('V1')->group(function () {
         Route::prefix('permissions')->group(function () {
             Route::get('list', 'PermissionsController@index');
         });
+
     });
 });

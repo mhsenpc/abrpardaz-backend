@@ -1086,7 +1086,24 @@
                         "schema": {
                             "type": "string"
                         }
-                    },
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/profile/setUserAddress": {
+            "post": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Set user Address",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\ProfileController::setUserAddress",
+                "parameters": [
                     {
                         "name": "postal_code",
                         "in": "query",
