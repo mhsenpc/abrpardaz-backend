@@ -56,7 +56,7 @@ chpasswd:
   list: |
     root:$password
   expire: False",
-            'metadata' => $meta_data,
+
         ];
 
         if (!empty($ssh_key_id)) {

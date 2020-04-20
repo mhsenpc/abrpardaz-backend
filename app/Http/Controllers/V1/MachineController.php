@@ -19,7 +19,7 @@ use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\RescaleServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\SoftRebootRequest;
-use App\Jobs\CreateMachineFromImageJob;
+use App\Jobs\CreateMachineJob;
 use App\Jobs\RemoveMachineBackupsJob;
 use App\Models\Image;
 use App\Models\Machine;
@@ -147,9 +147,6 @@ class MachineController extends BaseController
         try {
             $service = new MachineService();
             $server = $service->getServer($machine->remote_id);
-//            $server = new \stdClass();
-//            $server->powerState =1;
-//            $server->status ='ACTIVE';
             $machine->powerState = $server->powerState;
             $machine->status = $server->status;
         } catch (\Exception $exception) {
@@ -307,7 +304,7 @@ class MachineController extends BaseController
         );
 
         try {
-            CreateMachineFromImageJob::dispatch(
+            CreateMachineJob::dispatch(
                 $user_id,
                 $name,
                 $plan_id,
@@ -327,7 +324,7 @@ class MachineController extends BaseController
 
             Auth::user()->notify(new CreateServerFailedNotification($machine, Auth::user()->profile));
 
-            Log::critical("Couldn't create server from image for user #" . Auth::id());
+            Log::critical("Couldn't create server ".$name." from image #".$image_id." for user #" . Auth::id());
             Log::critical($exception);
             return Responder::error('ساخت سرور انجام نشد');
         }
@@ -828,6 +825,9 @@ class MachineController extends BaseController
     function remove(RemoveServerRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
+        if($machine->remote_id == 0 ){
+            return Responder::error("تا زمانیکه ساخت سرور به اتمام نرسیده است، امکان حذف آن وجود ندارد");
+        }
         try {
             $machine->delete();
             $service = new MachineService();
