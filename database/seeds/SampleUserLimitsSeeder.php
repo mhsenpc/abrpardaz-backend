@@ -12,12 +12,15 @@ class SampleUserLimitsSeeder extends Seeder
      */
     public function run()
     {
-        UserLimit::create([
-            'default' => true,
-            'name' => 'محدودیت استاندارد',
-            'max_machines' => 11,
-            'max_snapshots' => 30,
-            'max_volumes_usage' => 1024,
-        ]);
+        $limits_count = UserLimit::all()->count();
+        if ($limits_count == 0) {
+            UserLimit::create([
+                'default' => true,
+                'name' => 'محدودیت استاندارد',
+                'max_machines' => 11,
+                'max_snapshots' => 30,
+                'max_volumes_usage' => 1024,
+            ]);
+        }
     }
 }

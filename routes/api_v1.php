@@ -20,11 +20,14 @@ Route::prefix('v1')->namespace('V1')->group(function () {
     });
 
     Route::middleware(['auth:api', 'throttle:30,1',])->group(function () {
-        Route::middleware(\App\Http\Middleware\CheckValidationStatus::class)->group(function () {
 
+        Route::prefix('machines')->group(function () {
+            Route::get('list', 'MachineController@index');
+            Route::get('ofProject/{id}', 'MachineController@ofProject');
+        });
+
+        Route::middleware(\App\Http\Middleware\CheckValidationStatus::class)->group(function () {
             Route::prefix('machines')->group(function () {
-                Route::get('list', 'MachineController@index');
-                Route::get('ofProject/{id}', 'MachineController@ofProject');
                 Route::post('create', 'MachineController@create');
             });
 
