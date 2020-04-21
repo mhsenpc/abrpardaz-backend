@@ -150,11 +150,10 @@ class ProfileController extends BaseController
             'last_name' => \request('last_name'),
         ];
 
-        if(!empty(request('organization_name'))){
+        if (!empty(request('organization_name'))) {
             $values ['organization'] = true;
             $values ['organization_name'] = request('organization_name');
-        }
-        else{
+        } else {
             $values ['organization'] = false;
             $values ['organization_name'] = null;
         }
@@ -240,8 +239,8 @@ class ProfileController extends BaseController
      */
     function requestSetMobile(RequestSetMobileRequest $request)
     {
-        $tries_key = 'sms_count_' . request('mobile');
-        if (Cache::get($tries_key, 0) > 3)
+        $tries_key = 'sms_count_' . Auth::id();
+        if (Cache::get($tries_key, 0) >= 3)
             return Responder::error('لطفا ساعاتی دیگر جهت ارسال پیامک تلاش کنید');
 
         if (config('app.env') == 'local') {
@@ -254,7 +253,7 @@ class ProfileController extends BaseController
 
         if ($result) {
             Cache::put('validation_code_for_' . request('mobile'), $code, 5 * 60);
-            Cache::put($tries_key, Cache::get($tries_key, 0) + 1, 60 * 60);
+            Cache::put($tries_key, Cache::get($tries_key, 0) + 1, 1 * 60 * 60);
             Log::info('request set mobile .mobile #' . request('mobile') . ' ,user #' . Auth::id());
             return Responder::success('کد فعال سازی به شماره موبایل شما ارسال گردید');
         } else {
@@ -348,11 +347,10 @@ class ProfileController extends BaseController
         if (Cache::get($tries_key, 0) > 3)
             return Responder::error('لطفا ساعاتی دیگر جهت برقراری تماس تلاش کنید');
 
-        if (config('app.env') == 'local'){
+        if (config('app.env') == 'local') {
             $code = 11111;
             $result = true;
-        }
-        else{
+        } else {
             $code = rand(11111, 99999);
             $result = PhoneService::sendActivationCode(request('phone'), $code);
         }
