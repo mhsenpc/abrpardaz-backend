@@ -5,18 +5,21 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->namespace('V1')->group(function () {
 
     Route::prefix('auth')->group(function () {
-        Route::post('register', 'AuthController@register');
-        Route::post('login', 'AuthController@login');
-        Route::put('logout', 'AuthController@logout');
-        Route::post('forgetPassword', 'AuthController@forgetPassword');
-        Route::post('resetPassword', 'AuthController@resetPassword');
-        Route::post('changePassword', 'AuthController@changePassword')->middleware(['auth:api']);
-        Route::any('verify', 'AuthController@verify');
-        Route::get('redirectToGoogle', 'AuthController@redirectToGoogle');
-        Route::get('handleGoogleCallback', 'AuthController@handleGoogleCallback');
+        Route::middleware([ 'throttle:10,1'])->group(function () {
+            Route::post('register', 'AuthController@register');
+            Route::post('login', 'AuthController@login');
+            Route::post('forgetPassword', 'AuthController@forgetPassword');
+            Route::post('resetPassword', 'AuthController@resetPassword');
+            Route::put('logout', 'AuthController@logout');
+            Route::any('verify', 'AuthController@verify');
+            Route::get('handleGoogleCallback', 'AuthController@handleGoogleCallback');
+        });
+
+        Route::post('changePassword', 'AuthController@changePassword')->middleware(['auth:api', 'throttle:20,1']);
+        Route::get('redirectToGoogle', 'AuthController@redirectToGoogle')->middleware(['throttle:20,1']);;
     });
 
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware(['auth:api', 'throttle:30,1',])->group(function () {
         Route::middleware(\App\Http\Middleware\CheckValidationStatus::class)->group(function () {
 
             Route::prefix('machines')->group(function () {

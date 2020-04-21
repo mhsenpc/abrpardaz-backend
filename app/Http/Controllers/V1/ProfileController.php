@@ -344,7 +344,7 @@ class ProfileController extends BaseController
     function requestSetPhone(RequestSetPhoneRequest $request)
     {
         $tries_key = 'call_count_' . request('phone');
-        if (Cache::get($tries_key, 0) > 3)
+        if (Cache::get($tries_key, 0) >= 3)
             return Responder::error('لطفا ساعاتی دیگر جهت برقراری تماس تلاش کنید');
 
         if (config('app.env') == 'local') {
