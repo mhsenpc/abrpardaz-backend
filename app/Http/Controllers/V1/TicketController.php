@@ -180,7 +180,7 @@ class TicketController extends BaseController
         $ticket = new Ticket([
             'title' => \request('title'),
             'user_id' => Auth::id(),
-            'ticket_id' => strtoupper(Str::random(10)),
+            'ticket_id' => $this->generateUniqueTicketId(),
             'category_id' => \request('category'),
             'priority' => \request('priority'),
             'message' => \request('message'),
@@ -346,5 +346,15 @@ class TicketController extends BaseController
             }
         }
         return Responder::result(['ticket' => $ticket]);
+    }
+
+    private function generateUniqueTicketId()
+    {
+        while (true){
+            $id = 'TK'.random_int(11111111,99999999);
+            $item_count = Ticket::where('ticket_id',$id)->count();
+            if($item_count ==0)
+                return $id;
+        }
     }
 }

@@ -36,7 +36,7 @@ class BillingService
             $user->updateLastBillingDate();
 
             if ($total_amount > 0) {
-                $invoice_code = strtoupper(Str::random(10));
+                $invoice_code = self::generateUniqueInvoiceId();
                 $invoice = Invoice::create([
                     'user_id' => $user->id,
                     'amount' => $total_amount,
@@ -249,5 +249,15 @@ class BillingService
             }
         }
         return array($total_amount, $total_vat, $data);
+    }
+
+    private static function generateUniqueInvoiceId()
+    {
+        while (true){
+            $id = 'IN'.random_int(11111111,99999999);
+            $item_count = Invoice::where('invoice_id',$id)->count();
+            if($item_count ==0)
+                return $id;
+        }
     }
 }

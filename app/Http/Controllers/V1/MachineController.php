@@ -709,7 +709,7 @@ class MachineController extends BaseController
         $machine = Machine::find(request('id'));
         $service = new MachineService();
         $rescue_image_id = ""; //TODO: which image should be used to rescue?
-        $admin_pass = Str::random(8);
+        $admin_pass = PasswordGeneratorService::generate();
         try {
             $service->attachImage($machine->remote_id, $rescue_image_id, $admin_pass);
             Log::info('rescue machine #' . $machine->id . ',user #' . Auth::id());
@@ -812,7 +812,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(request('id'));
         $image = Image::find(request('image_id'));
-        $admin_pass = Str::random(8);
+        $admin_pass = PasswordGeneratorService::generate();
         $service = new MachineService();
         try {
             $service->attachImage($machine->remote_id, $image, $admin_pass);
