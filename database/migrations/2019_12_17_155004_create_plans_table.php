@@ -18,8 +18,9 @@ class CreatePlansTable extends Migration
             $table->string('remote_id');
             $table->string('name');
             $table->integer('disk');
-            $table->float('ram');
+            $table->integer('ram');
             $table->integer('vcpu');
+            $table->integer('traffic');
             $table->float('hourly_price');
             $table->timestamps();
             $table->softDeletes();

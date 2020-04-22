@@ -50,20 +50,20 @@ class FlavorSyncerService
         $flavor_service = new FlavorService();
         $remote_flavors = $flavor_service->getFlavors();
         foreach ($remote_flavors as $remote_flavor) {
-            $new_plan = Plan::where('remote_id', $remote_flavor->id)->first();
+            $existing_plan = Plan::where('remote_id', $remote_flavor->id)->first();
             $remote_flavor->retrieve();
             $disk = $remote_flavor->disk;
             $ram = $remote_flavor->ram / 1024;
             $vcpu = $remote_flavor->vcpus;
             $name = $remote_flavor->name;
 
-            if ($new_plan) {
+            if ($existing_plan) {
                 //update metadata
-                $new_plan->disk = $disk;
-                $new_plan->ram = $ram;
-                $new_plan->vcpu = $vcpu;
-                $new_plan->name = $name;
-                $new_plan->save();
+                $existing_plan->disk = $disk;
+                $existing_plan->ram = $ram;
+                $existing_plan->vcpu = $vcpu;
+                $existing_plan->name = $name;
+                $existing_plan->save();
                 $result .= "$name metadata updated!" . $this->separator;
             } else {
                 //insert new one in db
@@ -74,7 +74,8 @@ class FlavorSyncerService
                 $new_plan->vcpu = $vcpu;
                 $new_plan->name = $name;
                 $new_plan->hourly_price = 100;
-                $new_plan->save();
+                $new_plan->traffic = 10;
+                $existing_plan->save();
                 $result .= "$name inserted!" . $this->separator;
             }
         }
