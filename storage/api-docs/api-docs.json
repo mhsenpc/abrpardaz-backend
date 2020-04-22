@@ -852,6 +852,119 @@
                 }
             }
         },
+        "/machines/{id}/rescue": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Put on a machine on rescue mode",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::rescue",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/unrescue": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Put off a machine from rescue mode",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::unrescue",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/attachImage": {
+            "post": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Attach an image to the server",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::attachImage",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "image_id",
+                        "in": "query",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/machines/{id}/detachImage": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "Detach the image from the server",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::detachImage",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/machines/{id}/enableBackup": {
             "put": {
                 "tags": [
@@ -1083,6 +1196,15 @@
                         "in": "query",
                         "description": "",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "organization_name",
+                        "in": "query",
+                        "description": "",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }

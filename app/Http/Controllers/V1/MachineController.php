@@ -4,7 +4,9 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Server\ActivitiesRequest;
+use App\Http\Requests\Server\AttachImageToServerRequest;
 use App\Http\Requests\Server\CreateMachineRequest;
+use App\Http\Requests\Server\DetachImageFromServerRequest;
 use App\Http\Requests\Server\DetailsRequest;
 use App\Http\Requests\Server\DisableBackupRequest;
 use App\Http\Requests\Server\EnableBackupRequest;
@@ -17,8 +19,10 @@ use App\Http\Requests\Server\RebuildServerRequest;
 use App\Http\Requests\Server\RemoveServerRequest;
 use App\Http\Requests\Server\RenameServerRequest;
 use App\Http\Requests\Server\RescaleServerRequest;
+use App\Http\Requests\Server\RescueServerRequest;
 use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\SoftRebootRequest;
+use App\Http\Requests\Server\UnrescueServerRequest;
 use App\Jobs\CreateMachineJob;
 use App\Jobs\RemoveMachineBackupsJob;
 use App\Models\Image;
@@ -35,6 +39,7 @@ use App\Services\Responder;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class MachineController extends BaseController
 {
@@ -324,7 +329,7 @@ class MachineController extends BaseController
 
             Auth::user()->notify(new CreateServerFailedNotification($machine, Auth::user()->profile));
 
-            Log::critical("Couldn't create server ".$name." from image #".$image_id." for user #" . Auth::id());
+            Log::critical("Couldn't create server " . $name . " from image #" . $image_id . " for user #" . Auth::id());
             Log::critical($exception);
             return Responder::error('ساخت سرور انجام نشد');
         }
@@ -598,7 +603,7 @@ class MachineController extends BaseController
      */
     function rename(RenameServerRequest $request)
     {
-        $machine = Machine::findorFail(\request('id'));
+        $machine = Machine::find(\request('id'));
         $service = new MachineService();
         $service->rename($machine->remote_id, \request('name') . '-' . \request('id'));
 
@@ -656,14 +661,221 @@ class MachineController extends BaseController
         if (request('plan_id') == $machine->plan->id) {
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
         }
-        $machine->changePlan($plan);
-        Log::info('rescale machine #' . $machine->id . ',user #' . Auth::id());
-        ServerActivity::create([
-            'machine_id' => request('id'),
-            'user_id' => Auth::id(),
-            'message' => 'پلن سرور تغییر یافت'
-        ]);
-        return Responder::success('پلن با موفقیت تغییر یافت');
+        $service = new MachineService();
+        try {
+            $service->rescale($machine->remote_id, $plan->remote_id);
+            $machine->changePlan($plan);
+            Log::info('rescale machine #' . $machine->id . ',user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'پلن سرور تغییر یافت'
+            ]);
+            return Responder::success('پلن با موفقیت تغییر یافت');
+        } catch (\Exception $exception) {
+            Log::critical("Failed to change server #" . request('id') . " to plan #" . request('plan_id'));
+            Log::critical($exception);
+            return Responder::error('متاسفانه عملیات تغییر پلن با شکست مواجه شد');
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/rescue",
+     *      summary="Put on a machine on rescue mode",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function rescue(RescueServerRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $service = new MachineService();
+        $rescue_image_id = ""; //TODO: which image should be used to rescue?
+        $admin_pass = Str::random(8);
+        try {
+            $service->attachImage($machine->remote_id, $rescue_image_id, $admin_pass);
+            Log::info('rescue machine #' . $machine->id . ',user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'سرور به حالت نجات منتقل شد'
+            ]);
+            return Responder::result([
+                'message'=> 'سرور به حالت نجات منتقل شد',
+                'admin_pass' => $admin_pass
+            ]);
+        } catch (\Exception $exception) {
+            Log::critical('Failed to rescue machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical($exception);
+            return Responder::error('ورود با حالت نجات با شکست مواجه شد');
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/unrescue",
+     *      summary="Put off a machine from rescue mode",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function unrescue(UnrescueServerRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $service = new MachineService();
+        try {
+            $service->detachImage($machine->remote_id);
+            Log::info('Unrescue machine #' . $machine->id . ',user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'سرور از حالت نجات خارج شد'
+            ]);
+            return Responder::success('سرور از حالت نجات خارج شد');
+        } catch (\Exception $exception) {
+            Log::critical('Failed to unrescue machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical($exception);
+            return Responder::error('خروج سرور از حالت نجات با شکست مواجه شد');
+        }
+    }
+
+    /**
+     * @OA\Post(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/attachImage",
+     *      summary="Attach an image to the server",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="image_id",
+     *         in="query",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function attachImage(AttachImageToServerRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $image = Image::find(request('image_id'));
+        $admin_pass = Str::random(8);
+        $service = new MachineService();
+        try {
+            $service->attachImage($machine->remote_id, $image, $admin_pass);
+            Log::info('Attach image #'.request('image_id').', machine #' . $machine->id . ',user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'تصویر با موفقیت به سرور وصل شد'
+            ]);
+            return Responder::result([
+                'message'=> 'تصویر با موفقیت به سرور وصل شد',
+                'admin_pass' => $admin_pass
+            ]);
+        } catch (\Exception $exception) {
+            Log::critical('Failed to attach image #'.request('image_id').', machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical($exception);
+            return Responder::error('اتصال تصویر به سرور با شکست مواجه شد');
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/detachImage",
+     *      summary="Detach the image from the server",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function detachImage(DetachImageFromServerRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $service = new MachineService();
+        try {
+            $service->detachImage($machine->remote_id);
+            Log::info('Detach image from machine #' . $machine->id . ',user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'عملیات قطع اتصال تصویر از سرور موفقیت آمیز بود'
+            ]);
+            return Responder::success('عملیات قطع اتصال تصویر از سرور موفقیت آمیز بود');
+        } catch (\Exception $exception) {
+            Log::critical('Failed to detach image from machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical($exception);
+            return Responder::error('عملیات قطع اتصال تصویر از سرور با شکست مواجه شد');
+        }
     }
 
     /**
@@ -825,7 +1037,7 @@ class MachineController extends BaseController
     function remove(RemoveServerRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        if($machine->remote_id == 0 ){
+        if ($machine->remote_id == 0) {
             return Responder::error("تا زمانیکه ساخت سرور به اتمام نرسیده است، امکان حذف آن وجود ندارد");
         }
         try {

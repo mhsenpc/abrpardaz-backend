@@ -144,6 +144,26 @@ chpasswd:
         return true;
     }
 
+    function rescale(string $remote_id,string $flavor_id){
+        $server = $this->compute->getServer(['id' => $remote_id]);
+
+        $server->resize($flavor_id);
+        $server->confirmResize();
+    }
+
+    function attachImage(string $remote_id,string $image_id,string $admin_pass){
+        $server = $this->compute->getServer(['id' => $remote_id]);
+        $server->rescue([
+            'imageId'   => $image_id,
+            'adminPass' => $admin_pass,
+        ]);
+    }
+
+    function detachImage(string $remote_id){
+        $server = $this->compute->getServer(['id' => $remote_id]);
+        $server->unrescue();
+    }
+
     function remove(string $remote_id)
     {
         $server = $this->compute->getServer(['id' => $remote_id]);

@@ -43,6 +43,10 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::put('disableBackup', 'MachineController@disableBackup');
                 Route::put('resendInfo', 'MachineController@resendInfo');
                 Route::post('rescale', 'MachineController@rescale');
+                Route::put('rescue', 'MachineController@rescue');
+                Route::put('unrescue', 'MachineController@unrescue');
+                Route::post('attachImage', 'MachineController@attachImage');
+                Route::put('detachImage', 'MachineController@detachImage');
                 Route::post('rebuild', 'MachineController@rebuild');
                 Route::post('rename', 'MachineController@rename');
                 Route::delete('remove', 'MachineController@remove');
