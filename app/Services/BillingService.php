@@ -12,7 +12,6 @@ use App\Notifications\NewInvoiceNotification;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class BillingService
 {
@@ -48,8 +47,8 @@ class BillingService
                 ]);
 
                 $user->notify(new NewInvoiceNotification(Auth::user(), $user->profile, $invoice));
-                if(!empty( $user->profile->mobile))
-                    MobileService::sendInvoiceCreated( $user->profile->mobile,$invoice_code,number_format($total_amount + $total_vat));
+                if (!empty($user->profile->mobile))
+                    MobileService::sendInvoiceCreated($user->profile->mobile, $invoice_code, number_format($total_amount + $total_vat));
             }
         }
     }
@@ -62,13 +61,17 @@ class BillingService
      * @return array
      * @throws \Exception
      */
-    public static function CalculateBillingForMachines(\Illuminate\Database\Eloquent\Model $user,float $total_amount, float $total_vat, array $data): array
+    public static function CalculateBillingForMachines(\Illuminate\Database\Eloquent\Model $user, float $total_amount, float $total_vat, array $data): array
     {
         //calculate billing for machines
         $machines = Machine::where('user_id', $user->id)
             ->get();
         $machine_last_billing_date = null;
         foreach ($machines as $machine) {
+            if ($machine->remote_id == "0" || $machine->remote_id == "-1") {
+                continue; //do not count failed machines
+            }
+
             $billings = MachineBilling::where('machine_id', $machine->id)->orderBy('created_at')
                 ->get();
             foreach ($billings as $billing) {
@@ -253,10 +256,10 @@ class BillingService
 
     private static function generateUniqueInvoiceId()
     {
-        while (true){
-            $id = 'IN'.random_int(11111111,99999999);
-            $item_count = Invoice::where('invoice_id',$id)->count();
-            if($item_count ==0)
+        while (true) {
+            $id = 'IN' . random_int(11111111, 99999999);
+            $item_count = Invoice::where('invoice_id', $id)->count();
+            if ($item_count == 0)
                 return $id;
         }
     }
