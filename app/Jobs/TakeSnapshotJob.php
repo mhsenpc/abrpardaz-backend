@@ -56,9 +56,9 @@ class TakeSnapshotJob implements ShouldQueue
             $service = new MachineService();
             $image = $service->takeSnapshot($this->remote_id, $this->name);
             //update size and remote id in snapshots
-            Snapshot::find($this->snapshot_id)->updateSizeAndRemoteId($image->id, $image->size);
+            //Snapshot::find($this->snapshot_id)->updateSizeAndRemoteId($image->id, $image->size);
         } catch (\Exception $exception) {
-            Log::critical('failed to remove snapshot #'.$this->snapshot_id);
+            Log::critical('failed to take snapshot #'.$this->snapshot_id);
             Log::critical($exception);
             $snapshot = Snapshot::find($this->snapshot_id);
             $snapshot->user->notify(new CreateSnapshotFailedNotification($snapshot, $snapshot->user->profile));

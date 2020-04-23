@@ -82,9 +82,7 @@ class CreateMachineJob implements ShouldQueue
         //update machine record
         $machine->updateRemoteID($result->id);
 
-        Log::debug(print_r($result, true));
-
-        foreach ($result->addresses['external'] as $address) {
+        foreach (reset($result->addresses) as $address) {
             if ($address['version'] == 4) {
                 $machine->updateIpv4($address['addr']);
             }

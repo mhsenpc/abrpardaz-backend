@@ -39,7 +39,6 @@ use App\Services\Responder;
 use App\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class MachineController extends BaseController
 {
@@ -479,15 +478,19 @@ class MachineController extends BaseController
     function softReboot(SoftRebootRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
-        $service->softReboot($machine->remote_id);
-        Log::info('soft reboot machine #' . $machine->id . ',user #' . Auth::id());
-        ServerActivity::create([
-            'machine_id' => request('id'),
-            'user_id' => Auth::id(),
-            'message' => 'سرور راه اندازی مجدد شد'
-        ]);
-        return Responder::success('سرور با موفقیت راه اندازی شد');
+        try {
+            $service = new MachineService();
+            $service->softReboot($machine->remote_id);
+            Log::info('soft reboot machine #' . $machine->id . ',user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'سرور راه اندازی مجدد شد'
+            ]);
+            return Responder::success('سرور با موفقیت راه اندازی شد');
+        } catch (\Exception $exception) {
+            return Responder::error('امکان راه اندازی مجدد سرور در این لحظه وجود ندارد');
+        }
     }
 
     /**
@@ -719,11 +722,11 @@ class MachineController extends BaseController
                 'message' => 'سرور به حالت نجات منتقل شد'
             ]);
             return Responder::result([
-                'message'=> 'سرور به حالت نجات منتقل شد',
+                'message' => 'سرور به حالت نجات منتقل شد',
                 'admin_pass' => $admin_pass
             ]);
         } catch (\Exception $exception) {
-            Log::critical('Failed to rescue machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical('Failed to rescue machine #' . request('id') . ',user #' . Auth::id());
             Log::critical($exception);
             return Responder::error('ورود با حالت نجات با شکست مواجه شد');
         }
@@ -768,7 +771,7 @@ class MachineController extends BaseController
             ]);
             return Responder::success('سرور از حالت نجات خارج شد');
         } catch (\Exception $exception) {
-            Log::critical('Failed to unrescue machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical('Failed to unrescue machine #' . request('id') . ',user #' . Auth::id());
             Log::critical($exception);
             return Responder::error('خروج سرور از حالت نجات با شکست مواجه شد');
         }
@@ -816,18 +819,18 @@ class MachineController extends BaseController
         $service = new MachineService();
         try {
             $service->attachImage($machine->remote_id, $image, $admin_pass);
-            Log::info('Attach image #'.request('image_id').', machine #' . $machine->id . ',user #' . Auth::id());
+            Log::info('Attach image #' . request('image_id') . ', machine #' . $machine->id . ',user #' . Auth::id());
             ServerActivity::create([
                 'machine_id' => request('id'),
                 'user_id' => Auth::id(),
                 'message' => 'تصویر با موفقیت به سرور وصل شد'
             ]);
             return Responder::result([
-                'message'=> 'تصویر با موفقیت به سرور وصل شد',
+                'message' => 'تصویر با موفقیت به سرور وصل شد',
                 'admin_pass' => $admin_pass
             ]);
         } catch (\Exception $exception) {
-            Log::critical('Failed to attach image #'.request('image_id').', machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical('Failed to attach image #' . request('image_id') . ', machine #' . request('id') . ',user #' . Auth::id());
             Log::critical($exception);
             return Responder::error('اتصال تصویر به سرور با شکست مواجه شد');
         }
@@ -872,7 +875,7 @@ class MachineController extends BaseController
             ]);
             return Responder::success('عملیات قطع اتصال تصویر از سرور موفقیت آمیز بود');
         } catch (\Exception $exception) {
-            Log::critical('Failed to detach image from machine #' .request('id') . ',user #' . Auth::id());
+            Log::critical('Failed to detach image from machine #' . request('id') . ',user #' . Auth::id());
             Log::critical($exception);
             return Responder::error('عملیات قطع اتصال تصویر از سرور با شکست مواجه شد');
         }
@@ -1037,14 +1040,16 @@ class MachineController extends BaseController
     function remove(RemoveServerRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        if ($machine->remote_id == 0) {
+        if ($machine->remote_id === "0") {
             return Responder::error("تا زمانیکه ساخت سرور به اتمام نرسیده است، امکان حذف آن وجود ندارد");
         }
         try {
             $machine->delete();
-            $service = new MachineService();
-            $service->remove($machine->remote_id);
-            RemoveMachineBackupsJob::dispatch(\request('id'), Auth::id());
+            if (!in_array($machine->remote_id, ['0', -1])) {
+                $service = new MachineService();
+                $service->remove($machine->remote_id);
+                RemoveMachineBackupsJob::dispatch(\request('id'), Auth::id());
+            }
             Log::info('remove machine #' . $machine->id . ',user #' . Auth::id());
         } catch (\Exception $exception) {
             Log::critical('failed to delete machine #' . \request('id'));

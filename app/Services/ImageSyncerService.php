@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Models\Image;
+use Illuminate\Support\Facades\Log;
 
 class ImageSyncerService
 {
@@ -50,6 +51,10 @@ class ImageSyncerService
         $image_service = new ImageService();
         $remote_images = $image_service->getImages();
         foreach ($remote_images as $remote_image) {
+            $metadata = $remote_image->getMetadata();
+            if(!empty($metadata) && $metadata['image_type'] == 'snapshot' )
+                continue;
+
             $local_image = Image::where('remote_id', $remote_image->id)->first();
             $os_name = $remote_image->name;
 

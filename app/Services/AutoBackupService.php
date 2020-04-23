@@ -16,19 +16,22 @@ class AutoBackupService
     {
         $machines = Machine::where('backup', true)->get();
         foreach ($machines as $machine) {
-            TakeBackupJob::dispatch($machine->id);
+            if (!in_array($machine->remote_id, ['0', -1])) {
+                TakeBackupJob::dispatch($machine->id);
+            }
         }
     }
 
-    static function takeBackup(int $machine_id){
+    static function takeBackup(int $machine_id)
+    {
         try {
             $machine = Machine::find($machine_id);
             $name = $machine->name . '-' . Carbon::now();
             //$service = new MachineService();
             //$image = $service->takeSnapshot($machine->remote_id, $name);
-            $image= new \stdClass();
+            $image = new \stdClass();
             $image->id = '645asd54sad54';
-            $image->size = rand(1.1,5.9);
+            $image->size = rand(1.1, 5.9);
 
 
             //every machine has 7 backup slots at most
@@ -39,11 +42,10 @@ class AutoBackupService
                 //$service = new SnapshotService();
                 //$result = $service->remove($old_backup->remote_id);
                 $result = true;
-                if($result){
+                if ($result) {
                     $old_backup->delete();
-                }
-                else{
-                    Log::critical("Couldn't delete old backup #". $old_backup->id);
+                } else {
+                    Log::critical("Couldn't delete old backup #" . $old_backup->id);
                 }
             }
 

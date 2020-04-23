@@ -70,7 +70,7 @@ chpasswd:
             /** @var \OpenStack\Compute\v2\Models\Keypair $keypair */
             $keypair = $this->compute->getKeypair()->createKeypair($data);
 
-            $options['keypair'] = $ssh_key->name . $user_id;
+            $options['keyName'] = $ssh_key->name . $user_id;
         }
 
         // Create the server
