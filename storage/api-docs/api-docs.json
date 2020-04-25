@@ -1052,6 +1052,32 @@
                 }
             }
         },
+        "/machines/{id}/resetPassword": {
+            "put": {
+                "tags": [
+                    "Machine"
+                ],
+                "summary": "change password of the machine to a random password",
+                "description": "",
+                "operationId": "App\\Http\\Controllers\\V1\\MachineController::resetPassword",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/machines/{id}/remove": {
             "delete": {
                 "tags": [

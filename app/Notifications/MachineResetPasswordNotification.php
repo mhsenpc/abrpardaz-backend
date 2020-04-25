@@ -7,30 +7,28 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewInvoiceNotification extends Notification implements ShouldQueue
+class MachineResetPasswordNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     private $profile;
-    private $user;
-    private $invoice;
+    private $machine;
 
     /**
      * Create a new notification instance.
      *
-     * @param $user
-     * @param $invoice
+     * @param $profile
+     * @param $machine
      */
-    public function __construct($user,$profile, $invoice)
+    public function __construct($profile, $machine)
     {
-        $this->user = $user;
         $this->profile = $profile;
-        $this->invoice = $invoice;
+        $this->machine = $machine;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function via($notifiable)
@@ -41,28 +39,30 @@ class NewInvoiceNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("[invoice ID: {$this->invoice->invoice_id}]  صورتحساب جدید")
-            ->line($this->profile->name.' عزیز')
-            ->line('صورت حساب جدیدی برای شما ایجاد گردید')
-            ->line('لطفا هر چه سریع تر جهت پرداخت آن از طریق پنل اقدام نمایید');
+            ->subject("بازنشانی رمز عبور سرور شما - ابرپرداز")
+            ->line($this->profile->name .' عزیز')
+            ->line('سرور جدید شما با موفقیت ساخته شد')
+            ->line('نام: ' . $this->machine->name)
+            ->line('IP: ' . $this->machine->public_ipv4)
+            ->line('Username: root' )
+            ->line('Password: ' . $this->machine->password);
     }
 
     /**
      * Get the array representation of the notification.
      *
-     * @param mixed $notifiable
+     * @param  mixed  $notifiable
      * @return array
      */
     public function toArray($notifiable)
     {
         return [
-            'message' => 'صورت حساب جدید با شماره '.$this->invoice->invoice_id.' برای شما ایجاد گردید'
         ];
     }
 }

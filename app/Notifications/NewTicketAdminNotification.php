@@ -49,7 +49,7 @@ class NewTicketAdminNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("[Ticket ID: {$this->ticket->ticket_id}] {$this->ticket->title}")
-            ->line($this->profile->name)
+            ->line($this->profile->name.' عزیز')
             ->line('تیکت جدیدی ایجاد کرده است')
             ->line('اطلاعات تیکت :')
             ->line('عنوان:' . $this->ticket->title)

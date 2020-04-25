@@ -13,6 +13,7 @@ use App\Http\Requests\Server\EnableBackupRequest;
 use App\Http\Requests\Server\GetConsoleRequest;
 use App\Http\Requests\Server\HardRebootRequest;
 use App\Http\Requests\Server\ListRequest;
+use App\Http\Requests\Server\MachineResetPasswordRequest;
 use App\Http\Requests\Server\PowerOffRequest;
 use App\Http\Requests\Server\PowerOnRequest;
 use App\Http\Requests\Server\RebuildServerRequest;
@@ -31,6 +32,7 @@ use App\Models\Plan;
 use App\Models\ServerActivity;
 use App\Notifications\CreateServerFailedAdminNotification;
 use App\Notifications\CreateServerFailedNotification;
+use App\Notifications\MachineResetPasswordNotification;
 use App\Notifications\RebuildMachineNotification;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
@@ -149,10 +151,18 @@ class MachineController extends BaseController
     {
         $machine = Machine::where('id', request('id'))->with(['image', 'plan', 'sshKey'])->first();
         try {
-            $service = new MachineService();
-            $server = $service->getServer($machine->remote_id);
-            $machine->powerState = $server->powerState;
-            $machine->status = $server->status;
+            if ($machine->remote_id === "0") {
+                $machine->powerState = 0;
+                $machine->status = 'CREATING';
+            } else if ($machine->remote_id === "-1") {
+                $machine->powerState = 0;
+                $machine->status = 'ERROR';
+            } else {
+                $service = new MachineService();
+                $server = $service->getServer($machine->remote_id);
+                $machine->powerState = $server->powerState;
+                $machine->status = $server->status;
+            }
         } catch (\Exception $exception) {
             $machine->powerState = 0;
             $machine->status = 'ERROR';
@@ -999,18 +1009,70 @@ class MachineController extends BaseController
         $machine = Machine::find(request('id'));
         $image = Image::find(request('image_id'));
         $new_pass = PasswordGeneratorService::generate();
-        $service = new MachineService();
-        $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
-        $machine->password = $new_pass;
-        $machine->save();
-        Auth::user()->notify(new RebuildMachineNotification(Auth::user()->profile, $machine));
-        Log::info('rebuild machine #' . $machine->id . ', image #' . request('image_id') . ', user #' . Auth::id());
-        ServerActivity::create([
-            'machine_id' => request('id'),
-            'user_id' => Auth::id(),
-            'message' => 'تصویر جدید بر روی ماشین بارگذاری شد'
-        ]);
-        return Responder::success('فرآیند نصب مجدد تصویر بر روی ماشین شما شروع شد.');
+        try {
+            $service = new MachineService();
+            $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
+            $machine->password = $new_pass;
+            $machine->save();
+            Auth::user()->notify(new RebuildMachineNotification(Auth::user()->profile, $machine));
+            Log::info('rebuild machine #' . $machine->id . ', image #' . request('image_id') . ', user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'تصویر جدید بر روی ماشین بارگذاری شد'
+            ]);
+            return Responder::success('فرآیند نصب مجدد تصویر بر روی ماشین شما شروع شد.');
+        } catch (\Exception $exception) {
+            Log::error('failed to rebuild machine #' . request('id') . ', image #' . request('image_id') . ', user #' . Auth::id());
+            return Responder::error('عملیات با شکست مواجه شد');
+        }
+    }
+
+    /**
+     * @OA\Put(
+     *      tags={"Machine"},
+     *      path="/machines/{id}/resetPassword",
+     *      summary="change password of the machine to a random password",
+     *      description="",
+     *
+     * @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *
+     * @OA\Response(
+     *         response="default",
+     *         description=""
+     *     ),
+     *     )
+     *
+     */
+    function resetPassword(MachineResetPasswordRequest $request)
+    {
+        $machine = Machine::find(request('id'));
+        $new_pass = PasswordGeneratorService::generate();
+        try {
+            $service = new MachineService();
+            $service->resetPassword($machine->remote_id, $new_pass);
+            $machine->password = $new_pass;
+            $machine->save();
+            Auth::user()->notify(new MachineResetPasswordNotification(Auth::user()->profile, $machine));
+            Log::info('reset password machine #' . $machine->id . ', user #' . Auth::id());
+            ServerActivity::create([
+                'machine_id' => request('id'),
+                'user_id' => Auth::id(),
+                'message' => 'کلمه عبور مدیر سیستم سرور تغییر یافت'
+            ]);
+            return Responder::success('کلمه عبور سرور با موفقیت تغییر یافت و به پست الکترونیک شما ارسال گردید');
+        } catch (\Exception $exception) {
+            Log::error('failed to reset password machine #' . request('id') . ', user #' . Auth::id());
+            return Responder::error('عملیات با شکست مواجه شد');
+        }
     }
 
     /**

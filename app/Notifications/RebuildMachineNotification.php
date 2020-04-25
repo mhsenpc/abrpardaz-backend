@@ -46,7 +46,7 @@ class RebuildMachineNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("بازسازی سرور - ابرپرداز")
-            ->line($this->profile->name)
+            ->line($this->profile->name.' عزیز')
             ->line('سرور شما با موفقیت با تصویر جدید بازسازی شد')
             ->line('نام: ' . $this->machine->name)
             ->line('IP: ' . $this->machine->public_ipv4)

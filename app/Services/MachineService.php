@@ -164,6 +164,11 @@ chpasswd:
         $server->unrescue();
     }
 
+    function resetPassword(string $remote_id,string $password){
+        $server = $this->compute->getServer(['id' => $remote_id]);
+        $server->changePassword($password);
+    }
+
     function remove(string $remote_id)
     {
         $server = $this->compute->getServer(['id' => $remote_id]);

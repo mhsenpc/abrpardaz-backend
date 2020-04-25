@@ -184,18 +184,17 @@ class SnapshotController extends BaseController
             \request('name')
         );
 
-        $result = true;
+        $snapshot->name = \request('name');
+        $snapshot->save();
+
         if($result){
-            $snapshot->name = \request('name');
-            $snapshot->save();
             Log::info('snapshot renamed snapshot #'.request('id').',user #'.Auth::id());
-            return Responder::success("نام تصویر آنی با موفقیت تغییر کرد");
         }
         else{
             Log::warning('failed to rename snapshot. snapshot #'.request('id').',user #'.Auth::id());
-            return Responder::error("تغییر نام تصویر آنی انجام نشد");
         }
 
+        return Responder::success("نام تصویر آنی با موفقیت تغییر کرد");
     }
 
     /**
@@ -226,18 +225,17 @@ class SnapshotController extends BaseController
      */
     function remove(RemoveSnapshotRequest $request)
     {
+        $snapshot = Snapshot::find(\request('id'));
+        $snapshot->stopBilling();
+        $snapshot->delete();
         $service = new SnapshotService();
-        $result = $service->remove(\request('id'));
+        $result = $service->remove($snapshot->remote_id);
         if($result){
-            $snapshot = Snapshot::find(\request('id'));
-            $snapshot->stopBilling();
-            $snapshot->delete();
             Log::info('snapshot removed snapshot #'.request('id').',user #'.Auth::id());
-            return Responder::success("تصویر آنی با موفقیت حذف شد");
         }
         else{
-            Log::warning('failed to remove snapshot. snapshot #'.request('id').',user #'.Auth::id());
-            return Responder::error("حذف تصویر آنی امکانپذیر نمی باشد");
+            Log::warning('failed to remove snapshot #'.request('id').',user #'.Auth::id());
         }
+        return Responder::success("تصویر آنی با موفقیت حذف شد");
     }
 }

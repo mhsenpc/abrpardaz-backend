@@ -48,6 +48,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::post('attachImage', 'MachineController@attachImage');
                 Route::put('detachImage', 'MachineController@detachImage');
                 Route::post('rebuild', 'MachineController@rebuild');
+                Route::put('resetPassword', 'MachineController@resetPassword');
                 Route::post('rename', 'MachineController@rename');
                 Route::delete('remove', 'MachineController@remove');
             });

@@ -46,7 +46,7 @@ class TicketStatusNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("RE: {$this->ticket->title} (شماره تیکت: {$this->ticket->ticket_id})")
-            ->line($this->profile->name)
+            ->line($this->profile->name.' عزیز')
             ->line('تیکت شما به شماره '.$this->ticket->ticket_id .' بسته شد');
     }
 

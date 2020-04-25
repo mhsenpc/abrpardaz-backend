@@ -49,7 +49,7 @@ class NewTicketNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("[Ticket ID: {$this->ticket->ticket_id}] {$this->ticket->title}")
-            ->line($this->profile->name)
+            ->line($this->profile->name.' عزیز')
             ->line('از اینکه با پشتیبانی ابرپرداز تماس گرفتید متشکریم.')
             ->line('تیکتی برای شما باز شده و به محض پاسخ دهی به شما اطلاع داده خواهد شد')
             ->line('اطلاعات تیکت شما:')

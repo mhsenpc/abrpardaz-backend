@@ -13,7 +13,6 @@ class SnapshotService
 
     function __construct()
     {
-        return;
         $this->openstack = new OpenStack([
             'authUrl' => config('openstack.authUrl'),
             'region' => config('openstack.region'),
@@ -29,7 +28,6 @@ class SnapshotService
 
     function rename(string $id, string $newname): bool
     {
-        return true;
         try {
             $service = $this->openstack->blockStorageV2();
 
@@ -44,7 +42,6 @@ class SnapshotService
 
     function remove(string $id): bool
     {
-        return true;
         try {
             $service = $this->openstack->blockStorageV2();
 

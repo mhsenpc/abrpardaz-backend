@@ -46,7 +46,7 @@ class SendMachineInfoNotification extends Notification implements ShouldQueue
     {
         return (new MailMessage)
             ->subject("اطلاعات سرور شما - ابرپرداز")
-            ->line($this->profile->name)
+            ->line($this->profile->name.' عزیز')
             ->line('سرور جدید شما با موفقیت ساخته شد')
             ->line('نام: ' . $this->machine->name)
             ->line('IP: ' . $this->machine->public_ipv4)
