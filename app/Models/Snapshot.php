@@ -40,7 +40,7 @@ class Snapshot extends Model
             'user_id' => $user_id,
             'image_id' => $image_id,
             'last_billing_date' => Carbon::now(),
-            'remote_id' => 'fake_remote_id'
+            'remote_id' => '0'
         ]);
     }
 

@@ -23,4 +23,9 @@ class Project extends Model
 
         static::addGlobalScope(new ProjectAccessScope());
     }
+
+    public function machines()
+    {
+        return $this->hasMany(Machine::class);
+    }
 }

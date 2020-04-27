@@ -278,6 +278,9 @@ class ProjectController extends BaseController
         if($project->owner_id != Auth::id())
             return Responder::error('شما اجازه حذف این پروزه را ندارید');
 
+        if($project->machines->count() >0)
+            return Responder::error('فقط پروزه های خالی می توانند حذف شوند');
+
         $project->delete();
         Log::info('remove project #'.request('id').',user #'.Auth::id());
         return Responder::success('پروژه با موفقیت حذف شد');

@@ -10,7 +10,9 @@ use App\Http\Requests\Backup\TriggerBackupRequest;
 use App\Jobs\TakeBackupJob;
 use App\Models\Backup;
 use App\Models\Machine;
+use App\Services\AutoBackupService;
 use App\Services\Responder;
+use App\Services\SnapshotService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -66,7 +68,7 @@ class BackupController extends BaseController
     function ofMachine(OfMachineRequest $request)
     {
         return Responder::result([
-            'list' => Backup::where('machine_id',\request('machine_id'))->oldest()->get()
+            'list' => Backup::where('machine_id', \request('machine_id'))->oldest()->get()
         ]);
     }
 
@@ -98,8 +100,7 @@ class BackupController extends BaseController
      */
     function trigger(TriggerBackupRequest $request)
     {
-        Machine::findOrFail(request('machine_id'));
-        TakeBackupJob::dispatch(request('machine_id'));
+        AutoBackupService::takeBackup(request('machine_id'));
         return Responder::success('تهیه نسخه پشتیبان بصورت دستی اجرا شد');
     }
 
@@ -142,17 +143,19 @@ class BackupController extends BaseController
     function rename(RenameBackupRequest $request)
     {
         $backup = Backup::findOrFail(request('id'));
-        //$service = new SnapshotService();
-        //$result = $service->rename($backup->remote_id,request('name'));
-        $result = true;
-        if ($result) {
-            $backup->name = request('name');
-            $backup->save();
-            Log::info('Backup removed. id #' . request('id') . ',user #' . Auth::id());
-            return Responder::success('نام نسخه پشتیبان با موفقیت تغییر یافت');
-        } else {
-            return Responder::error('متاسفانه تغییر نام این نسخه پشتیبان انجام نشد');
+        $backup->name = request('name');
+        $backup->save();
+        try {
+            $remote_name = \request('name') . "-" . request('id');
+            $service = new SnapshotService();
+            $service->rename($backup->remote_id, $remote_name);
+            Log::info('Backup rename. id #' . request('id') . ',user #' . Auth::id());
+        } catch (\Exception $exception) {
+            Log::error('failed to rename backup #' . request('id') . ',user #' . Auth::id());
+            Log::error($exception);;
         }
+        return Responder::success('نام نسخه پشتیبان با موفقیت تغییر یافت');
+
     }
 
     /**
@@ -184,14 +187,14 @@ class BackupController extends BaseController
     function remove(RemoveBackupRequest $request)
     {
         $backup = Backup::findOrFail(request('id'));
-        //$service = new SnapshotService();
-        //$result = $service->remove($backup->remote_id);
         $backup->delete();
-        $result = true;
-        if ($result) {
+        try {
+            $service = new SnapshotService();
+            $service->remove($backup->remote_id);
             Log::info('Backup removed. id #' . request('id') . ',user #' . Auth::id());
-        } else {
-            Log::info('Failed to remove backup. id #' . request('id') . ',user #' . Auth::id());
+        } catch (\Exception $exception) {
+            Log::error('Failed to remove backup. id #' . request('id') . ',user #' . Auth::id());
+            Log::error($exception);
         }
         return Responder::success("نسخه پشتیبان با موفقیت حذف شد");
     }

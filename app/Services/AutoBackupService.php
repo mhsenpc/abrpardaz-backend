@@ -27,25 +27,22 @@ class AutoBackupService
         try {
             $machine = Machine::find($machine_id);
             $name = $machine->name . '-' . Carbon::now();
-            //$service = new MachineService();
-            //$image = $service->takeSnapshot($machine->remote_id, $name);
-            $image = new \stdClass();
-            $image->id = '645asd54sad54';
-            $image->size = rand(1.1, 5.9);
-
+            $service = new MachineService();
+            $image = $service->takeSnapshot($machine->remote_id, $name, 0);
 
             //every machine has 7 backup slots at most
             $backups = Backup::where('machine_id', $machine_id)->get();
             //so delete latest
             if ($backups->count() > 6) {
                 $old_backup = Backup::where('machine_id', $machine_id)->oldest()->first();
-                //$service = new SnapshotService();
-                //$result = $service->remove($old_backup->remote_id);
-                $result = true;
-                if ($result) {
-                    $old_backup->delete();
-                } else {
-                    Log::critical("Couldn't delete old backup #" . $old_backup->id);
+                $old_backup->delete();
+                try {
+                    $service = new SnapshotService();
+                    $service->remove($old_backup->remote_id);
+
+                } catch (\Exception $exception) {
+                    Log::error("Couldn't delete old backup #" . $old_backup->id);
+                    Log::error($exception);
                 }
             }
 

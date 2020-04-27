@@ -108,8 +108,11 @@ class MachineController extends BaseController
                             $machine->status = 'power_on';
                         else if ($server->status == 'SHUTOFF')
                             $machine->status = 'power_off';
-
-                        $machine->power = $server;
+                        else if ($server->status == 'ERROR')
+                            $machine->status = 'failed';
+                        else {
+                            $machine->status = $server->status;
+                        }
                     } catch (\Exception $exception) {
                         $machine->status = 'failed';
                     }
@@ -1024,6 +1027,7 @@ class MachineController extends BaseController
             return Responder::success('فرآیند نصب مجدد تصویر بر روی ماشین شما شروع شد.');
         } catch (\Exception $exception) {
             Log::error('failed to rebuild machine #' . request('id') . ', image #' . request('image_id') . ', user #' . Auth::id());
+            Log::error($exception);
             return Responder::error('عملیات با شکست مواجه شد');
         }
     }

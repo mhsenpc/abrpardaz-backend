@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Events\SnapshotCreated;
 use App\Http\Controllers\BaseController;
+use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
 use App\Http\Requests\Snapshot\RenameSnapshotRequest;
-use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Http\Requests\Snapshot\TakeSnapshotRequest;
 use App\Jobs\TakeSnapshotJob;
 use App\Models\Backup;
 use App\Models\Machine;
-use App\Models\ServerActivity;
 use App\Models\Snapshot;
 use App\Services\Responder;
 use App\Services\SnapshotService;
 use App\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -70,7 +67,7 @@ class SnapshotController extends BaseController
     function ofMachine(OfMachineRequest $request)
     {
         return Responder::result([
-            'list' => Backup::where('machine_id',\request('machine_id'))->get()
+            'list' => Snapshot::where('machine_id', \request('machine_id'))->get()
         ]);
     }
 
@@ -126,15 +123,8 @@ class SnapshotController extends BaseController
             $machine->image_id
         );
 
-        TakeSnapshotJob::dispatch($machine->remote_id, \request('name'), $snapshot->id);
+        TakeSnapshotJob::dispatch($machine->id, \request('name'), $snapshot->id);
 
-        SnapshotCreated::dispatch(Auth::id(), $snapshot->id,$snapshot->name);
-        Log::info('take snapshot machine #' . $machine->id . ',user #' . Auth::id());
-        ServerActivity::create([
-            'machine_id' => request('machine_id'),
-            'user_id' => Auth::id(),
-            'message' => 'درخواست ساخت تصویر آنی از سرور دریافت شد'
-        ]);
         return Responder::success('عملیات ساخت تصویر آنی شروع شد');
     }
 
@@ -178,20 +168,21 @@ class SnapshotController extends BaseController
     function rename(RenameSnapshotRequest $request)
     {
         $snapshot = Snapshot::find(request('id'));
-        $service = new SnapshotService();
-        $result = $service->rename(
-            $snapshot->remote_id,
-            \request('name')
-        );
-
         $snapshot->name = \request('name');
         $snapshot->save();
 
-        if($result){
-            Log::info('snapshot renamed snapshot #'.request('id').',user #'.Auth::id());
-        }
-        else{
-            Log::warning('failed to rename snapshot. snapshot #'.request('id').',user #'.Auth::id());
+        $remote_name = \request('name') . "-" . request('id');
+
+        try {
+            $service = new SnapshotService();
+            $service->rename(
+                $snapshot->remote_id,
+                $remote_name
+            );
+            Log::info('snapshot renamed snapshot #' . request('id') . ',user #' . Auth::id());
+        } catch (\Exception $exception) {
+            Log::error('failed to rename snapshot. snapshot #' . request('id') . ',user #' . Auth::id());
+            Log::error($exception);
         }
 
         return Responder::success("نام تصویر آنی با موفقیت تغییر کرد");
@@ -228,13 +219,13 @@ class SnapshotController extends BaseController
         $snapshot = Snapshot::find(\request('id'));
         $snapshot->stopBilling();
         $snapshot->delete();
-        $service = new SnapshotService();
-        $result = $service->remove($snapshot->remote_id);
-        if($result){
-            Log::info('snapshot removed snapshot #'.request('id').',user #'.Auth::id());
-        }
-        else{
-            Log::warning('failed to remove snapshot #'.request('id').',user #'.Auth::id());
+        try {
+            $service = new SnapshotService();
+            $service->remove($snapshot->remote_id);
+            Log::info('snapshot removed snapshot #' . request('id') . ',user #' . Auth::id());
+        } catch (\Exception $exception) {
+            Log::error('failed to remove snapshot #' . request('id') . ',user #' . Auth::id());
+            Log::error($exception);
         }
         return Responder::success("تصویر آنی با موفقیت حذف شد");
     }

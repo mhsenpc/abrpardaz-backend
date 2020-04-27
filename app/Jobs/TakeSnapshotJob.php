@@ -2,6 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Events\SnapshotCreated;
+use App\Models\Machine;
+use App\Models\ServerActivity;
 use App\Models\Snapshot;
 use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\CreateSnapshotFailedNotification;
@@ -21,7 +24,7 @@ class TakeSnapshotJob implements ShouldQueue
     /**
      * @var string
      */
-    private $remote_id;
+    private $machine_id;
     /**
      * @var string
      */
@@ -34,13 +37,13 @@ class TakeSnapshotJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param string $remote_id
+     * @param int $machine_id
      * @param string $name
      * @param int $snapshot_id
      */
-    public function __construct(string $remote_id, string $name, int $snapshot_id)
+    public function __construct(int $machine_id, string $name, int $snapshot_id)
     {
-        $this->remote_id = $remote_id;
+        $this->machine_id = $machine_id;
         $this->name = $name;
         $this->snapshot_id = $snapshot_id;
     }
@@ -53,15 +56,26 @@ class TakeSnapshotJob implements ShouldQueue
     public function handle()
     {
         try {
+            $machine = Machine::find($this->machine_id);
             $service = new MachineService();
-            $image = $service->takeSnapshot($this->remote_id, $this->name);
+            $image = $service->takeSnapshot($machine->remote_id, $this->name,$this->snapshot_id);
             //update size and remote id in snapshots
-            //Snapshot::find($this->snapshot_id)->updateSizeAndRemoteId($image->id, $image->size);
+            Snapshot::find($this->snapshot_id)->updateSizeAndRemoteId($image->id, $image->size);
+
+            SnapshotCreated::dispatch($machine->user_id, $this->snapshot_id,$this->name);
+            Log::info('take snapshot machine #' . $machine->id . ',user #' . $machine->user_id);
+            ServerActivity::create([
+                'machine_id' => $this->machine_id,
+                'user_id' => $machine->user_id,
+                'message' => 'تصویر آنی با نام '.$this->name. " برای سرور ".$machine->name. " ساخته شد"
+            ]);
         } catch (\Exception $exception) {
             Log::critical('failed to take snapshot #'.$this->snapshot_id);
             Log::critical($exception);
             $snapshot = Snapshot::find($this->snapshot_id);
             $snapshot->user->notify(new CreateSnapshotFailedNotification($snapshot, $snapshot->user->profile));
+            $snapshot->remote_id = -1;
+            $snapshot->save();
             $snapshot->delete();
         }
     }

@@ -26,30 +26,21 @@ class SnapshotService
         $this->compute = $this->openstack->computeV2(['region' => config('openstack.region')]);
     }
 
-    function rename(string $id, string $newname): bool
+    function rename(string $id, string $newname)
     {
-        try {
-            $service = $this->openstack->blockStorageV2();
+        $service = $this->openstack->imagesV2();
 
-            $snapshot_remote = $service->getSnapshot($id);
-            $snapshot_remote->name = $newname;
-            $snapshot_remote->update();
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
+        $image = $service->getImage($id);
+        $image->update([
+            'name'       => $newname,
+        ]);
     }
 
-    function remove(string $id): bool
+    function remove(string $id)
     {
-        try {
-            $service = $this->openstack->blockStorageV2();
+        $service = $this->openstack->imagesV2();
 
-            $snapshot_remote = $service->getSnapshot($id);
-            $snapshot_remote->delete();
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
+        $image = $service->getImage($id);
+        $image->delete();
     }
 }

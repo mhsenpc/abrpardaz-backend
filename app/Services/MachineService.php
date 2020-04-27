@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\Image;
 use App\Models\Plan;
 use App\Models\SshKey;
+use Illuminate\Support\Facades\Log;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -119,15 +120,27 @@ chpasswd:
         $server->update();
     }
 
-    function takeSnapshot(string $remote_id, string $name)
+    function takeSnapshot(string $remote_id, string $name,int $snapshot_id)
     {
         $server = $this->compute->getServer(['id' => $remote_id]);
+        $final_name = $name."-".$snapshot_id;
 
         $server->createImage([
-            'name' => $name,
+            'name' => $final_name,
         ]);
 
         $server->waitUntil('Active');
+
+        $images = $this->openstack->imagesV2()
+            ->listImages();
+
+        foreach ($images as $image) {
+            if($image->name == $final_name){
+                return $image;
+            }
+        }
+
+        throw new \Exception('Failed to find snapshot id after taking snapshot #'.$name);
     }
 
     function rebuild(string $remote_id, string $image_remote_id, string $admin_pass)
