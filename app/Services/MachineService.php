@@ -37,15 +37,14 @@ class MachineService
         return $server;
     }
 
-    function createMachineFromImage(int $machine_id, string $name, string $password, int $user_id, int $plan_id, int $image_id, array $meta_data, $ssh_key_id = null)
+    function createMachineFromImage(int $machine_id, string $name, string $password, int $user_id, int $plan_id, string $source_remote_id, array $meta_data, $ssh_key_id = null)
     {
-        $image = Image::find($image_id);
         $plan = Plan::find($plan_id);
 
         $options = [
             // Required
             'name' => $name . "-" . $machine_id,
-            'imageId' => $image->remote_id,
+            'imageId' => $source_remote_id,
             'flavorId' => $plan->remote_id,
 
             // Required if multiple network is defined

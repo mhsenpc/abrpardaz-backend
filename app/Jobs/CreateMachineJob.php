@@ -32,9 +32,9 @@ class CreateMachineJob implements ShouldQueue
      */
     private $plan_id;
     /**
-     * @var int
+     * @var string
      */
-    private $image_id;
+    private $source_remote_id;
     private $ssh_key_id;
     /**
      * @var int
@@ -47,16 +47,16 @@ class CreateMachineJob implements ShouldQueue
      * @param int $user_id
      * @param string $name
      * @param int $plan_id
-     * @param int $image_id
+     * @param string $source_remote_id
      * @param int $machine_id
      * @param $ssh_key_id
      */
-    public function __construct(int $user_id, string $name, int $plan_id, int $image_id, int $machine_id, $ssh_key_id)
+    public function __construct(int $user_id, string $name, int $plan_id, string $source_remote_id, int $machine_id, $ssh_key_id)
     {
         $this->user_id = $user_id;
         $this->name = $name;
         $this->plan_id = $plan_id;
-        $this->image_id = $image_id;
+        $this->source_remote_id = $source_remote_id;
         $this->ssh_key_id = $ssh_key_id;
         $this->machine_id = $machine_id;
     }
@@ -76,7 +76,7 @@ class CreateMachineJob implements ShouldQueue
 
         $service = new MachineService();
         $result = $service->createMachineFromImage(
-            $this->machine_id, $this->name, $machine->password , $this->user_id, $this->plan_id, $this->image_id,$meta_data, $this->ssh_key_id
+            $this->machine_id, $this->name, $machine->password , $this->user_id, $this->plan_id, $this->source_remote_id,$meta_data, $this->ssh_key_id
         );
 
         //update machine record
@@ -99,5 +99,7 @@ class CreateMachineJob implements ShouldQueue
         MachineCreated::dispatch($machine);
 
         $user->notify(new SendMachineInfoNotification($user, $machine));
+
+        Log::info('server '.$this->name.' created from remote image #'.$this->source_remote_id.',user #' . $this->user_id);
     }
 }

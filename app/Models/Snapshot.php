@@ -25,6 +25,11 @@ class Snapshot extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function image()
+    {
+        return $this->belongsTo(Image::class);
+    }
+
     protected $dates = [
         'created_at',
         'updated_at',
@@ -32,6 +37,7 @@ class Snapshot extends Model
         'end_date',
         'last_billing_date'
     ];
+
 
     static function newSnapshot(string $name,int $machine_id,int $user_id,int $image_id){
         return Snapshot::create([

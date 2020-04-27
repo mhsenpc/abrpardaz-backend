@@ -30,6 +30,7 @@ use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
 use App\Models\ServerActivity;
+use App\Models\Snapshot;
 use App\Notifications\CreateServerFailedAdminNotification;
 use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\MachineResetPasswordNotification;
@@ -294,18 +295,28 @@ class MachineController extends BaseController
             }
         }
 
-        if (empty($snapshot_id) && empty($image_id)) {
+        $image = null;
+        $source_remote_id = "source_remote_id";
+        if(!empty($snapshot_id)){
+            $snapshot = Snapshot::findOrFail($snapshot_id);
+            $image = $snapshot->image;
+            $source_remote_id = $snapshot->remote_id;
+        }
+        else if(!empty($image_id)){
+            $image = Image::findOrFail($image_id);
+            $source_remote_id = $image->remote_id;
+        }
+        else{
             return Responder::error('منبع سرور جدید مشخص نشده است');
         }
 
-        $image = Image::findOrFail($image_id);
         $plan = Plan::findOrFail($plan_id);
         if ($plan->disk < $image->min_disk) {
             return Responder::error('فضای دیسک پلن انتخابی برای سیستم عامل انتخاب شده ناکافی است');
         }
 
         if ($plan->ram < $image->min_ram) {
-            return Responder::error('فضای Ram پلن انتخابی برای سیستم عامل انتخاب شده ناکافی است');
+            return Responder::error('فضای رم پلن انتخابی برای سیستم عامل انتخاب شده ناکافی است');
         }
 
         $password = PasswordGeneratorService::generate();
@@ -315,7 +326,7 @@ class MachineController extends BaseController
             $password,
             $user_id,
             $plan_id,
-            $image_id,
+            $image->id,
             $project_id,
             $ssh_key_id
         );
@@ -325,12 +336,11 @@ class MachineController extends BaseController
                 $user_id,
                 $name,
                 $plan_id,
-                $image_id,
+                $source_remote_id,
                 $machine->id,
                 $ssh_key_id
             );
 
-            Log::info('create server from image user #' . $user_id);
             return Responder::success('عملیات ساخت سرور شروع شد');
         } catch (\Exception $exception) {
             $machine->updateRemoteID('-1');
@@ -343,7 +353,7 @@ class MachineController extends BaseController
 
             Log::critical("Couldn't create server " . $name . " from image #" . $image_id . " for user #" . Auth::id());
             Log::critical($exception);
-            return Responder::error('ساخت سرور انجام نشد');
+            return Responder::error('ساخت سرور با شکست مواجه شد');
         }
     }
 
