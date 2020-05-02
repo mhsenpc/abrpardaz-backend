@@ -28,7 +28,8 @@ class TakeSnapshotRequest extends ApiRequest
     {
         return [
             'machine_id' => 'required|numeric|exists:machines,id',
-            'name' => 'required'
+            'name' => 'required',
+            'description' => 'sometimes|nullable',
         ];
     }
 }

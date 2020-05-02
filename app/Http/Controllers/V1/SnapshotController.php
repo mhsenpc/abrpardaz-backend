@@ -5,7 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
-use App\Http\Requests\Snapshot\RenameSnapshotRequest;
+use App\Http\Requests\Snapshot\UpdateSnapshotInfoRequest;
 use App\Http\Requests\Snapshot\TakeSnapshotRequest;
 use App\Jobs\TakeSnapshotJob;
 use App\Models\Backup;
@@ -120,7 +120,8 @@ class SnapshotController extends BaseController
             \request('name'),
             \request('machine_id'),
             Auth::id(),
-            $machine->image_id
+            $machine->image_id,
+            request('description')
         );
 
         TakeSnapshotJob::dispatch($machine->id, \request('name'), $snapshot->id);
@@ -132,8 +133,8 @@ class SnapshotController extends BaseController
     /**
      * @OA\Post(
      *      tags={"Snapshot"},
-     *      path="/snapshots/{id}/rename",
-     *      summary="Rename a snapshot",
+     *      path="/snapshots/updateInfo",
+     *      summary="Change information of a snapshot",
      *      description="",
      *
      * @OA\Parameter(
@@ -145,11 +146,20 @@ class SnapshotController extends BaseController
      *             type="integer"
      *         )
      *     ),
-     *
      * @OA\Parameter(
      *         name="name",
      *         in="query",
-     *         description="new name of the snapshot",
+     *         description="The name you want to put on the snapshot",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
+     * @OA\Parameter(
+     *         name="description",
+     *         in="query",
+     *         description="The extra information you put on the snapshot",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -158,17 +168,16 @@ class SnapshotController extends BaseController
      *
      * @OA\Response(
      *         response="default",
-     *         description="result"
+     *         description=""
      *     ),
-     *
-     *
      *     )
      *
      */
-    function rename(RenameSnapshotRequest $request)
+    function updateInfo(UpdateSnapshotInfoRequest $request)
     {
         $snapshot = Snapshot::find(request('id'));
         $snapshot->name = \request('name');
+        $snapshot->description = \request('description');
         $snapshot->save();
 
         $remote_name = \request('name') . "-" . request('id');
@@ -185,7 +194,7 @@ class SnapshotController extends BaseController
             Log::error($exception);
         }
 
-        return Responder::success("نام تصویر آنی با موفقیت تغییر کرد");
+        return Responder::success("اطلاعات تصویر آنی با موفقیت تغییر کرد");
     }
 
     /**

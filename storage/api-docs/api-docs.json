@@ -1887,14 +1887,14 @@
                 }
             }
         },
-        "/snapshots/{id}/rename": {
+        "/snapshots/updateSnapshot": {
             "post": {
                 "tags": [
                     "Snapshot"
                 ],
-                "summary": "Rename a snapshot",
+                "summary": "Change information of a snapshot",
                 "description": "",
-                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::rename",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::updateSnapshot",
                 "parameters": [
                     {
                         "name": "id",
@@ -1908,7 +1908,16 @@
                     {
                         "name": "name",
                         "in": "query",
-                        "description": "new name of the snapshot",
+                        "description": "The name you want to put on the snapshot",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "The extra information you put on the snapshot",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1917,7 +1926,7 @@
                 ],
                 "responses": {
                     "default": {
-                        "description": "result"
+                        "description": ""
                     }
                 }
             }

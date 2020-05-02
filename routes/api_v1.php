@@ -61,7 +61,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
 
                 Route::prefix('{id}')->group(function () {
                     Route::get('getProgress', 'SnapshotController@getProgress');
-                    Route::post('rename', 'SnapshotController@rename');
+                    Route::post('updateInfo', 'SnapshotController@updateInfo');
                     Route::delete('remove', 'SnapshotController@remove');
                 });
             });
@@ -72,7 +72,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
                 Route::put('trigger', 'BackupController@trigger');
 
                 Route::prefix('{id}')->group(function () {
-                    Route::post('rename', 'BackupController@rename');
+                    Route::post('updateInfo', 'BackupController@updateInfo');
                     Route::delete('remove', 'BackupController@remove');
                 });
             });

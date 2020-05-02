@@ -5,7 +5,7 @@ namespace App\Http\Requests\Snapshot;
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class RenameSnapshotRequest extends ApiRequest
+class UpdateSnapshotInfoRequest extends ApiRequest
 {
     use AddIDParameterTrait;
 
@@ -27,8 +27,9 @@ class RenameSnapshotRequest extends ApiRequest
     public function rules()
     {
         return [
-            'name' => 'required',
             'id' => 'required|numeric|exists:snapshots,id',
+            'name' => 'required',
+            'description' => 'sometimes|nullable',
         ];
     }
 }
