@@ -21,6 +21,7 @@ class CreateBackupsTable extends Migration
             $table->integer('machine_id');
             $table->integer('user_id');
             $table->integer('image_id');
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

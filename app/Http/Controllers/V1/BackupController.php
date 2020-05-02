@@ -5,7 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Backup\OfMachineRequest;
 use App\Http\Requests\Backup\RemoveBackupRequest;
-use App\Http\Requests\Backup\RenameBackupRequest;
+use App\Http\Requests\Backup\UpdateBackupInfoRequest;
 use App\Http\Requests\Backup\TriggerBackupRequest;
 use App\Jobs\TakeBackupJob;
 use App\Models\Backup;
@@ -107,7 +107,7 @@ class BackupController extends BaseController
     /**
      * @OA\Post(
      *      tags={"Backup"},
-     *      path="/backups/{id}/rename",
+     *      path="/backups/{id}/updateInfo",
      *      summary="Rename a backup",
      *      description="",
      *
@@ -131,6 +131,16 @@ class BackupController extends BaseController
      *         )
      *     ),
      *
+     * @OA\Parameter(
+     *         name="description",
+     *         in="query",
+     *         description="The extra information you put on the backup",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *
      * @OA\Response(
      *         response="default",
      *         description="result"
@@ -140,10 +150,11 @@ class BackupController extends BaseController
      *     )
      *
      */
-    function rename(RenameBackupRequest $request)
+    function updateInfo(UpdateBackupInfoRequest $request)
     {
         $backup = Backup::findOrFail(request('id'));
         $backup->name = request('name');
+        $backup->description = request('description');
         $backup->save();
         try {
             $remote_name = \request('name') . "-" . request('id');

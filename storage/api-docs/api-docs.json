@@ -380,14 +380,14 @@
                 }
             }
         },
-        "/backups/{id}/rename": {
+        "/backups/{id}/updateInfo": {
             "post": {
                 "tags": [
                     "Backup"
                 ],
                 "summary": "Rename a backup",
                 "description": "",
-                "operationId": "App\\Http\\Controllers\\V1\\BackupController::rename",
+                "operationId": "App\\Http\\Controllers\\V1\\BackupController::updateInfo",
                 "parameters": [
                     {
                         "name": "id",
@@ -402,6 +402,15 @@
                         "name": "name",
                         "in": "query",
                         "description": "new name of the backup",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "The extra information you put on the backup",
                         "required": true,
                         "schema": {
                             "type": "string"
@@ -1887,14 +1896,14 @@
                 }
             }
         },
-        "/snapshots/updateSnapshot": {
+        "/snapshots/updateInfo": {
             "post": {
                 "tags": [
                     "Snapshot"
                 ],
                 "summary": "Change information of a snapshot",
                 "description": "",
-                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::updateSnapshot",
+                "operationId": "App\\Http\\Controllers\\V1\\SnapshotController::updateInfo",
                 "parameters": [
                     {
                         "name": "id",

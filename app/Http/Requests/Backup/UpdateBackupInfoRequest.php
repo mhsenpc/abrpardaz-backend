@@ -5,7 +5,7 @@ namespace App\Http\Requests\Backup;
 use App\Http\Requests\ApiRequest;
 use App\Traits\AddIDParameterTrait;
 
-class RenameBackupRequest extends ApiRequest
+class UpdateBackupInfoRequest extends ApiRequest
 {
     use AddIDParameterTrait;
     /**
@@ -27,7 +27,8 @@ class RenameBackupRequest extends ApiRequest
     {
         return [
             'id' => 'required|numeric|exists:backups,id',
-            'name'=>'required'
+            'name'=>'required',
+            'description'=>'sometimes|nullable',
         ];
     }
 }
