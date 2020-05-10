@@ -15,7 +15,7 @@ class InvoiceController extends BaseController
 {
     function __construct()
     {
-        $this->middleware('permission:Invoice Operator', ['only' => ['unsuspend']]);
+        $this->middleware('permission:Invoice Operator', ['only' => ['show','confirmReceipt']]);
     }
 
     function index()

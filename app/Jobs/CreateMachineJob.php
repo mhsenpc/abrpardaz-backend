@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Events\MachineCreated;
 use App\Models\Machine;
 use App\Models\MachineBilling;
+use App\Notifications\CreateServerFailedAdminNotification;
+use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\User;
@@ -70,36 +72,48 @@ class CreateMachineJob implements ShouldQueue
     {
         $machine = Machine::find($this->machine_id);
         $user = User::with('profile')->find($this->user_id);
-        $meta_data =[
+        $meta_data = [
             'user' => json_encode($user)
         ];
 
         $service = new MachineService();
         $result = $service->createMachineFromImage(
-            $this->machine_id, $this->name, $machine->password , $this->user_id, $this->plan_id, $this->source_remote_id,$meta_data, $this->ssh_key_id
+            $this->machine_id, $this->name, $machine->password, $this->user_id, $this->plan_id, $this->source_remote_id, $meta_data, $this->ssh_key_id
         );
 
-        //update machine record
-        $machine->updateRemoteID($result->id);
-
-        foreach (reset($result->addresses) as $address) {
-            if ($address['version'] == 4) {
-                $machine->updateIpv4($address['addr']);
+        if ($result->status === "ERROR") {
+            $machine->updateRemoteID('-1');
+            $admins = User::role('Super Admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new CreateServerFailedAdminNotification($machine, User::find($this->user_id)->profile));
             }
+
+            User::find($this->user_id)->notify(new CreateServerFailedNotification($machine, User::find($this->user_id)->profile));
+
+            Log::critical("Couldn't create server " . $this->name . " from image #" . $this->source_remote_id . " for user #" . $this->user_id);
+        } else {
+            //update machine record
+            $machine->updateRemoteID($result->id);
+
+            foreach (reset($result->addresses) as $address) {
+                if ($address['version'] == 4) {
+                    $machine->updateIpv4($address['addr']);
+                }
+            }
+
+            $user = User::find($this->user_id);
+
+            MachineBilling::create([
+                'machine_id' => $this->machine_id,
+                'plan_id' => $this->plan_id,
+                'last_billing_date' => Carbon::now()
+            ]);
+
+            MachineCreated::dispatch($machine);
+
+            $user->notify(new SendMachineInfoNotification($user, $machine));
+
+            Log::info('server ' . $this->name . ' created from remote image #' . $this->source_remote_id . ',user #' . $this->user_id);
         }
-
-        $user = User::find($this->user_id);
-
-        MachineBilling::create([
-            'machine_id' => $this->machine_id,
-            'plan_id' => $this->plan_id,
-            'last_billing_date' => Carbon::now()
-        ]);
-
-        MachineCreated::dispatch($machine);
-
-        $user->notify(new SendMachineInfoNotification($user, $machine));
-
-        Log::info('server '.$this->name.' created from remote image #'.$this->source_remote_id.',user #' . $this->user_id);
     }
 }

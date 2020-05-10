@@ -36,8 +36,8 @@ class BackupController extends BaseController
      */
     function index()
     {
-        $backups = Backup::paginate(10);
-        return Responder::result(['pagination' => $backups]);
+        $backups = Machine::with('backups.image')->whereHas('backups')->get();
+        return Responder::result(['list' => $backups]);
     }
 
     /**

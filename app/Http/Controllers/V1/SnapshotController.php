@@ -36,7 +36,7 @@ class SnapshotController extends BaseController
      */
     function index()
     {
-        return Responder::result(['list' => Snapshot::all()]);
+        return Responder::result(['list' => Snapshot::with('image')->get()]);
     }
 
     /**

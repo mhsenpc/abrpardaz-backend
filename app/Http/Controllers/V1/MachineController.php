@@ -26,6 +26,7 @@ use App\Http\Requests\Server\SoftRebootRequest;
 use App\Http\Requests\Server\UnrescueServerRequest;
 use App\Jobs\CreateMachineJob;
 use App\Jobs\RemoveMachineBackupsJob;
+use App\Models\Backup;
 use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
@@ -281,8 +282,13 @@ class MachineController extends BaseController
         $plan_id = \request('plan_id');
         $image_id = \request('image_id');
         $snapshot_id = \request('snapshot_id');
+        $backup_id = \request('backup_id');
         $project_id = request('project_id');
         $ssh_key_id = \request('ssh_key_id');
+        $auto_backup = false;
+        if(!empty(\request('auto_backup'))){
+            $auto_backup = true;
+        }
 
         if (!User::find($user_id)->projects->contains($project_id)) {
             return Responder::error('شما به این پروژه دسترسی ندارید');
@@ -301,6 +307,11 @@ class MachineController extends BaseController
             $snapshot = Snapshot::findOrFail($snapshot_id);
             $image = $snapshot->image;
             $source_remote_id = $snapshot->remote_id;
+        }
+        else if(!empty($backup_id)){
+            $backup = Backup::findOrFail($backup_id);
+            $image = $backup->image;
+            $source_remote_id = $backup->remote_id;
         }
         else if(!empty($image_id)){
             $image = Image::findOrFail($image_id);
@@ -328,6 +339,7 @@ class MachineController extends BaseController
             $plan_id,
             $image->id,
             $project_id,
+            $auto_backup,
             $ssh_key_id
         );
 

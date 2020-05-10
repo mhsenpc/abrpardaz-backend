@@ -57,7 +57,11 @@ class Machine extends Model
         return $this->belongsTo(User::class);
     }
 
-    static function createMachine(string $name,string $password, int $user_id, int $plan_id, int $image_id, int $project_id, $ssh_key_id = null): Machine
+    public function backups(){
+        return $this->hasMany(Backup::class);
+    }
+
+    static function createMachine(string $name,string $password, int $user_id, int $plan_id, int $image_id, int $project_id,bool $backup,$ssh_key_id = null): Machine
     {
         /** @var Machine $machine */
         $machine = new Machine();
@@ -69,6 +73,7 @@ class Machine extends Model
         $machine->ssh_key_id = $ssh_key_id;
         $machine->project_id = $project_id;
         $machine->remote_id = 0;
+        $machine->backup = $backup;
         $machine->save();
 
         return $machine;
