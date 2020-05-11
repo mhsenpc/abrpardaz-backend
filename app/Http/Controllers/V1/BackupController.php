@@ -5,9 +5,8 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Backup\OfMachineRequest;
 use App\Http\Requests\Backup\RemoveBackupRequest;
-use App\Http\Requests\Backup\UpdateBackupInfoRequest;
 use App\Http\Requests\Backup\TriggerBackupRequest;
-use App\Jobs\TakeBackupJob;
+use App\Http\Requests\Backup\UpdateBackupInfoRequest;
 use App\Models\Backup;
 use App\Models\Machine;
 use App\Services\AutoBackupService;
@@ -157,16 +156,17 @@ class BackupController extends BaseController
         $backup->description = request('description');
         $backup->save();
         try {
-            $remote_name = \request('name') . "-" . request('id');
-            $service = new SnapshotService();
-            $service->rename($backup->remote_id, $remote_name);
-            Log::info('Backup rename. id #' . request('id') . ',user #' . Auth::id());
+            if (!in_array($backup->remote_id, ['0', '-1'])) {
+                $remote_name = \request('name') . "-" . request('id');
+                $service = new SnapshotService();
+                $service->rename($backup->remote_id, $remote_name);
+                Log::info('Backup rename. id #' . request('id') . ',user #' . Auth::id());
+            }
         } catch (\Exception $exception) {
             Log::error('failed to rename backup #' . request('id') . ',user #' . Auth::id());
             Log::error($exception);;
         }
         return Responder::success('نام نسخه پشتیبان با موفقیت تغییر یافت');
-
     }
 
     /**
@@ -198,15 +198,18 @@ class BackupController extends BaseController
     function remove(RemoveBackupRequest $request)
     {
         $backup = Backup::findOrFail(request('id'));
-        $backup->delete();
         try {
-            $service = new SnapshotService();
-            $service->remove($backup->remote_id);
+            if (!in_array($backup->remote_id, ['0', '-1'])) {
+                $service = new SnapshotService();
+                $service->remove($backup->remote_id);
+            }
+            $backup->delete();
             Log::info('Backup removed. id #' . request('id') . ',user #' . Auth::id());
+            return Responder::success("نسخه پشتیبان با موفقیت حذف شد");
         } catch (\Exception $exception) {
             Log::error('Failed to remove backup. id #' . request('id') . ',user #' . Auth::id());
             Log::error($exception);
+            return Responder::error("عملیات حذف نسخه پشتیبان با شکست مواجه گردید");
         }
-        return Responder::success("نسخه پشتیبان با موفقیت حذف شد");
     }
 }

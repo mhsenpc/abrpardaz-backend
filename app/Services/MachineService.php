@@ -4,10 +4,8 @@
 namespace App\Services;
 
 
-use App\Models\Image;
 use App\Models\Plan;
 use App\Models\SshKey;
-use Illuminate\Support\Facades\Log;
 use OpenStack\OpenStack;
 
 class MachineService
@@ -84,45 +82,71 @@ chpasswd:
 
     function powerOn(string $id)
     {
+        if ($id === "0" || $id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $id]);
         $server->start();
+        return true;
     }
 
     function powerOff(string $id)
     {
+        if ($id === "0" || $id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $id]);
         $server->stop();
+        return true;
     }
 
     function softReboot(string $id)
     {
+        if ($id === "0" || $id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $id]);
         $server->reboot('SOFT');
+        return true;
     }
 
     function hardReboot(string $id)
     {
+        if ($id === "0" || $id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $id]);
         $server->reboot('HARD');
+        return true;
     }
 
     function console(string $id)
     {
+        if ($id === "0" || $id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $id]);
         return $server->getConsoleOutput();
     }
 
     function rename(string $id, string $newname)
     {
+        if ($id === "0" || $id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $id]);
         $server->name = $newname;
         $server->update();
+        return true;
     }
 
-    function takeSnapshot(string $remote_id, string $name,int $snapshot_id)
+    function takeSnapshot(string $remote_id, string $name, int $snapshot_id)
     {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $remote_id]);
-        $final_name = $name."-".$snapshot_id;
+        $final_name = $name . "-" . $snapshot_id;
 
         $server->createImage([
             'name' => $final_name,
@@ -134,16 +158,19 @@ chpasswd:
             ->listImages();
 
         foreach ($images as $image) {
-            if($image->name == $final_name){
+            if ($image->name == $final_name) {
                 return $image;
             }
         }
 
-        throw new \Exception('Failed to find snapshot id after taking snapshot #'.$name);
+        throw new \Exception('Failed to find snapshot id after taking snapshot #' . $name);
     }
 
     function rebuild(string $remote_id, string $image_remote_id, string $admin_pass)
     {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer([
             'id' => $remote_id,
         ]);
@@ -156,34 +183,59 @@ chpasswd:
         return true;
     }
 
-    function rescale(string $remote_id,string $flavor_id){
+    function rescale(string $remote_id, string $flavor_id)
+    {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $remote_id]);
 
         $server->resize($flavor_id);
+        $server->waitUntilActive();
         $server->confirmResize();
+        return true;
     }
 
-    function attachImage(string $remote_id,string $image_id,string $admin_pass){
+    function attachImage(string $remote_id, string $image_id, string $admin_pass)
+    {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $remote_id]);
         $server->rescue([
-            'imageId'   => $image_id,
+            'imageId' => $image_id,
             'adminPass' => $admin_pass,
         ]);
+        return true;
     }
 
-    function detachImage(string $remote_id){
+    function detachImage(string $remote_id)
+    {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $remote_id]);
         $server->unrescue();
+        return true;
     }
 
-    function resetPassword(string $remote_id,string $password){
+    function resetPassword(string $remote_id, string $password)
+    {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $remote_id]);
         $server->changePassword($password);
+        return true;
     }
 
     function remove(string $remote_id)
     {
+        if ($remote_id === "0" || $remote_id === "1")
+            return false;
+
         $server = $this->compute->getServer(['id' => $remote_id]);
         $server->delete();
+        return true;
     }
 }

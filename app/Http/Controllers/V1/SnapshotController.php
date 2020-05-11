@@ -5,10 +5,9 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Snapshot\OfMachineRequest;
 use App\Http\Requests\Snapshot\RemoveSnapshotRequest;
-use App\Http\Requests\Snapshot\UpdateSnapshotInfoRequest;
 use App\Http\Requests\Snapshot\TakeSnapshotRequest;
+use App\Http\Requests\Snapshot\UpdateSnapshotInfoRequest;
 use App\Jobs\TakeSnapshotJob;
-use App\Models\Backup;
 use App\Models\Machine;
 use App\Models\Snapshot;
 use App\Services\Responder;
@@ -183,12 +182,14 @@ class SnapshotController extends BaseController
         $remote_name = \request('name') . "-" . request('id');
 
         try {
-            $service = new SnapshotService();
-            $service->rename(
-                $snapshot->remote_id,
-                $remote_name
-            );
-            Log::info('snapshot renamed snapshot #' . request('id') . ',user #' . Auth::id());
+            if (!in_array($snapshot->remote_id, ['0', '-1'])) {
+                $service = new SnapshotService();
+                $service->rename(
+                    $snapshot->remote_id,
+                    $remote_name
+                );
+                Log::info('snapshot renamed snapshot #' . request('id') . ',user #' . Auth::id());
+            }
         } catch (\Exception $exception) {
             Log::error('failed to rename snapshot. snapshot #' . request('id') . ',user #' . Auth::id());
             Log::error($exception);
@@ -226,16 +227,19 @@ class SnapshotController extends BaseController
     function remove(RemoveSnapshotRequest $request)
     {
         $snapshot = Snapshot::find(\request('id'));
-        $snapshot->stopBilling();
-        $snapshot->delete();
         try {
-            $service = new SnapshotService();
-            $service->remove($snapshot->remote_id);
+            if (!in_array($snapshot->remote_id, ['0', '-1'])) {
+                $service = new SnapshotService();
+                $service->remove($snapshot->remote_id);
+            }
+            $snapshot->stopBilling();
+            $snapshot->delete();
             Log::info('snapshot removed snapshot #' . request('id') . ',user #' . Auth::id());
+            return Responder::success("تصویر آنی با موفقیت حذف شد");
         } catch (\Exception $exception) {
             Log::error('failed to remove snapshot #' . request('id') . ',user #' . Auth::id());
             Log::error($exception);
+            return Responder::error("عملیات حذف تصویر آنی با شکست مواجه گردید");
         }
-        return Responder::success("تصویر آنی با موفقیت حذف شد");
     }
 }

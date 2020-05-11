@@ -1133,7 +1133,7 @@ class MachineController extends BaseController
         }
         try {
             $machine->delete();
-            if (!in_array($machine->remote_id, ['0', -1])) {
+            if (!in_array($machine->remote_id, ['0', '-1'])) {
                 $service = new MachineService();
                 $service->remove($machine->remote_id);
                 RemoveMachineBackupsJob::dispatch(\request('id'), Auth::id());
