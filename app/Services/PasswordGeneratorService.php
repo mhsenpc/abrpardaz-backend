@@ -8,7 +8,8 @@ use Illuminate\Support\Str;
 
 class PasswordGeneratorService
 {
-    static function generate(){
-        return Str::random(6);
+    static function generate(int $length = 6)
+    {
+        return Str::random($length);
     }
 }

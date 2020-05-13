@@ -8,11 +8,13 @@ use App\Models\Project;
 use App\Models\Snapshot;
 use App\Models\UserLimit;
 use App\Models\Volume;
+use App\Services\IdentityService;
+use App\Services\PasswordGeneratorService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -34,7 +36,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password','remote_password'
     ];
 
     /**
@@ -92,6 +94,13 @@ class User extends Authenticatable
 
     static function newUser(string $email, string $password)
     {
+        $remote_user_id = "";
+        $remote_password = PasswordGeneratorService::generate(12);
+
+        $identity = new IdentityService();
+        $remote_user = $identity->createUser($email, $remote_password);
+        $remote_user_id = $remote_user->id;
+
         $profile = (new Profile());
         $profile->save();
 
@@ -101,9 +110,14 @@ class User extends Authenticatable
         $user->profile_id = $profile->id;
         $user->last_billing_date = Carbon::now();
         $user->user_limit_id = UserLimit::findDefaultGroup()->id;
+        $user->remote_user_id = $remote_user_id;
+        $user->remote_user_name = $email;
+        $user->remote_password = $remote_password;
         $user->save();
 
         $user->syncRoles(['Normal User']);
+
+        $project = Project::createProject($email,'Default',$user->id);
 
         return $user;
     }
@@ -133,25 +147,29 @@ class User extends Authenticatable
         return Volume::where('user_id', $this->id)->sum('size');
     }
 
-    function verifyEmail(){
+    function verifyEmail()
+    {
         $this->email_verified_at = Carbon::now();
         $this->save();
         return $this;
     }
 
-    function changeUserLimit(int $user_limit_id){
+    function changeUserLimit(int $user_limit_id)
+    {
         $this->user_limit_id = $user_limit_id;
         $this->save();
         return $this;
     }
 
-    function suspend(){
+    function suspend()
+    {
         $this->suspend = true;
         $this->save();
         return $this;
     }
 
-    function unsuspend(){
+    function unsuspend()
+    {
         $this->suspend = false;
         $this->save();
         return $this;

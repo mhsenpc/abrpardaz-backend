@@ -183,7 +183,7 @@ class SnapshotController extends BaseController
 
         try {
             if (!in_array($snapshot->remote_id, ['0', '-1'])) {
-                $service = new SnapshotService();
+                $service = new SnapshotService($snapshot->user->remote_user_id, $snapshot->user->remote_password, $snapshot->machine->project->remote_id);
                 $service->rename(
                     $snapshot->remote_id,
                     $remote_name
@@ -229,7 +229,7 @@ class SnapshotController extends BaseController
         $snapshot = Snapshot::find(\request('id'));
         try {
             if (!in_array($snapshot->remote_id, ['0', '-1'])) {
-                $service = new SnapshotService();
+                $service = new SnapshotService($snapshot->user->remote_user_id, $snapshot->user->remote_password, $snapshot->machine->project->remote_id);
                 $service->remove($snapshot->remote_id);
             }
             $snapshot->stopBilling();

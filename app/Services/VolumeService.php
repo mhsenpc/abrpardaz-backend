@@ -11,17 +11,16 @@ class VolumeService
     private $openstack;
     private $service;
 
-    function __construct()
+    function __construct(string $user_id, string $password, string $project_id)
     {
-        return;
         $this->openstack = new OpenStack([
             'authUrl' => config('openstack.authUrl'),
             'region' => config('openstack.region'),
             'user' => [
-                'id' => config('openstack.userId'),
-                'password' => config('openstack.password')
+                'id' => $user_id,
+                'password' => $password
             ],
-            'scope' => ['project' => ['id' => config('openstack.projectId')]]
+            'scope' => ['project' => ['id' => $project_id ]]
         ]);
 
         $service = $this->openstack->blockStorageV2();

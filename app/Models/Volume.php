@@ -25,6 +25,11 @@ class Volume extends Model
         return $this->belongsTo(Machine::class);
     }
 
+    public function project()
+    {
+        return $this->belongsTo(Machine::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(\App\User::class);

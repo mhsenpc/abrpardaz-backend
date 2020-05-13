@@ -25,7 +25,8 @@ class CreateVolumeRequest extends ApiRequest
     {
         return [
             'name' => 'required',
-            'size' => 'required|numeric'
+            'size' => 'required|numeric',
+            'project_id' => 'required|numeric|exists:projects,id',
         ];
     }
 }

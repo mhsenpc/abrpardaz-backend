@@ -30,6 +30,7 @@ use App\Models\Backup;
 use App\Models\Image;
 use App\Models\Machine;
 use App\Models\Plan;
+use App\Models\Project;
 use App\Models\ServerActivity;
 use App\Models\Snapshot;
 use App\Notifications\CreateServerFailedAdminNotification;
@@ -93,8 +94,9 @@ class MachineController extends BaseController
      */
     function ofProject(ListRequest $request)
     {
+        $project = Project::find(request('id'));
         $machines = Machine::with(['image', 'plan', 'sshKey'])->where('project_id', request('id'))->get();
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $project->remote_id);
         foreach ($machines as &$machine) {
             switch ($machine->remote_id) {
                 case '-1':
@@ -163,7 +165,7 @@ class MachineController extends BaseController
                 $machine->powerState = 0;
                 $machine->status = 'ERROR';
             } else {
-                $service = new MachineService();
+                $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
                 $server = $service->getServer($machine->remote_id);
                 $machine->powerState = $server->powerState;
                 $machine->status = $server->status;
@@ -398,7 +400,7 @@ class MachineController extends BaseController
     function console(GetConsoleRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         $link = $service->console($machine->remote_id);
 
         Log::info('get console machine #' . $machine->id . ',user #' . Auth::id());
@@ -437,7 +439,7 @@ class MachineController extends BaseController
     function powerOn(PowerOnRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         $service->powerOn($machine->remote_id);
         Log::info('power on machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
@@ -475,7 +477,7 @@ class MachineController extends BaseController
     function powerOff(PowerOffRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         $service->powerOff($machine->remote_id);
         Log::info('power off machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
@@ -514,7 +516,7 @@ class MachineController extends BaseController
     {
         $machine = Machine::findorFail(\request('id'));
         try {
-            $service = new MachineService();
+            $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
             $service->softReboot($machine->remote_id);
             Log::info('soft reboot machine #' . $machine->id . ',user #' . Auth::id());
             ServerActivity::create([
@@ -555,7 +557,7 @@ class MachineController extends BaseController
     function hardReboot(HardRebootRequest $request)
     {
         $machine = Machine::findorFail(\request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         $service->hardReboot($machine->remote_id);
         Log::info('hard reboot machine #' . $machine->id . ',user #' . Auth::id());
         ServerActivity::create([
@@ -642,7 +644,7 @@ class MachineController extends BaseController
     function rename(RenameServerRequest $request)
     {
         $machine = Machine::find(\request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         $service->rename($machine->remote_id, \request('name') . '-' . \request('id'));
 
         $machine->name = request('name');
@@ -699,7 +701,7 @@ class MachineController extends BaseController
         if (request('plan_id') == $machine->plan->id) {
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
         }
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         try {
             $service->rescale($machine->remote_id, $plan->remote_id);
             $machine->changePlan($plan);
@@ -745,7 +747,7 @@ class MachineController extends BaseController
     function rescue(RescueServerRequest $request)
     {
         $machine = Machine::find(request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         $rescue_image_id = ""; //TODO: which image should be used to rescue?
         $admin_pass = PasswordGeneratorService::generate();
         try {
@@ -795,7 +797,7 @@ class MachineController extends BaseController
     function unrescue(UnrescueServerRequest $request)
     {
         $machine = Machine::find(request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         try {
             $service->detachImage($machine->remote_id);
             Log::info('Unrescue machine #' . $machine->id . ',user #' . Auth::id());
@@ -851,7 +853,7 @@ class MachineController extends BaseController
         $machine = Machine::find(request('id'));
         $image = Image::find(request('image_id'));
         $admin_pass = PasswordGeneratorService::generate();
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         try {
             $service->attachImage($machine->remote_id, $image, $admin_pass);
             Log::info('Attach image #' . request('image_id') . ', machine #' . $machine->id . ',user #' . Auth::id());
@@ -899,7 +901,7 @@ class MachineController extends BaseController
     function detachImage(DetachImageFromServerRequest $request)
     {
         $machine = Machine::find(request('id'));
-        $service = new MachineService();
+        $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
         try {
             $service->detachImage($machine->remote_id);
             Log::info('Detach image from machine #' . $machine->id . ',user #' . Auth::id());
@@ -1035,7 +1037,7 @@ class MachineController extends BaseController
         $image = Image::find(request('image_id'));
         $new_pass = PasswordGeneratorService::generate();
         try {
-            $service = new MachineService();
+            $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
             $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
             $machine->password = $new_pass;
             $machine->save();
@@ -1083,7 +1085,7 @@ class MachineController extends BaseController
         $machine = Machine::find(request('id'));
         $new_pass = PasswordGeneratorService::generate();
         try {
-            $service = new MachineService();
+            $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
             $service->resetPassword($machine->remote_id, $new_pass);
             $machine->password = $new_pass;
             $machine->save();
@@ -1134,7 +1136,7 @@ class MachineController extends BaseController
         try {
             $machine->delete();
             if (!in_array($machine->remote_id, ['0', '-1'])) {
-                $service = new MachineService();
+                $service = new MachineService(Auth::user()->remote_user_id,Auth::user()->remote_password, $machine->project->remote_id);
                 $service->remove($machine->remote_id);
                 RemoveMachineBackupsJob::dispatch(\request('id'), Auth::id());
             }

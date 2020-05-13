@@ -76,7 +76,7 @@ class CreateMachineJob implements ShouldQueue
             'user' => json_encode($user)
         ];
 
-        $service = new MachineService();
+        $service = new MachineService($user->remote_user_id,$user->remote_password,$machine->project->remote_id);
         $result = $service->createMachineFromImage(
             $this->machine_id, $this->name, $machine->password, $this->user_id, $this->plan_id, $this->source_remote_id, $meta_data, $this->ssh_key_id
         );
