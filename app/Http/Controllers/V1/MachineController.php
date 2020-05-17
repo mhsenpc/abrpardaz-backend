@@ -25,6 +25,7 @@ use App\Http\Requests\Server\ResendInfoRequest;
 use App\Http\Requests\Server\SoftRebootRequest;
 use App\Http\Requests\Server\UnrescueServerRequest;
 use App\Jobs\CreateMachineJob;
+use App\Jobs\RebuildMachineJob;
 use App\Jobs\RemoveMachineBackupsJob;
 use App\Models\Backup;
 use App\Models\Image;
@@ -98,7 +99,7 @@ class MachineController extends BaseController
         foreach ($machines as &$machine) {
             switch ($machine->remote_id) {
                 case '-1':
-                    $machine->status = 'failed';
+                    $machine->status = 'ERROR';
                     break;
                 case '0':
                     $machine->status = 'creating';
@@ -106,15 +107,8 @@ class MachineController extends BaseController
                 default:
                     try {
                         $server = $service->getServer($machine->remote_id);
-                        if ($server->status == 'ACTIVE')
-                            $machine->status = 'power_on';
-                        else if ($server->status == 'SHUTOFF')
-                            $machine->status = 'power_off';
-                        else if ($server->status == 'ERROR')
-                            $machine->status = 'failed';
-                        else {
-                            $machine->status = $server->status;
-                        }
+                        $machine->status = $server->status;
+
                     } catch (\Exception $exception) {
                         $machine->status = 'failed';
                     }
@@ -1032,26 +1026,18 @@ class MachineController extends BaseController
     function rebuild(RebuildServerRequest $request)
     {
         $machine = Machine::find(request('id'));
+        $plan = $machine->plan;
         $image = Image::find(request('image_id'));
-        $new_pass = PasswordGeneratorService::generate();
-        try {
-            $service = new MachineService();
-            $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
-            $machine->password = $new_pass;
-            $machine->save();
-            Auth::user()->notify(new RebuildMachineNotification(Auth::user()->profile, $machine));
-            Log::info('rebuild machine #' . $machine->id . ', image #' . request('image_id') . ', user #' . Auth::id());
-            ServerActivity::create([
-                'machine_id' => request('id'),
-                'user_id' => Auth::id(),
-                'message' => 'تصویر جدید بر روی ماشین بارگذاری شد'
-            ]);
-            return Responder::success('فرآیند نصب مجدد تصویر بر روی ماشین شما شروع شد.');
-        } catch (\Exception $exception) {
-            Log::error('failed to rebuild machine #' . request('id') . ', image #' . request('image_id') . ', user #' . Auth::id());
-            Log::error($exception);
-            return Responder::error('عملیات با شکست مواجه شد');
+        if ($plan->disk < $image->min_disk) {
+            return Responder::error('فضای دیسک سرور شما برای سیستم عامل انتخاب شده ناکافی است');
         }
+
+        if ($plan->ram < $image->min_ram) {
+            return Responder::error('فضای رم سرور شما برای سیستم عامل انتخاب شده ناکافی است');
+        }
+
+        RebuildMachineJob::dispatch(request('id'),request('image_id') , Auth::id());
+        return Responder::success('عملیات نصب مجدد سیستم عامل بر روی سرور شروع شد. لطفا تا پایان عملیات منتظر بمانید');
     }
 
     /**
