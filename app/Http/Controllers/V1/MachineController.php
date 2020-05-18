@@ -27,6 +27,7 @@ use App\Http\Requests\Server\UnrescueServerRequest;
 use App\Jobs\CreateMachineJob;
 use App\Jobs\RebuildMachineJob;
 use App\Jobs\RemoveMachineBackupsJob;
+use App\Jobs\RescaleMachineJob;
 use App\Models\Backup;
 use App\Models\Image;
 use App\Models\Machine;
@@ -36,7 +37,6 @@ use App\Models\Snapshot;
 use App\Notifications\CreateServerFailedAdminNotification;
 use App\Notifications\CreateServerFailedNotification;
 use App\Notifications\MachineResetPasswordNotification;
-use App\Notifications\RebuildMachineNotification;
 use App\Notifications\SendMachineInfoNotification;
 use App\Services\MachineService;
 use App\Services\PasswordGeneratorService;
@@ -280,7 +280,7 @@ class MachineController extends BaseController
         $project_id = request('project_id');
         $ssh_key_id = \request('ssh_key_id');
         $auto_backup = false;
-        if(!empty(\request('auto_backup'))){
+        if (!empty(\request('auto_backup'))) {
             $auto_backup = true;
         }
 
@@ -297,21 +297,18 @@ class MachineController extends BaseController
 
         $image = null;
         $source_remote_id = "source_remote_id";
-        if(!empty($snapshot_id)){
+        if (!empty($snapshot_id)) {
             $snapshot = Snapshot::findOrFail($snapshot_id);
             $image = $snapshot->image;
             $source_remote_id = $snapshot->remote_id;
-        }
-        else if(!empty($backup_id)){
+        } else if (!empty($backup_id)) {
             $backup = Backup::findOrFail($backup_id);
             $image = $backup->image;
             $source_remote_id = $backup->remote_id;
-        }
-        else if(!empty($image_id)){
+        } else if (!empty($image_id)) {
             $image = Image::findOrFail($image_id);
             $source_remote_id = $image->remote_id;
-        }
-        else{
+        } else {
             return Responder::error('منبع سرور جدید مشخص نشده است');
         }
 
@@ -690,25 +687,26 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(request('id'));
         $plan = Plan::find(request('plan_id'));
+        $image = $machine->image;
+
         if (request('plan_id') == $machine->plan->id) {
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
         }
-        $service = new MachineService();
-        try {
-            $service->rescale($machine->remote_id, $plan->remote_id);
-            $machine->changePlan($plan);
-            Log::info('rescale machine #' . $machine->id . ',user #' . Auth::id());
-            ServerActivity::create([
-                'machine_id' => request('id'),
-                'user_id' => Auth::id(),
-                'message' => 'پلن سرور تغییر یافت'
-            ]);
-            return Responder::success('پلن با موفقیت تغییر یافت');
-        } catch (\Exception $exception) {
-            Log::critical("Failed to change server #" . request('id') . " to plan #" . request('plan_id'));
-            Log::critical($exception);
-            return Responder::error('متاسفانه عملیات تغییر پلن با شکست مواجه شد');
+
+        if ($plan->disk < $image->min_disk) {
+            return Responder::error('فضای دیسک پلن انتخاب شده برای سیستم عامل شما ناکافی است');
         }
+
+        if ($plan->ram < $image->min_ram) {
+            return Responder::error('فضای رم پلن انتخاب شده برای سیستم عامل شما ناکافی است');
+        }
+
+        if ($plan->disk <$machine->plan->disk) {
+            return Responder::error('اندازه دیسک نباید از دیسک فعلی کمتر باشد');
+        }
+
+        RescaleMachineJob::dispatch(request('id'), request('plan_id'), Auth::id());
+        return Responder::success('عملیات تغییر پلن سرور شما شروع شد');
     }
 
     /**
@@ -1036,7 +1034,7 @@ class MachineController extends BaseController
             return Responder::error('فضای رم سرور شما برای سیستم عامل انتخاب شده ناکافی است');
         }
 
-        RebuildMachineJob::dispatch(request('id'),request('image_id') , Auth::id());
+        RebuildMachineJob::dispatch(request('id'), request('image_id'), Auth::id());
         return Responder::success('عملیات نصب مجدد سیستم عامل بر روی سرور شروع شد. لطفا تا پایان عملیات منتظر بمانید');
     }
 

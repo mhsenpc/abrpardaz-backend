@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Events\MachineCreated;
+use App\Events\MachineRebuilt;
 use App\Models\Image;
 use App\Models\Machine;
 use App\Models\ServerActivity;
@@ -70,6 +72,7 @@ class RebuildMachineJob implements ShouldQueue
                 'user_id' => $this->user_id,
                 'message' => 'تصویر جدید بر روی ماشین بارگذاری شد'
             ]);
+            MachineRebuilt::dispatch($machine);
         } catch (\Exception $exception) {
             Log::error('failed to rebuild machine #' . $this->machine_id . ', image #' . $this->image_id . ', user #' . $this->user_id);
             Log::error($exception);
