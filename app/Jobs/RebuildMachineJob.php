@@ -56,10 +56,11 @@ class RebuildMachineJob implements ShouldQueue
     public function handle()
     {
         $machine = Machine::find($this->machine_id);
+        $user = User::find($this->user_id);
         $image = Image::find($this->image_id);
         $new_pass = PasswordGeneratorService::generate();
         try {
-            $service = new MachineService();
+            $service = new MachineService($user->remote_user_id,$user->remote_password, $machine->project->remote_id);
             $service->rebuild($machine->remote_id, $image->remote_id, $new_pass);
             $machine->password = $new_pass;
             $machine->image_id =$this->image_id;

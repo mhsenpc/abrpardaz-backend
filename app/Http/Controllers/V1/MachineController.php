@@ -689,26 +689,9 @@ class MachineController extends BaseController
     {
         $machine = Machine::find(request('id'));
         $plan = Plan::find(request('plan_id'));
-        $image = $machine->image;
 
         if (request('plan_id') == $machine->plan->id) {
             return Responder::error('پلن انتخاب شده همان پلن فعلی شما می باشد');
-        }
-        $service = new MachineService();
-        try {
-            $service->rescale($machine->remote_id, $plan->remote_id);
-            $machine->changePlan($plan);
-            Log::info('rescale machine #' . $machine->id . ',user #' . Auth::id());
-            ServerActivity::create([
-                'machine_id' => request('id'),
-                'user_id' => Auth::id(),
-                'message' => 'پلن سرور تغییر یافت'
-            ]);
-            return Responder::success('پلن با موفقیت تغییر یافت');
-        } catch (\Exception $exception) {
-            Log::critical("Failed to change server #" . request('id') . " to plan #" . request('plan_id'));
-            Log::critical($exception);
-            return Responder::error('متاسفانه عملیات تغییر پلن با شکست مواجه شد');
         }
 
         if ($plan->disk <$machine->plan->disk) {

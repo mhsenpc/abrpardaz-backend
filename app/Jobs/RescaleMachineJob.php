@@ -56,7 +56,9 @@ class RescaleMachineJob implements ShouldQueue
     {
         $machine = Machine::find($this->machine_id);
         $plan = Plan::find($this->plan_id);
-        $service = new MachineService();
+        $user = User::find($this->user_id);
+
+        $service = new MachineService($user->remote_user_id,$user->remote_password, $machine->project->remote_id);
         try {
             $service->rescale($machine->remote_id, $plan->remote_id);
             $machine->changePlan($plan);
