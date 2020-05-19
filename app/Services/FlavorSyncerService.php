@@ -75,7 +75,7 @@ class FlavorSyncerService
                 $new_plan->name = $name;
                 $new_plan->hourly_price = 100;
                 $new_plan->traffic = 10;
-                $existing_plan->save();
+                $new_plan->save();
                 $result .= "$name inserted!" . $this->separator;
             }
         }
