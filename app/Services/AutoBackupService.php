@@ -27,7 +27,7 @@ class AutoBackupService
         try {
             $machine = Machine::find($machine_id);
             $name = $machine->name . '-' . Carbon::now();
-            $service = new MachineService();
+            $service = new MachineService($machine->user->remote_user_id,$machine->user->remote_password, $machine->project->remote_id);
             $image = $service->takeSnapshot($machine->remote_id, $name, 0);
 
             //every machine has 7 backup slots at most
@@ -37,7 +37,7 @@ class AutoBackupService
                 $old_backup = Backup::where('machine_id', $machine_id)->oldest()->first();
                 $old_backup->delete();
                 try {
-                    $service = new SnapshotService();
+                    $service = new SnapshotService($machine->user->remote_user_id,$machine->user->remote_password, $machine->project->remote_id);
                     $service->remove($old_backup->remote_id);
 
                 } catch (\Exception $exception) {

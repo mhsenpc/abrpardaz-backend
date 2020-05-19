@@ -65,11 +65,7 @@ class ProjectController extends BaseController
      *
      */
     function add(AddRequest $request){
-        $project = Project::create([
-            'owner_id' => Auth::id(),
-            'name' => request('name')
-        ]);
-        Auth::user()->projects()->attach($project->id);
+        Project::createProject(Auth::user()->email, request('name'),Auth::id());
 
         Log::info('new project added.user #'.Auth::id());
         return Responder::success('پروژه با موفقیت ایجاد شد');

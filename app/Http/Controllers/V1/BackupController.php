@@ -158,7 +158,7 @@ class BackupController extends BaseController
         try {
             if (!in_array($backup->remote_id, ['0', '-1'])) {
                 $remote_name = \request('name') . "-" . request('id');
-                $service = new SnapshotService();
+                $service = new SnapshotService(Auth::user()->remote_user_id, Auth::user()->remote_password, $backup->machine->project->remote_id);
                 $service->rename($backup->remote_id, $remote_name);
                 Log::info('Backup rename. id #' . request('id') . ',user #' . Auth::id());
             }
@@ -200,7 +200,7 @@ class BackupController extends BaseController
         $backup = Backup::findOrFail(request('id'));
         try {
             if (!in_array($backup->remote_id, ['0', '-1'])) {
-                $service = new SnapshotService();
+                $service = new SnapshotService(Auth::user()->remote_user_id, Auth::user()->remote_password, $backup->machine->project->remote_id);
                 $service->remove($backup->remote_id);
             }
             $backup->delete();

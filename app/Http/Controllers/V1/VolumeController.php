@@ -9,6 +9,7 @@ use App\Http\Requests\Volume\DetachFromMachineRequest;
 use App\Http\Requests\Volume\RemoveVolumeRequest;
 use App\Http\Requests\Volume\RenameVolumeRequest;
 use App\Models\Machine;
+use App\Models\Project;
 use App\Models\Volume;
 use App\Services\Responder;
 use App\Services\VolumeService;
@@ -77,7 +78,8 @@ class VolumeController extends BaseController
      */
     function createVolume(CreateVolumeRequest $request)
     {
-        $service = new VolumeService();
+        $project = Project::find(request('project_id'));
+        $service = new VolumeService(Auth::user()->remote_user_id, Auth::user()->remote_password, $project->remote_id);
 
         $user_limit = User::find(Auth::id())->userLimit;
         if ($user_limit) {
@@ -139,7 +141,7 @@ class VolumeController extends BaseController
         $volume = Volume::find(\request('id'));
         $machine = Machine::find(\request('machine_id'));
 
-        $service = new VolumeService();
+        $service = new VolumeService(Auth::user()->remote_user_id, Auth::user()->remote_password, $volume->project->remote_id);
         $service->attachVolumeToMachine($machine->remote_id, $volume->remote_id);
 
         Log::info('volume attach to machine #' . request('machine_id') . ', volume #' . request('id') . ',user #' . Auth::id());
@@ -186,7 +188,7 @@ class VolumeController extends BaseController
         $volume = Volume::find(\request('id'));
         $machine = Machine::find(\request('machine_id'));
 
-        $service = new VolumeService();
+        $service = new VolumeService(Auth::user()->remote_user_id, Auth::user()->remote_password, $volume->project->remote_id);
         $service->detachVolumeFromMachine($machine->remote_id, $volume->remote_id);
 
         Log::info('volume detach from machine #' . request('machine_id') . ', volume #' . request('id') . ',user #' . Auth::id());
@@ -272,7 +274,7 @@ class VolumeController extends BaseController
             return Responder::error('لطفا قبل از حذف فضا اتصال آن را قطع کنید');
         }
 
-        $service = new VolumeService();
+        $service = new VolumeService(Auth::user()->remote_user_id, Auth::user()->remote_password, $volume->project->remote_id);
         $service->remove($volume->remote_id);
         $volume->stopBilling();
         $volume->delete();

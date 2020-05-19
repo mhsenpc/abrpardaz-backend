@@ -19,6 +19,7 @@ class CreateVolumesTable extends Migration
             $table->string('name')->nullable();
             $table->float('size');
             $table->integer('machine_id')->nullable();
+            $table->integer('project_id');
             $table->integer('user_id');
             $table->timestamp('last_billing_date');
             $table->timestamp('end_date');
@@ -26,6 +27,7 @@ class CreateVolumesTable extends Migration
             $table->softDeletes();
 
             $table->foreign('machine_id')->references('id')->on('machines');
+            $table->foreign('project_id')->references('id')->on('projects');
             $table->foreign('user_id')->references('id')->on('users');
         });
     }
