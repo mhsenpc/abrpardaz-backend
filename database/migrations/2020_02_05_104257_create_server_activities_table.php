@@ -15,8 +15,8 @@ class CreateServerActivitiesTable extends Migration
     {
         Schema::create('server_activities', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('machine_id');
-            $table->integer('user_id');
+            $table->unsignedInteger('machine_id');
+            $table->unsignedInteger('user_id');
             $table->string('message');
             $table->timestamps();
 

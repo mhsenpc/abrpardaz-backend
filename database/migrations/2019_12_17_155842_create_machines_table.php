@@ -19,11 +19,11 @@ class CreateMachinesTable extends Migration
             $table->string('remote_id')->nullable();
             $table->string('public_ipv4')->nullable();
             $table->string('password')->nullable();
-            $table->integer('user_id');
-            $table->integer('plan_id');
-            $table->integer('project_id');
-            $table->integer('image_id');
-            $table->integer('ssh_key_id')->nullable();
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('plan_id');
+            $table->unsignedInteger('project_id');
+            $table->unsignedInteger('image_id');
+            $table->unsignedInteger('ssh_key_id')->nullable();
             $table->boolean('backup')->default(true);
             $table->timestamps();
             $table->softDeletes();

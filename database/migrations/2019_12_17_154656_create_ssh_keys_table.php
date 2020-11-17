@@ -17,7 +17,7 @@ class CreateSshKeysTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('content',5000);
-            $table->integer('user_id');
+            $table->unsignedInteger('user_id');
             $table->timestamps();
             $table->softDeletes();
 

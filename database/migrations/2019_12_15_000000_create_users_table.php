@@ -19,14 +19,14 @@ class CreateUsersTable extends Migration
             $table->boolean('suspend')->default(false);
             $table->string('password');
             $table->integer('referrer_id')->nullable();
-            $table->integer('user_limit_id')->nullable();
-            $table->integer('profile_id');
+            $table->unsignedInteger('user_limit_id')->nullable();
+            $table->unsignedInteger('profile_id');
             $table->string('provider_user_id')->nullable();
             $table->string('remote_user_id')->nullable();
             $table->string('remote_user_name')->nullable();
             $table->string('remote_password')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->timestamp('last_billing_date');
+            $table->timestamp('email_verified_at',0)->nullable();
+            $table->timestamp('last_billing_date',0)->nullable();
             $table->timestamps();
             $table->softDeletes();
 

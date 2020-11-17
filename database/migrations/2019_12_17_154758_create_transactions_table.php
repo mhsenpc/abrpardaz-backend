@@ -16,9 +16,9 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('reference_id');
-            $table->integer('invoice_id');
+            $table->unsignedInteger('invoice_id');
             $table->integer('is_valid');
-            $table->integer('user_id');
+            $table->unsignedInteger('user_id');
             $table->timestamps();
             $table->softDeletes();
 

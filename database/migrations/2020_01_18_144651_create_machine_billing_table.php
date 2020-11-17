@@ -15,10 +15,10 @@ class CreateMachineBillingTable extends Migration
     {
         Schema::create('machine_billing', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('machine_id');
-            $table->integer('plan_id');
-            $table->timestamp('last_billing_date')->nullable();
-            $table->timestamp('end_date')->nullable();
+            $table->unsignedInteger('machine_id');
+            $table->unsignedInteger('plan_id');
+            $table->timestamp('last_billing_date',0)->nullable();
+            $table->timestamp('end_date',0)->nullable();
             $table->timestamps();
 
             $table->foreign('plan_id')->references('id')->on('plans');

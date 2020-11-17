@@ -18,9 +18,9 @@ class CreateBackupsTable extends Migration
             $table->string('name');
             $table->string('remote_id')->nullable();
             $table->float('size')->nullable();
-            $table->integer('machine_id');
-            $table->integer('user_id');
-            $table->integer('image_id');
+            $table->unsignedInteger('machine_id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('image_id');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();

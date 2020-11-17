@@ -18,11 +18,11 @@ class CreateVolumesTable extends Migration
             $table->string('remote_id');
             $table->string('name')->nullable();
             $table->float('size');
-            $table->integer('machine_id')->nullable();
-            $table->integer('project_id');
-            $table->integer('user_id');
-            $table->timestamp('last_billing_date');
-            $table->timestamp('end_date');
+            $table->unsignedInteger('machine_id')->nullable();
+            $table->unsignedInteger('project_id');
+            $table->unsignedInteger('user_id');
+            $table->timestamp('last_billing_date',0)->nullable();
+            $table->timestamp('end_date',0)->nullable();
             $table->timestamps();
             $table->softDeletes();
 
