@@ -32,7 +32,7 @@ Route::prefix('v1')->namespace('V1')->group(function () {
             });
 
             Route::prefix('machines/{id}')->group(function () {
-                Route::post('console', 'MachineController@console');
+                Route::get('console', 'MachineController@console');
                 Route::get('details', 'MachineController@details');
                 Route::get('activities', 'MachineController@activities');
                 Route::put('powerOn', 'MachineController@powerOn');
